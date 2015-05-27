@@ -20,14 +20,14 @@
         branch: "{{branch}}"
         timeout: 300
       publish:
-        repodir: "{{clone_repo[webtest_server].stdout}}"
+        repodir: "/tmp/{{clone_repo[webtest_server].stdout}}"
       on-success: "make_venv"
     - 
       name: "make_venv"
       ref: "core.remote"
       params: 
         hosts: "{{webtest_server}}"
-        cmd: "cd {{repodir}} && make venv"
+        cmd: "cd {{repodir}} && make requirements"
         timeout: 1800
       on-success: "run_tests"
     - 
@@ -35,7 +35,7 @@
       ref: "core.remote"
       params: 
         hosts: "{{webtest_server}}"
-        cmd: "cd {{repodir}} && . virtualenv/bin/activate && python webui/test_st2web.py TestSt2web {{test_user}} {{test_password}} {{web_host}} {{web_port}}"
+        cmd: "cd {{repodir}} && . virtualenv/bin/activate && DISPLAY=:10 python webui/test_st2web.py TestSt2web {{web_host}} {{web_port}} {{test_user}} {{test_password}}"
         timeout: 1800
       on-success: "clean_repo"
     - 

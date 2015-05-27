@@ -17,7 +17,6 @@
       type: "string"
       description: "The branch to clone"
       default: "master"
-      required: true
     test_user:
       type: "string"
       description: "webui username"
