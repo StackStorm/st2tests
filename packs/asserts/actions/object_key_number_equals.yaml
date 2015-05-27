@@ -1,0 +1,19 @@
+---
+description: Check if key in object is equal to a given numerical value.
+enabled: true
+entry_point: object_key_number_equals.py
+name: object_key_number_equals
+parameters:
+  object:
+    type: object
+    description: Object input.
+    required: true
+  key:
+    type: string
+    description: Key in object to pick the value for to test.
+    required: true
+  value:
+    type: number
+    description: Expected numerical value.
+    required: true
+runner_type: "python-script"
