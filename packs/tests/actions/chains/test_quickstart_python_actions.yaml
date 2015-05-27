@@ -1,0 +1,59 @@
+---
+chain:
+  -
+    name: "test_stdout_python_action"
+    ref: "fixtures.streamwriter"
+    params:
+        stream: "stdout"
+    on-success: "assert_stdout_field_stdout_test"
+  -
+    name: "assert_stdout_field_stdout_test"
+    ref: "asserts.object_key_string_equals"
+    params:
+        object: "{{test_stdout_python_action}}"
+        key: "stdout"
+        value: "STREAM IS STDOUT."
+    on-success: "assert_exit_code_zero_stdout_test"
+  -
+    name: "assert_exit_code_zero_stdout_test"
+    ref: "asserts.object_key_number_equals"
+    params:
+        object: "{{test_stdout_python_action}}"
+        key: "exit_code"
+        value: 0
+    on-success: "test_stderr_python_action"
+  -
+    name: "test_stderr_python_action"
+    ref: "fixtures.streamwriter"
+    params:
+        stream: "stderr"
+    on-success: "assert_stderr_field_stderr_test"
+  -
+    name: "assert_stderr_field_stderr_test"
+    ref: "asserts.object_key_string_equals"
+    params:
+        object: "{{test_stderr_python_action}}"
+        key: "stderr"
+        value: "STREAM IS STDERR."
+    on-success: "assert_exit_code_zero_stderr_test"
+  -
+    name: "assert_exit_code_zero_stderr_test"
+    ref: "asserts.object_key_number_equals"
+    params:
+        object: "{{test_stderr_python_action}}"
+        key: "exit_code"
+        value: 0
+    on-success: "test_exception_python_action"
+  -
+    name: "test_exception_python_action"
+    ref: "fixtures.streamwriter"
+    params:
+        stream: "shyte"
+    on-failure: "assert_exit_code_non_zero_exception_test"
+  -
+    name: "assert_exit_code_non_zero_exception_test"
+    ref: "asserts.object_key_number_greater"
+    params:
+        object: "{{test_exception_python_action}}"
+        key: "exit_code"
+        value: 0
