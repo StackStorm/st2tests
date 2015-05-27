@@ -1,0 +1,11 @@
+---
+description: Simple python action to test output to different streams.
+enabled: true
+entry_point: pythonactions/streamwriter.py
+name: streamwriter
+parameters:
+  stream:
+    type: string
+    description: Stream to write to (stdout or stderr).
+    required: true
+runner_type: "python-script"
