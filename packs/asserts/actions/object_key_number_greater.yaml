@@ -1,0 +1,19 @@
+---
+description: Check if key in object is greater than a given numerical value.
+enabled: true
+entry_point: object_key_number_greater.py
+name: object_key_number_greater
+parameters:
+  object:
+    type: object
+    description: Object input.
+    required: true
+  key:
+    type: string
+    description: Key in object to pick the value for to test.
+    required: true
+  value:
+    type: number
+    description: Numerical value to test against.
+    required: true
+runner_type: "python-script"
