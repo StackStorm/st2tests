@@ -35,7 +35,7 @@
       ref: "core.remote"
       params: 
         hosts: "{{webtest_server}}"
-        cmd: "cd {{repodir}} && . virtualenv/bin/activate && python webui/test_st2web.py {{test_user}} {{test_password}} {{web_host}} {{web_port}}"
+        cmd: "cd {{repodir}} && . virtualenv/bin/activate && python webui/test_st2web.py TestSt2web {{test_user}} {{test_password}} {{web_host}} {{web_port}}"
         timeout: 1800
       on-success: "clean_repo"
     - 
