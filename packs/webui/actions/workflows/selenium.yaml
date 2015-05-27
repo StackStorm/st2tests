@@ -1,0 +1,48 @@
+---
+  chain:
+    -
+      name: "get_webtest_server"
+      ref: "linux.dig"
+      params:
+        hostname: "webtest-ubuntu.service.consul"
+        rand: true
+        count: 1
+      publish:
+        webtest_server: "{{get_webtest_server.result[0]}}"
+      on-success: "clone_repo"
+    - 
+      name: "clone_repo"
+      ref: "st2cd.git_clone"
+      params: 
+        hosts: "{{webtest_server}}"
+        repo: "{{repo}}"
+        target: "{{repo_target}}"
+        branch: "{{branch}}"
+        timeout: 300
+      publish:
+        repodir: "{{clone_repo[webtest_server].stdout}}"
+      on-success: "make_venv"
+    - 
+      name: "make_venv"
+      ref: "core.remote"
+      params: 
+        hosts: "{{webtest_server}}"
+        cmd: "cd {{repodir}} && make venv"
+        timeout: 1800
+      on-success: "run_tests"
+    - 
+      name: "run_tests"
+      ref: "core.remote"
+      params: 
+        hosts: "{{webtest_server}}"
+        cmd: "cd {{repodir}} && . virtualenv/bin/activate && python webui/test_st2web.py {{test_user}} {{test_password}} {{web_host}} {{web_port}}"
+        timeout: 1800
+      on-success: "clean_repo"
+    - 
+      name: "clean_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{webtest_server}}"
+        repo: "{{repodir}}"
+
+  default: "get_webtest_server"
