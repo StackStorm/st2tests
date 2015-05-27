@@ -1,0 +1,36 @@
+---
+  name: "selenium"
+  runner_type: "action-chain"
+  description: "Clone st2e2e repo and run selenium tests"
+  enabled: true
+  entry_point: "workflows/selenium.yaml"
+  parameters:
+    repo:
+      type: "string"
+      description: "Url of the repo to clone"
+      required: true
+    repo_target:
+      type: "string"
+      default: "st2e2e_{{branch}}"
+      description: "Directory name for clone"
+    branch:
+      type: "string"
+      description: "The branch to clone"
+      default: "master"
+      required: true
+    test_user:
+      type: "string"
+      description: "webui username"
+      default: "testu"
+    test_password:
+      type: "string"
+      description: "webui password"
+      default: "testp"
+    web_host:
+      type: "string"
+      description: "The webui host to test against"
+      required: true
+    web_port:
+      type: "string"
+      description: "webui port"
+      default: "8080"
