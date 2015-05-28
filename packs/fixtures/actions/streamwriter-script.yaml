@@ -1,0 +1,24 @@
+---
+description: Simple python action to test output to different streams.
+enabled: true
+entry_point: scripts/streamwriter-script.py
+name: streamwriter-script
+parameters:
+  stream:
+    type: string
+    description: Stream to write to (stdout or stderr).
+    required: true
+  str_arg:
+    type: string
+    description: Some string arg.
+  int_arg:
+    type: number
+    description: Some int arg.
+  obj_arg:
+    type: object
+    description: Some object arg.
+  sudo:
+    immutable: true
+  kwarg_op:
+    immutable: true
+runner_type: "remote-shell-script"
