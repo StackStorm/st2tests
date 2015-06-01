@@ -7,6 +7,6 @@ enabled: true
 entry_point: "chains/test_quickstart_python_actions.yaml"
 parameters:
   token:
-  type: "string"
-  description: "st2 auth token"
-  default: ""
+    type: "string"
+    description: "st2 auth token"
+    default: ""
