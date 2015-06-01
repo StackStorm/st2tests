@@ -1,8 +1,8 @@
 ---
-description: Simple python action to test output to different streams.
+description: Simple script action to test output to different streams.
 enabled: true
 entry_point: scripts/streamwriter-script.py
-name: streamwriter-script
+name: streamwriter-script-remote
 parameters:
   stream:
     type: string
