@@ -1,10 +1,10 @@
 ---
 # Action definition metadata
-name: "test_quickstart_python_action"
+name: "test_quickstart_remote_script_actions"
 description: "Workflow tests python action on Quick Start"
 runner_type: "action-chain"
 enabled: true
-entry_point: "chains/test_quickstart_python_actions.yaml"
+entry_point: "chains/test_quickstart_remote_script_actions.yaml"
 parameters:
   token:
     type: "string"

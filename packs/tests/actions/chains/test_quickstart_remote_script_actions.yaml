@@ -1,0 +1,66 @@
+---
+chain:
+  -
+    name: "test_stdout_remote_script_action"
+    ref: "fixtures.streamwriter-script-remote"
+    params:
+        stream: "stdout"
+        hosts: "localhost"
+        str_arg: "foo"
+        int_arg: 1
+        obj_arg:
+            foo: bar
+    on-success: "assert_stdout_field_stdout_test"
+  -
+    name: "assert_stdout_field_stdout_test"
+    ref: "asserts.object_key_string_equals"
+    params:
+        object: "{{test_stdout_remote_script_action.localhost}}"
+        key: "stdout"
+        value: "STREAM IS STDOUT. STR: foo INT: 1 OBJ: {u'foo': u'bar'}"
+    on-success: "assert_return_code_zero_stdout_test"
+  -
+    name: "assert_return_code_zero_stdout_test"
+    ref: "asserts.object_key_number_equals"
+    params:
+        object: "{{test_stdout_remote_script_action.localhost}}"
+        key: "return_code"
+        value: 0
+    on-success: "test_stderr_remote_script_action"
+  -
+    name: "test_stderr_remote_script_action"
+    ref: "fixtures.streamwriter-script-remote"
+    params:
+        stream: "stderr"
+        hosts: "localhost"
+    on-success: "assert_stderr_field_stderr_test"
+  -
+    name: "assert_stderr_field_stderr_test"
+    ref: "asserts.object_key_string_equals"
+    params:
+        object: "{{test_stderr_remote_script_action.localhost}}"
+        key: "stderr"
+        value: "STREAM IS STDERR."
+    on-success: "assert_return_code_zero_stderr_test"
+  -
+    name: "assert_return_code_zero_stderr_test"
+    ref: "asserts.object_key_number_equals"
+    params:
+        object: "{{test_stderr_remote_script_action.localhost}}"
+        key: "return_code"
+        value: 0
+    on-success: "test_exception_remote_script_action"
+  -
+    name: "test_exception_remote_script_action"
+    ref: "fixtures.streamwriter-script-remote"
+    params:
+        stream: "shyte"
+        hosts: "localhost"
+    on-failure: "assert_return_code_non_zero_exception_test"
+  -
+    name: "assert_return_code_non_zero_exception_test"
+    ref: "asserts.object_key_number_greater"
+    params:
+        object: "{{test_exception_remote_script_action.localhost}}"
+        key: "return_code"
+        value: 0

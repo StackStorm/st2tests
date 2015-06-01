@@ -13,10 +13,11 @@ class AssertObjectKeyIntEquals(Action):
             raise ValueError('object shoud be of type "dict".')
         if key not in object:
             sys.stderr.write('KEY %s DOESN\'T EXIST.' % key)
-            return False
+            raise ValueError('Key %s doesn\'t exist in object %s' % (key, object))
         result = (object[key] == value)
         if result:
-            sys.stdout.write('EQUAL')
+            sys.stdout.write('EQUAL.')
         else:
-            sys.stdout.write('NOT EQUAL')
+            sys.stdout.write('NOT EQUAL.')
+            sys.stderr.write(' Expected: %s, Original: %s' % (value, object[key]))
         return result
