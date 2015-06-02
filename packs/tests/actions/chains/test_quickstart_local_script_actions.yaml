@@ -1,0 +1,63 @@
+---
+chain:
+  -
+    name: "test_stdout_local_script_action"
+    ref: "fixtures.streamwriter-script-local"
+    params:
+        stream: "stdout"
+        str_arg: "foo"
+        int_arg: 1
+        obj_arg:
+            foo: bar
+    on-success: "assert_stdout_field_stdout_test"
+  -
+    name: "assert_stdout_field_stdout_test"
+    ref: "asserts.object_key_string_equals"
+    params:
+        object: "{{test_stdout_local_script_action}}"
+        key: "stdout"
+        value: "STREAM IS STDOUT. STR: foo INT: 1 OBJ: {u'foo': u'bar'}"
+    on-success: "assert_return_code_zero_stdout_test"
+  -
+    name: "assert_return_code_zero_stdout_test"
+    ref: "asserts.object_key_number_equals"
+    params:
+        object: "{{test_stdout_local_script_action}}"
+        key: "return_code"
+        value: 0
+    on-success: "test_stderr_local_script_action"
+  -
+    name: "test_stderr_local_script_action"
+    ref: "fixtures.streamwriter-script-local"
+    params:
+        stream: "stderr"
+    on-success: "assert_stderr_field_stderr_test"
+  -
+    name: "assert_stderr_field_stderr_test"
+    ref: "asserts.object_key_string_equals"
+    params:
+        object: "{{test_stderr_local_script_action}}"
+        key: "stderr"
+        value: "STREAM IS STDERR."
+    on-success: "assert_return_code_zero_stderr_test"
+  -
+    name: "assert_return_code_zero_stderr_test"
+    ref: "asserts.object_key_number_equals"
+    params:
+        object: "{{test_stderr_local_script_action}}"
+        key: "return_code"
+        value: 0
+    on-success: "test_exception_local_script_action"
+  -
+    name: "test_exception_local_script_action"
+    ref: "fixtures.streamwriter-script-local"
+    params:
+        stream: "shyte"
+    on-failure: "assert_return_code_non_zero_exception_test"
+  -
+    name: "assert_return_code_non_zero_exception_test"
+    ref: "asserts.object_key_number_greater"
+    params:
+        object: "{{test_exception_local_script_action}}"
+        key: "return_code"
+        value: 0
