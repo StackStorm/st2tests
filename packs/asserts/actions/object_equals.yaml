@@ -1,0 +1,15 @@
+---
+description: Check if an input object is equal to a given object.
+enabled: true
+entry_point: object_equals.py
+name: object_equals
+parameters:
+  object:
+    type: object
+    description: Object input.
+    required: true
+  expected:
+    type: object
+    description: Expected object.
+    required: true
+runner_type: "python-script"

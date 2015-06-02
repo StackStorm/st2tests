@@ -1,0 +1,32 @@
+---
+chain:
+  -
+    name: "list_last_trigger_instance_emitted"
+    ref: "core.local"
+    params:
+        env:
+            ST2_AUTH_TOKEN: "{{token}}"
+        cmd: "st2 triggerinstance list --trigger=fixtures.test_trigger.dummy -n=1 -j -a id | grep id | awk '{print $2}'"
+    on-success: "get_last_trigger_instance"
+  -
+    name: "get_last_trigger_instance"
+    ref: "core.local"
+    params:
+        env:
+            ST2_AUTH_TOKEN: "{{token}}"
+        cmd: "st2 triggerinstance get {{ list_last_trigger_instance_emitted.stdout }} -j -a payload"
+    on-success: "assert_trigger_instance_payload_matches_expected"
+  -
+    name: "assert_trigger_instance_payload_matches_expected"
+    ref: "asserts.object_equals"
+    params:
+        object: "{{ get_last_trigger_instance.stdout }}"
+        expected:
+            payload:
+                str: "String"
+                int: 1
+                boo: true
+                obj:
+                    foo: "bar"
+                    baz: 1
+                lst: [1, 5, 7]

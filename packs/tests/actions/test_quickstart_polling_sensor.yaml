@@ -1,0 +1,12 @@
+---
+# Action definition metadata
+name: "test_quickstart_polling_sensor"
+description: "Workflow tests polling sensor on Quick Start"
+runner_type: "action-chain"
+enabled: true
+entry_point: "chains/test_quickstart_polling_sensor.yaml"
+parameters:
+  token:
+    type: "string"
+    description: "st2 auth token"
+    default: ""
