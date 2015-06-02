@@ -1,0 +1,21 @@
+---
+  class_name: "TestPollingSensor"
+  entry_point: "test_poll_sensor.py"
+  description: "Test poll sensor"
+  poll_interval: 5
+  trigger_types:
+    -
+      name: "test_trigger.dummy"
+      payload_schema:
+        type: "object"
+        properties:
+          str:
+            type: "string"
+          int:
+            type: "number"
+          obj:
+            type: "object"
+          lst:
+            type: "array"
+          boo:
+            type: "boolean"
