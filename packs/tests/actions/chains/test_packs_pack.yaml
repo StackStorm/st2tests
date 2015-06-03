@@ -120,7 +120,7 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.load register=all | grep -c 'Registered' | grep 4"
+            cmd: "st2 run packs.load register=all | grep -c 'Registered' | grep 6"
         on-success: success_handler
         on-failure: error_handler
     -
