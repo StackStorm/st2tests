@@ -1,0 +1,21 @@
+---
+  class_name: "TestPassiveSensor"
+  entry_point: "test_passive_sensor.py"
+  description: "Test passive sensor"
+  poll_interval: 5
+  trigger_types:
+    -
+      name: "test_passive_trigger.dummy"
+      payload_schema:
+        type: "object"
+        properties:
+          str:
+            type: "string"
+          int:
+            type: "number"
+          obj:
+            type: "object"
+          lst:
+            type: "array"
+          boo:
+            type: "boolean"
