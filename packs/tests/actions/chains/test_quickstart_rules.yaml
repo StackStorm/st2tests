@@ -28,7 +28,23 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 rule create /usr/share/doc/st2/examples/rules/sample_rule_with_webhook.yaml &> /dev/null"
+            cmd: "st2 rule create /usr/share/doc/st2/examples/rules/sample_rule_with_webhook.yaml -j | grep name"
+        on-success: sleep
+    -
+        name: sleep
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "sleep 5"
+        on-success: test_webhook_list    
+    -
+        name: test_webhook_list
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 webhook list -j | grep sample"
         on-success: test_rule_list
     -
         name: test_rule_list
@@ -44,7 +60,7 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 rule get {{ tested_rule }} &> /dev/null"
+            cmd: "st2 rule get {{ tested_rule }} -j | grep name"
         on-success: setup_post_to_web_hook_via_curl
     -
         name: setup_post_to_web_hook_via_curl
