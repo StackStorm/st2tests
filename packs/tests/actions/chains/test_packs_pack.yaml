@@ -3,7 +3,7 @@ vars:
         base_repo_url: "https://github.com/StackStorm"
         pack_to_install_1: "docker"
         pack_to_install_2: "sensu"
-        install_from_repo: "st2contrib.git"
+        install_from_repo: "st2contrib"
 
 chain:
     -
