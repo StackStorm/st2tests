@@ -9,6 +9,7 @@ This pack contains a set of end-to-end tests, that allow to verify st2, using st
 * **tests.test_quickstart** follows the set of commands described in [Explore StackStorm with CLI](http://docs.stackstorm.com/start.html#explore-st2-with-cli) and [Work with Actions](http://docs.stackstorm.com/start.html#work-with-actions) sections of [Quick Start](http://docs.stackstorm.com/start.html)
 * **tests.test_quickstart_rules** tests rule creation, validation and deletion, as described in [Define a Rule](http://docs.stackstorm.com/start.html#define-a-rule) section of [Quick Start](http://docs.stackstorm.com/start.html)
 * **tests.test_quickstart_key** verifies key create/get example, used in [Datastore](http://docs.stackstorm.com/start.html#datastore) section of [Quick Start](http://docs.stackstorm.com/start.html)
+* **tests.test_windows_runners** verifies Windows runner prerequisites and if Windows host was specified, runs an action using core.windows_cmd. This workflow requires 3 parameters: windows_host, windows_user and windows_password.
 
 All tests utilize [ActionChain](http://docs.stackstorm.com/actionchain.html).
 
