@@ -3,6 +3,7 @@ vars:
         base_repo_url: "https://github.com/StackStorm"
         pack_to_install_1: "docker"
         pack_to_install_2: "sensu"
+        pack_to_install_with_no_config: "bitcon"
         install_from_repo: "st2contrib"
 
 chain:
@@ -121,6 +122,24 @@ chain:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.load register=all | grep -c 'Registered' | grep 6"
+        on-success: test_pack_install_with_no_config
+        on-failure: error_handler
+    -
+        name: test_pack_install_with_no_config
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 run packs.download packs={{ pack_to_install_with_no_config }}"
+        on-success: test_pack_reinstall_with_no_config
+        on-failure: error_handler
+    -
+        name: test_pack_reinstall_with_no_config
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 run packs.download packs={{ pack_to_install_with_no_config }}"
         on-success: success_handler
         on-failure: error_handler
     -
