@@ -1,0 +1,159 @@
+---
+  vars:
+    slack_fail_channel: "#stackstorm"
+    slack_ok_channel: "#thunderdome"
+    test_lock_name: "chatops.lock"
+  chain:
+    -
+      name: "get_lock"
+      ref: "core.local"
+      params:
+        cmd: "st2 key get key=\"chatops.lock\" | grep value"
+      on-failure: "set_lock"
+      notify:
+        on-success:
+            message: "[CHATOPS_ITESTS]\n STATUS: LOCK_EXISTS."
+            channels: ["slack_thunderdome"]
+    -
+      name: "set_lock"
+      ref: "core.local"
+      params:
+        cmd: "st2 key set key=\"{{test_lock_name}}\" value=\"1\""
+      on-success: "get_build_server"
+      on-failure: "slack_lock_acquire_failure"
+      notify:
+        on-failure:
+            message: "[CHATOPS_ITESTS]\n STATUS: Failed to acquire lock."
+            channels: ["slack_thunderdome"]
+    -
+      name: "slack_lock_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "{{slack_ok_channel}}"
+        message: "```[CHATOPS_ITESTS]\n STATUS: LOCK_EXISTS.\n```"
+    -
+      name: "slack_lock_acquire_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "{{slack_ok_channel}}"
+        message: "```[CHATOPS_ITESTS]\n STATUS: LOCKING_FAILED.\n```"
+    -
+      name: "get_build_server"
+      ref: "linux.dig"
+      params:
+        hostname: "st2-build-slave-itests-ubuntu.service.consul"
+        rand: true
+        count: 1
+      publish:
+        build_host: "{{get_build_server.result[0]}}"
+      on-success: "clone_st2_repo"
+      on-failure: "slack_failure"
+    -
+      name: "clone_st2_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{build_host}}"
+        repo: "{{st2_repo}}"
+        branch: "{{st2_repo_branch}}"
+        target: "{{st2_repo_target}}"
+      on-success: "clone_hubot_stackstorm_repo"
+      on-failure: "slack_failure"
+    -
+      name: "clone_hubot_stackstorm_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{build_host}}"
+        repo: "{{hubot_stackstorm_repo}}"
+        branch: "{{hubot_stackstorm_repo_branch}}"
+        target: "{{hubot_stackstorm_repo_target}}"
+      on-success: "clone_hubot_stanley_repo"
+      on-failure: "slack_failure"
+    -
+      name: "clone_hubot_stanley_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{build_host}}"
+        repo: "{{hubot_stanley_repo}}"
+        branch: "{{hubot_stanley_repo_branch}}"
+        target: "{{hubot_stanley_repo_target}}"
+      on-success: "validate_hubot_stackstorm"
+      on-failure: "slack_failure"
+    -
+      name: "validate_hubot_stackstorm"
+      ref: "core.remote"
+      params:
+        hosts: "{{build_host}}"
+        cmd: "cd {{hubot_stackstorm_repo_target}} && gulp ci"
+      on-success: "prep_hubot_stanley"
+      on-failure: "slack_failure"
+    -
+      name: "prep_hubot_stanley"
+      ref: "chatops.prep_hubot_stanley"
+      params:
+        hosts: "{{build_host}}"
+      on-success: "prep_stackstorm"
+      on-failure: "slack_failure"
+    -
+      name: "prep_stackstorm"
+      ref: "chatops.prep_stackstorm"
+      params:
+        hosts: "{{build_host}}"
+        stackstorm_repo_target: "{{st2_repo_target}}"
+      on-success: "start_st2"
+      on-failure: "slack_failure"
+    -
+      name: "start_st2"
+      ref: "core.remote"
+      params:
+        hosts: "{{build_host}}"
+        cmd: "cd {{st2_repo_target}} && tools/launchdev.sh startclean"
+      on-success: "install_dependency_packs"
+      on-failure: "slack_failure"
+    -
+      name: "install_dependency_packs"
+      ref: "chatops.install_dependency_packs"
+      params:
+        hosts: "{{build_host}}"
+        stackstorm_repo_target: "{{st2_repo_target}}"
+      on-success: "release_lock"
+      on-failure: "slack_failure"
+    -
+      name: "slack_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "{{slack_fail_channel}}"
+        message: "```[CHATOPS_ITESTS]\n STATUS: FAILED.\n```"
+      on-success: "release_lock"
+      on-failure: "release_lock"
+    -
+      name: "release_lock"
+      ref: "core.local"
+      params:
+        cmd: "st2 key delete key=\"{{test_lock_name}}\""
+      on-success: "clean_st2_repo"
+      on-failure: "clean_st2_repo"
+    -
+      name: "clean_st2_repo"
+      ref: "chatops.clean_repo"
+      params:
+        hosts: "{{build_host}}"
+        repo: "{{clone_st2_repo[build_host].stdout}}"
+        sudo: true
+      on-success: "clean_hubot_stackstorm_repo"
+      on-failure: "clean_hubot_stackstorm_repo"
+    -
+      name: "clean_hubot_stackstorm_repo"
+      ref: "chatops.clean_repo"
+      params:
+        hosts: "{{build_host}}"
+        repo: "{{clone_hubot_stackstorm_repo[build_host].stdout}}"
+      on-success: "clean_hubot_stanley_repo"
+      on-failure: "clean_hubot_stanley_repo"
+    -
+      name: "clean_hubot_stanley_repo"
+      ref: "chatops.clean_repo"
+      params:
+        hosts: "{{build_host}}"
+        repo: "{{clone_hubot_stanley_repo[build_host].stdout}}"
+
+  default: "get_lock"

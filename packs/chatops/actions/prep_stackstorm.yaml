@@ -1,0 +1,24 @@
+---
+  name: "prep_stackstorm"
+  runner_type: "run-remote-script"
+  description: "prepare stackstorm virtualenv etc."
+  enabled: true
+  entry_point: "scripts/prep_stackstorm.sh"
+  parameters:
+    stackstorm_repo_target:
+      type: "string"
+      description: "Location of cloned hubot-stackstorm on disk."
+      required: true
+      position: 0
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
