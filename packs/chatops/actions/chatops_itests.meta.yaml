@@ -5,6 +5,10 @@ runner_type: "action-chain"
 enabled: true
 entry_point: "workflows/chatops_itests.yaml"
 parameters:
+    token:
+      type: "string"
+      description: "st2 auth token"
+      default: ""
     repos_base:
       type: "string"
       description: "Base for all repos to be cloned to"
