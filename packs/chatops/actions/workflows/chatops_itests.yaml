@@ -8,7 +8,9 @@
       name: "get_lock"
       ref: "core.local"
       params:
-        cmd: "st2 key get key=\"chatops.lock\" | grep value"
+        env:
+          ST2_AUTH_TOKEN: "{{token}}"
+        cmd: "st2 key get \"{{test_lock_name}}\" | grep value"
       on-failure: "set_lock"
       notify:
         on-success:
@@ -18,7 +20,9 @@
       name: "set_lock"
       ref: "core.local"
       params:
-        cmd: "st2 key set key=\"{{test_lock_name}}\" value=\"1\""
+        env:
+          ST2_AUTH_TOKEN: "{{token}}"      
+        cmd: "st2 key set \"{{test_lock_name}}\" \"1\""
       on-success: "get_build_server"
       on-failure: "slack_lock_acquire_failure"
       notify:
@@ -29,13 +33,13 @@
       name: "slack_lock_failure"
       ref: "slack.post_message"
       params:
-        channel: "{{slack_ok_channel}}"
+        channel: "{{slack_fail_channel}}"
         message: "```[CHATOPS_ITESTS]\n STATUS: LOCK_EXISTS.\n```"
     -
       name: "slack_lock_acquire_failure"
       ref: "slack.post_message"
       params:
-        channel: "{{slack_ok_channel}}"
+        channel: "{{slack_fail_channel}}"
         message: "```[CHATOPS_ITESTS]\n STATUS: LOCKING_FAILED.\n```"
     -
       name: "get_build_server"
@@ -129,7 +133,9 @@
       name: "release_lock"
       ref: "core.local"
       params:
-        cmd: "st2 key delete key=\"{{test_lock_name}}\""
+        env:
+          ST2_AUTH_TOKEN: "{{token}}"      
+        cmd: "st2 key delete \"{{test_lock_name}}\""
       on-success: "clean_st2_repo"
       on-failure: "clean_st2_repo"
     -
