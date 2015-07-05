@@ -16,7 +16,7 @@ parameters:
     default: ""
   windows_username:
     type: "string"
-    description: "Windows username. Default is Administrator"winwindows
+    description: "Windows username. Default is Administrator"
     default: "Administrator"
   windows_password:
     type: "string"
