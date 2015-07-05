@@ -1,8 +1,7 @@
 ---
 vars:
         samba_client_version: "4.1"
-        winexe_version: "1.00"
-        windows_command: 
+        winexe_version: "1.1"
 
 chain:
     -
@@ -19,7 +18,7 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "winexe | grep 'version {{winexe_version}}'"
+            cmd: "winexe 2>&1 | grep 'version {{winexe_version}}'"
         on-success: "is_windows_host_provided"
     -
         name: "is_windows_host_provided"
@@ -53,3 +52,20 @@ chain:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "echo '{{run_windows_cmd_action.result}}' | grep 'Microsoft Windows'"
+        on-success: "run_windows_powershell_script_example"
+    -
+        name: "run_windows_powershell_script_example"
+        ref: "examples.get_windows_uptime"
+        params:
+            host: "{{windows_host}}"
+            username: "{{windows_username}}"
+            password: "{{windows_password}}"
+            share: "C$"
+        on-success: "check_windows_powershell_script_example"
+    -
+        name: "check_windows_powershell_script_example"
+        ref: "core.local"
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo '{{run_windows_powershell_script_example.result}}' | grep 'Uptime: .* days, .* hours, .* minutes'"
