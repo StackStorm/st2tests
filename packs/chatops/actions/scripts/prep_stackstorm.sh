@@ -29,7 +29,7 @@ then
 fi
 
 cd st2client
-OUT=`python setup.py develop > ${OUTPUT}`
+OUT=`sudo python setup.py develop > ${OUTPUT}`
 if [[ $? != 0 ]]
 then
     cat ${OUTPUT}
