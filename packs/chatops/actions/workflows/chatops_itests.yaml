@@ -60,6 +60,8 @@
         repo: "{{st2_repo}}"
         branch: "{{st2_repo_branch}}"
         target: "{{st2_repo_target}}"
+      publish:
+        cloned_st2_repo: "{{clone_st2_repo[build_host].stdout}}"        
       on-success: "clone_hubot_stackstorm_repo"
       on-failure: "slack_failure"
     -
@@ -70,6 +72,8 @@
         repo: "{{hubot_stackstorm_repo}}"
         branch: "{{hubot_stackstorm_repo_branch}}"
         target: "{{hubot_stackstorm_repo_target}}"
+      publish:
+        cloned_hubot_stackstorm_repo: "{{clone_hubot_stackstorm_repo[build_host].stdout}}"
       on-success: "clone_hubot_stanley_repo"
       on-failure: "slack_failure"
     -
@@ -80,6 +84,8 @@
         repo: "{{hubot_stanley_repo}}"
         branch: "{{hubot_stanley_repo_branch}}"
         target: "{{hubot_stanley_repo_target}}"
+      publish:
+        cloned_hubot_stanley_repo: "{{clone_hubot_stanley_repo[build_host].stdout}}"
       on-success: "validate_hubot_stackstorm"
       on-failure: "slack_failure"
     -
@@ -87,7 +93,7 @@
       ref: "core.remote"
       params:
         hosts: "{{build_host}}"
-        cmd: "cd {{hubot_stackstorm_repo_target}} && gulp ci"
+        cmd: "cd {{cloned_hubot_stanley_repo}} && npm install gulp chai coffee-script gulp-jshint gulp-mocha gulp-plumber hubot hubot-help hubot-mock-adapter jshint jshint-stylish log lodash cli-table st2client hubot --save-dev && gulp ci"
       on-success: "prep_hubot_stanley"
       on-failure: "slack_failure"
     -
@@ -95,6 +101,8 @@
       ref: "chatops.prep_hubot_stanley"
       params:
         hosts: "{{build_host}}"
+        hubot_stackstorm_repo_target: "{{cloned_hubot_stackstorm_repo}}"
+        hubot_stanley_repo_target: "{{cloned_hubot_stanley_repo}}"
       on-success: "prep_stackstorm"
       on-failure: "slack_failure"
     -
@@ -102,7 +110,7 @@
       ref: "chatops.prep_stackstorm"
       params:
         hosts: "{{build_host}}"
-        stackstorm_repo_target: "{{st2_repo_target}}"
+        stackstorm_repo_target: "{{cloned_st2_repo}}"
       on-success: "start_st2"
       on-failure: "slack_failure"
     -
@@ -110,7 +118,7 @@
       ref: "core.remote"
       params:
         hosts: "{{build_host}}"
-        cmd: "cd {{st2_repo_target}} && tools/launchdev.sh startclean"
+        cmd: "cd {{cloned_st2_repo}}/tools && ./launchdev.sh startclean"
       on-success: "install_dependency_packs"
       on-failure: "slack_failure"
     -
@@ -118,7 +126,7 @@
       ref: "chatops.install_dependency_packs"
       params:
         hosts: "{{build_host}}"
-        stackstorm_repo_target: "{{st2_repo_target}}"
+        stackstorm_repo_target: "{{cloned_st2_repo}}"
       on-success: "release_lock"
       on-failure: "slack_failure"
     -
@@ -143,7 +151,7 @@
       ref: "chatops.clean_repo"
       params:
         hosts: "{{build_host}}"
-        repo: "{{clone_st2_repo[build_host].stdout}}"
+        repo: "{{cloned_st2_repo}}"
         sudo: true
       on-success: "clean_hubot_stackstorm_repo"
       on-failure: "clean_hubot_stackstorm_repo"
@@ -152,7 +160,7 @@
       ref: "chatops.clean_repo"
       params:
         hosts: "{{build_host}}"
-        repo: "{{clone_hubot_stackstorm_repo[build_host].stdout}}"
+        repo: "{{cloned_hubot_stackstorm_repo}}"
       on-success: "clean_hubot_stanley_repo"
       on-failure: "clean_hubot_stanley_repo"
     -
@@ -160,6 +168,6 @@
       ref: "chatops.clean_repo"
       params:
         hosts: "{{build_host}}"
-        repo: "{{clone_hubot_stanley_repo[build_host].stdout}}"
+        repo: "{{cloned_hubot_stanley_repo}}"
 
   default: "get_lock"
