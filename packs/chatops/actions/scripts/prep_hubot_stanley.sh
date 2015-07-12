@@ -20,7 +20,7 @@ then
 fi
 
 cd ${HUBOT_STACKSTORM_REPO}
-OUT=`npm link > ${OUTPUT}`
+OUT=`sudo npm link > ${OUTPUT}`
 if [[ $? != 0 ]]
 then
     cat ${OUTPUT}
@@ -29,7 +29,7 @@ then
 fi
 
 cd ${HUBOT_STANLEY_REPO}
-out=`npm link hubot-stackstorm > ${OUTPUT}`
+out=`sudo npm link hubot-stackstorm > ${OUTPUT}`
 if [[ $? != 0 ]]
 then
     cat ${OUTPUT}
@@ -37,7 +37,7 @@ then
     exit 3
 fi
 
-out=`cp /home/stanley/chatops_itests_hubot_start.sh /home/stanley/${HUBOT_STANLEY_REPO}/chatops_itests_hubot_start.sh > OUTPUT`
+out=`cp /home/stanley/chatops_itests_hubot_start.sh ${HUBOT_STANLEY_REPO} > OUTPUT`
 if [[ $? != 0 ]]
 then
     cat ${OUTPUT}
