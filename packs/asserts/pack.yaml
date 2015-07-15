@@ -1,6 +1,6 @@
 ---
 name: asserts
-description:
+description: "Exposes functions that can be used in tests for assertion."
 version: 0.1
 author: Lakshmi Kannan
 email: support@stackstorm.com
