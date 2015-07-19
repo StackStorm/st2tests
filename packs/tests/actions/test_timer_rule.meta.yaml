@@ -1,0 +1,12 @@
+---
+# Action definition metadata
+name: "test_timer_rule"
+description: "Workflow tests timer rule"
+runner_type: "action-chain"
+enabled: true
+entry_point: "chains/test_timer_rule.yaml"
+parameters:
+  token:
+    type: "string"
+    description: "st2 auth token"
+    default: ""
