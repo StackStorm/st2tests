@@ -1,0 +1,33 @@
+---
+vars:
+        interval_tested_rule: fixtures.tests.interval_timer
+        tested_interval: 5
+        tested_triggers: 5
+
+chain:
+    -
+        # Check if tested rule is registered
+        name: check_if_test_interval_timer_enabled
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 rule get {{ interval_tested_rule }}"
+        on-success: wait_for_triggers
+    -
+        # Wait to make sure it triggered tested_triggers times
+        name: wait_for_triggers
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "sleep `echo {{ tested_triggers  }}*{{ tested_interval }}+{{ tested_interval }}-1 | bc`"
+        on-success: check_trigger_intervals
+    -
+        # Check intervals between triggers
+        name: check_trigger_intervals
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 execution list --action=core.local -a=id -n=5 -j | grep id | cut -d':' -f2 | xargs -n1 st2 execution get | grep stdout | grep interval | awk 'BEGIN{sample={{ tested_triggers }};interval={{ tested_interval }};min=interval-1;max=interval+1}NR==1{prev=$3;total=0;count=0;}NR>1{diff=$3-prev;total+=diff;count++;prev=$3;print count,diff,total;if(diff<min||diff>max){exit 1}}END{ndiffs=sample-1;if(total<ndiffs*interval-1||total>ndiffs*interval+1){exit 1}}'"
