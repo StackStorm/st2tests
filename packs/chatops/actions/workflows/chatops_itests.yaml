@@ -21,7 +21,7 @@
       ref: "core.local"
       params:
         env:
-          ST2_AUTH_TOKEN: "{{token}}"      
+          ST2_AUTH_TOKEN: "{{token}}"
         cmd: "st2 key set \"{{test_lock_name}}\" \"1\""
       on-success: "get_build_server"
       on-failure: "slack_lock_acquire_failure"
@@ -61,7 +61,7 @@
         branch: "{{st2_repo_branch}}"
         target: "{{st2_repo_target}}"
       publish:
-        cloned_st2_repo: "{{clone_st2_repo[build_host].stdout}}"        
+        cloned_st2_repo: "{{clone_st2_repo[build_host].stdout}}"
       on-success: "clone_hubot_stackstorm_repo"
       on-failure: "slack_failure"
     -
@@ -93,7 +93,8 @@
       ref: "core.remote"
       params:
         hosts: "{{build_host}}"
-        cmd: "cd {{cloned_hubot_stanley_repo}} && npm install gulp chai coffee-script gulp-jshint gulp-mocha gulp-plumber hubot hubot-help hubot-mock-adapter jshint jshint-stylish log lodash cli-table st2client hubot --save-dev && gulp ci"
+        cmd: "cd {{cloned_hubot_stanley_repo}} && npm install gulp chai coffee-script gulp-jshint gulp-mocha gulp-plumber hubot hubot-help truncate hubot-mock-adapter jshint jshint-stylish log lodash cli-table st2client chai-as-promised nock rsvp --save-dev && gulp ci"
+        timeout: 300
       on-success: "prep_hubot_stanley"
       on-failure: "slack_failure"
     -
@@ -111,6 +112,7 @@
       params:
         hosts: "{{build_host}}"
         stackstorm_repo_target: "{{cloned_st2_repo}}"
+        timeout: 300
       on-success: "start_st2"
       on-failure: "slack_failure"
     -
@@ -142,7 +144,7 @@
       ref: "core.local"
       params:
         env:
-          ST2_AUTH_TOKEN: "{{token}}"      
+          ST2_AUTH_TOKEN: "{{token}}"
         cmd: "st2 key delete \"{{test_lock_name}}\""
       on-success: "clean_st2_repo"
       on-failure: "clean_st2_repo"
