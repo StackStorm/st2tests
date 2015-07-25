@@ -45,7 +45,7 @@
       name: "get_build_server"
       ref: "linux.dig"
       params:
-        hostname: "st2-build-slave-itests-ubuntu.service.consul"
+        hostname: "fluttershy.uswest2.stackstorm.net"
         rand: true
         count: 1
       publish:
