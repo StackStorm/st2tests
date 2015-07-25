@@ -161,6 +161,7 @@
       params:
         hosts: "{{build_host}}"
         repo: "{{cloned_hubot_stackstorm_repo}}"
+        sudo: true
       on-success: "clean_hubot_stanley_repo"
       on-failure: "clean_hubot_stanley_repo"
     -
