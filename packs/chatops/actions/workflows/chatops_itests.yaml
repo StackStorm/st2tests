@@ -126,7 +126,7 @@
       ref: "chatops.install_dependency_packs"
       params:
         hosts: "{{build_host}}"
-        stackstorm_repo_target: "{{cloned_st2_repo}}"
+        hubot_stackstorm_repo_target: "{{cloned_st2_repo}}"
       on-success: "release_lock"
       on-failure: "slack_failure"
     -
