@@ -10,7 +10,7 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "rpm -qa | grep samba-client-{{samba_client_version}}"
+            cmd: "smbclient --version | grep 'Version {{samba_client_version}}'"
         on-success: "test_winexe"
     -
         name: "test_winexe"
