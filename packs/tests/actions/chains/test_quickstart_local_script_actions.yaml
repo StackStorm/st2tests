@@ -5,10 +5,10 @@ chain:
     ref: "fixtures.streamwriter-script-local"
     params:
         stream: "stdout"
-        str_arg: "foo"
+        str_arg: "foo bar\nbaz"
         int_arg: 1
         obj_arg:
-            foo: bar
+            foo: "bar baz"
     on-success: "assert_stdout_field_stdout_test"
   -
     name: "assert_stdout_field_stdout_test"
@@ -16,7 +16,7 @@ chain:
     params:
         object: "{{test_stdout_local_script_action}}"
         key: "stdout"
-        value: "STREAM IS STDOUT. STR: foo INT: 1 OBJ: {u'foo': u'bar'}"
+        value: "STREAM IS STDOUT. STR: foo bar\nbaz INT: 1 OBJ: {u'foo': u'bar baz'}"
     on-success: "assert_return_code_zero_stdout_test"
   -
     name: "assert_return_code_zero_stdout_test"
@@ -61,3 +61,22 @@ chain:
         object: "{{test_exception_local_script_action}}"
         key: "return_code"
         value: 0
+    on-success: "test_stdout_local_script_action_sudo"
+  -
+    name: "test_stdout_local_script_action_sudo"
+    ref: "fixtures.streamwriter-script-local"
+    params:
+        stream: "stdout"
+        str_arg: "foo bar\nbaz"
+        int_arg: 1
+        obj_arg:
+            foo: "bar baz"
+        sudo:  true
+    on-success: "assert_stdout_field_stdout_test_sudo"
+  -
+    name: "assert_stdout_field_stdout_test_sudo"
+    ref: "asserts.object_key_string_equals"
+    params:
+        object: "{{test_stdout_local_script_action_sudo}}"
+        key: "stdout"
+        value: "STREAM IS STDOUT. STR: foo bar\nbaz INT: 1 OBJ: {u'foo': u'bar baz'}"

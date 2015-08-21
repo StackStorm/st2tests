@@ -18,7 +18,7 @@ parameters:
     type: object
     description: Some object arg.
   sudo:
-    immutable: true
+    immutable: false
   kwarg_op:
     immutable: true
 runner_type: "remote-shell-script"
