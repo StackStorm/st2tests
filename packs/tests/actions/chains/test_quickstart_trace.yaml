@@ -1,0 +1,60 @@
+---
+  chain:
+    -
+      name: "test_trace_tag_during_execution"
+      ref: "core.local"
+      params:
+        env:
+          ST2_AUTH_TOKEN: "{{token}}"
+        cmd: "st2 run core.local cmd=date --trace-tag='test-trace-tag'"
+      on-success: sleep
+    -
+      name: "sleep"
+      ref: "core.local"
+      params:
+        env:
+          ST2_AUTH_TOKEN: "{{token}}"
+        cmd: "sleep 10"
+      on-success: test_trace_list
+    -
+      name: "test_trace_list"
+      ref: "core.local"
+      params:
+        env:
+          ST2_AUTH_TOKEN: "{{token}}"
+        cmd: "st2 trace list --trace-tag='test-trace-tag' | grep execution"
+      on-success: "get_trace_id_for_tag"
+    -
+      name: "get_trace_id_for_tag"
+      ref: "core.local"
+      params:
+        env:
+          ST2_AUTH_TOKEN: "{{token}}"
+        cmd: "st2 trace list --trace-tag='test-trace-tag' | grep  -m 1 id | awk '{print $2}' | tr -d '\n'"
+      on-success: "test_trace_id_during_execution"
+    -
+      name: "test_trace_id_during_execution"
+      ref: "core.local"
+      params:
+        env:
+          ST2_AUTH_TOKEN: "{{token}}"
+        cmd: "st2 run core.local cmd=pwd --trace-id='{{get_trace_id_for_tag.stdout}}'"
+      on-success: "grep_trace_id_executions"
+    -
+      name: "grep_trace_id_executions"
+      ref: "core.local"
+      params:
+        env:
+          ST2_AUTH_TOKEN: "{{token}}"
+        cmd: "st2 trace get {{get_trace_id_for_tag.stdout | replace('\n', '')}} -j | grep execution | wc -l"
+      on-success: "assert_trace_id_has_two_executions"
+    -
+      name: "assert_trace_id_has_two_executions"
+      ref: "asserts.object_key_string_equals"
+      params:
+        object: "{{grep_trace_id_executions}}"
+        key: "stdout"
+        value: "2"
+
+
+
