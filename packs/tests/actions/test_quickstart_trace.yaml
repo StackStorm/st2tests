@@ -1,0 +1,12 @@
+---
+# Action definition metadata
+name: "test_quickstart_trace"
+description: "Workflow tests trace functionality on Quick Start"
+runner_type: "action-chain"
+enabled: true
+entry_point: "chains/test_quickstart_trace.yaml"
+parameters:
+  token:
+    type: "string"
+    description: "st2 auth token"
+    default: ""
