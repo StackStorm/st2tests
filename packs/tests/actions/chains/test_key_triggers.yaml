@@ -59,7 +59,7 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 trigger-instance get {{check_key_create_trigger_instance.stdout}}"
+            cmd: "st2 trigger-instance get {{check_key_create_trigger_instance.stdout}} -j"
         on-success: assert_trigger_instance_payload_matches_expected_create
     -
         name: assert_trigger_instance_payload_matches_expected_create
@@ -94,7 +94,7 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 trigger-instance get {{check_key_change_trigger_instance.stdout}}"
+            cmd: "st2 trigger-instance get {{check_key_change_trigger_instance.stdout}} -j"
         on-success: assert_trigger_instance_payload_matches_expected_change
     -
         name: assert_trigger_instance_payload_matches_expected_change
@@ -124,7 +124,7 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 trigger-instance get {{check_key_update_trigger_instance.stdout}}"
+            cmd: "st2 trigger-instance get {{check_key_update_trigger_instance.stdout}} -j"
         on-success: assert_trigger_instance_payload_matches_expected_update
     -
         name: assert_trigger_instance_payload_matches_expected_update
@@ -159,7 +159,7 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 trigger-instance get {{check_key_delete_trigger_instance.stdout}}"
+            cmd: "st2 trigger-instance get {{check_key_delete_trigger_instance.stdout}} -j"
         on-success: assert_trigger_instance_payload_matches_expected_delete
     -
         name: assert_trigger_instance_payload_matches_expected_delete
