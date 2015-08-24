@@ -1,0 +1,12 @@
+---
+# Action definition metadata
+name: "test_key_triggers"
+description: "Workflow tests key triggers functionality"
+runner_type: "action-chain"
+enabled: true
+entry_point: "chains/test_key_triggers.yaml"
+parameters:
+  token:
+    type: "string"
+    description: "st2 auth token"
+    default: ""

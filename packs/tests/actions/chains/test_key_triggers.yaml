@@ -1,0 +1,170 @@
+---
+vars:
+    trigger_key_create: core.st2.key_value_pair.create
+    trigger_key_update: core.st2.key_value_pair.update
+    trigger_key_change: core.st2.key_value_pair.value_change
+    trigger_key_delete: core.st2.key_value_pair.delete
+chain:
+    -
+        name: check_if_key_create_trigger_is_registered
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger get {{trigger_key_create}}"
+        on-success: check_if_key_update_trigger_is_registered
+    -
+        name: check_if_key_update_trigger_is_registered
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger get {{trigger_key_update}}"
+        on-success: check_if_key_change_trigger_is_registered
+    -
+        name: check_if_key_change_trigger_is_registered
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger get {{trigger_key_change}}"
+        on-success: check_if_key_delete_trigger_is_registered
+    -
+        name: check_if_key_delete_trigger_is_registered
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger get {{trigger_key_delete}}"
+        on-success: create_key
+    -
+        name: create_key
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 key set a b"
+        on-success: check_key_create_trigger_instance
+    -
+        name: check_key_create_trigger_instance
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger-instance list --trigger {{trigger_key_create}} -n 1 -n 1 -j | grep  -m 1 id | awk '{print $2}' | tr -d '\",'"
+        on-success: retrieve_key_create_trigger_instance
+    -
+        name: retrieve_key_create_trigger_instance
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger-instance get {{check_key_create_trigger_instance.stdout | replace('\n', '')}} -j"
+        on-success: assert_trigger_instance_payload_matches_expected_create
+    -
+        name: assert_trigger_instance_payload_matches_expected_create
+        ref: asserts.object_equals
+        params:
+            object: "{{ retrieve_key_create_trigger_instance.stdout.payload }}"
+            expected:
+                object:
+                    name: a
+                    value: b
+        on-success: update_key
+    -
+        name: update_key
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 key set a c"
+        on-success: check_key_change_trigger_instance
+    -
+        name: check_key_change_trigger_instance
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger-instance list --trigger {{trigger_key_change}} -n 1 -n 1 -j | grep  -m 1 id | awk '{print $2}' | tr -d '\",'"
+        on-success: retrieve_key_change_trigger_instance
+    -
+        name: retrieve_key_change_trigger_instance
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger-instance get {{check_key_change_trigger_instance.stdout | replace('\n', '')}} -j"
+        on-success: assert_trigger_instance_payload_matches_expected_change
+    -
+        name: assert_trigger_instance_payload_matches_expected_change
+        ref: asserts.object_equals
+        params:
+            object: "{{ retrieve_key_change_trigger_instance.stdout.payload }}"
+            expected:
+                new_object:
+                    name: a
+                    value: c
+                old_object:
+                    name: a
+                    value: b
+        on-success: check_key_update_trigger_instance
+    -
+        name: check_key_update_trigger_instance
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger-instance list --trigger {{trigger_key_update}} -n 1 -n 1 -j | grep  -m 1 id | awk '{print $2}' | tr -d '\",'"
+        on-success: retrieve_key_update_trigger_instance
+    -
+        name: retrieve_key_update_trigger_instance
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger-instance get {{check_key_update_trigger_instance.stdout | replace('\n', '')}} -j"
+        on-success: assert_trigger_instance_payload_matches_expected_update
+    -
+        name: assert_trigger_instance_payload_matches_expected_update
+        ref: asserts.object_equals
+        params:
+            object: "{{ retrieve_key_update_trigger_instance.stdout.payload }}"
+            expected:
+                object:
+                    name: a
+                    value: c
+        on-success: delete_key
+    -
+        name: delete_key
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 key delete a"
+        on-success: check_key_delete_trigger_instance
+    -
+        name: check_key_delete_trigger_instance
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger-instance list --trigger {{trigger_key_delete}} -n 1 -n 1 -j | grep  -m 1 id | awk '{print $2}' | tr -d '\",'"
+        on-success: retrieve_key_delete_trigger_instance
+    -
+        name: retrieve_key_delete_trigger_instance
+        ref: core.local
+        params:
+            env:
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 trigger-instance get {{check_key_delete_trigger_instance.stdout | replace('\n', '')}} -j"
+        on-success: assert_trigger_instance_payload_matches_expected_delete
+    -
+        name: assert_trigger_instance_payload_matches_expected_delete
+        ref: asserts.object_equals
+        params:
+            object: "{{ retrieve_key_delete_trigger_instance.stdout.payload }}"
+            expected:
+                object:
+                    name: a
+                    value: c
+default: check_if_key_create_trigger_is_registered
