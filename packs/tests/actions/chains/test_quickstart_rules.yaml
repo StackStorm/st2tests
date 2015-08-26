@@ -69,9 +69,9 @@ chain:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "curl http://localhost:9101/v1/webhooks/sample -d '{\"foo\": \"bar\", \"name\": \"st2\"}' -H 'Content-Type: application/json' -H 'X-Auth-Token: {{token}}'"
-        on-success: test_check_output_after_post_via_wget
+        on-success: test_check_output_after_post_via_curl
     -
-        name: test_check_output_after_post_via_wget
+        name: test_check_output_after_post_via_curl
         ref: core.local
         params:
             env:
