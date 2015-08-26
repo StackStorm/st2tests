@@ -37,7 +37,7 @@ chain:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "sleep 10"
-        on-success: test_webhook_list    
+        on-success: test_webhook_list
     -
         name: test_webhook_list
         ref: core.local
@@ -76,7 +76,7 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "sleep 8; tail -1 /tmp/st2.webhook_sample.out | grep 'foo' | grep 'bar' | grep 'name' | grep 'st2'"
+            cmd: "sleep 6; tail -1 /tmp/st2.webhook_sample.out | grep 'foo' | grep 'bar' | grep 'name' | grep 'st2'"
         on-success: setup_post_to_web_hook_via_st2
     -
         name: setup_post_to_web_hook_via_st2
@@ -92,7 +92,7 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "sleep 3; tail -1 /tmp/st2.webhook_sample.out | grep 'you' | grep 'too' | grep 'name' | grep 'st2'"
+            cmd: "sleep 6; tail -1 /tmp/st2.webhook_sample.out | grep 'you' | grep 'too' | grep 'name' | grep 'st2'"
         on-success: test_delete_rule
     -
         name: test_delete_rule
