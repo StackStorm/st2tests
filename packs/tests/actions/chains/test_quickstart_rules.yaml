@@ -36,7 +36,8 @@ chain:
         params:
             env:
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "sleep 10"
+            cmd: "sleep 120"
+            timeout: 180
         on-success: test_webhook_list
     -
         name: test_webhook_list
