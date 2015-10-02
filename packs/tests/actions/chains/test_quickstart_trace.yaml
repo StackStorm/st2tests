@@ -5,6 +5,9 @@
       ref: "core.local"
       params:
         env:
+          ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+          ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+          ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
           ST2_AUTH_TOKEN: "{{token}}"
         cmd: "st2 run core.local cmd=date --trace-tag='test-trace-tag'"
       on-success: sleep
@@ -13,6 +16,9 @@
       ref: "core.local"
       params:
         env:
+          ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+          ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+          ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
           ST2_AUTH_TOKEN: "{{token}}"
         cmd: "sleep 10"
       on-success: test_trace_list
@@ -21,6 +27,9 @@
       ref: "core.local"
       params:
         env:
+          ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+          ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+          ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
           ST2_AUTH_TOKEN: "{{token}}"
         cmd: "st2 trace list --trace-tag='test-trace-tag' | grep execution"
       on-success: "get_trace_id_for_tag"
@@ -29,6 +38,9 @@
       ref: "core.local"
       params:
         env:
+          ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+          ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+          ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
           ST2_AUTH_TOKEN: "{{token}}"
         cmd: "st2 trace list --trace-tag='test-trace-tag' | grep  -m 1 id | awk '{print $2}' | tr -d '\n'"
       on-success: "test_trace_id_during_execution"
@@ -37,6 +49,9 @@
       ref: "core.local"
       params:
         env:
+          ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+          ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+          ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
           ST2_AUTH_TOKEN: "{{token}}"
         cmd: "st2 run core.local cmd=pwd --trace-id='{{get_trace_id_for_tag.stdout}}'"
       on-success: "grep_trace_id_executions"
@@ -45,6 +60,9 @@
       ref: "core.local"
       params:
         env:
+          ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+          ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+          ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
           ST2_AUTH_TOKEN: "{{token}}"
         cmd: "st2 trace get {{get_trace_id_for_tag.stdout | replace('\n', '')}} -j | grep execution | wc -l"
       on-success: "assert_trace_id_has_two_executions"

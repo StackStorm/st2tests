@@ -12,6 +12,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 action list --pack {{ pack_to_install_1 }} | grep 'No matching items found'"
         on-success: setup_check_pack_to_install_2_installed
@@ -21,6 +24,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.uninstall packs={{ pack_to_install_1 }}"
         on-success: setup_check_pack_to_install_2_installed
@@ -30,6 +36,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 action list --pack {{ pack_to_install_2 }} | grep 'No matching items found'"
         on-success: test_packs_install_multiple_packs_from_repo
@@ -39,6 +48,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.uninstall packs={{ pack_to_install_2 }}"
         on-success: test_packs_install_multiple_packs_from_repo
@@ -48,6 +60,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.install packs={{ pack_to_install_1 }},{{ pack_to_install_2 }} repo_url={{ base_repo_url }}/{{ install_from_repo }}"
             timeout: 120
@@ -58,6 +73,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 action list -j --pack {{ pack_to_install_1 }} | grep '{{ pack_to_install_1 }}'"
         on-success: test_check_pack_to_install_2_installed
@@ -67,6 +85,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 action list -j --pack {{ pack_to_install_2 }} | grep '{{ pack_to_install_2 }}'"
         on-success: test_packs_uninstall_multiple_packs
@@ -76,6 +97,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.uninstall packs={{ pack_to_install_1 }},{{ pack_to_install_2 }}"
         on-success: test_check_pack_to_install_1_uninstalled
@@ -85,6 +109,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 action list --pack {{ pack_to_install_1 }} | grep 'No matching items found'"
         on-success: test_check_pack_to_install_2_uninstalled
@@ -94,6 +121,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 action list --pack {{ pack_to_install_2 }} | grep 'No matching items found'"
         on-success: test_packs_download
@@ -103,6 +133,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.download packs={{ pack_to_install_1 }}"
         on-success: test_packs_setup_virtualenv
@@ -112,6 +145,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.setup_virtualenv packs={{ pack_to_install_1 }} | grep 'Successfuly set up'"
         on-success: test_packs_load_register_all
@@ -121,6 +157,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.load register=all | grep -c 'Registered' | grep 6"
         on-success: test_pack_install_with_no_config
@@ -130,6 +169,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.download packs={{ pack_to_install_with_no_config }}"
         on-success: test_pack_reinstall_with_no_config
@@ -139,6 +181,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.download packs={{ pack_to_install_with_no_config }}"
         on-success: success_handler
@@ -148,6 +193,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "echo packs pack test succeed; exit 0"
     -
@@ -156,5 +204,8 @@ chain:
         ref: "core.local"
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "echo packs pack test failed; exit 1"

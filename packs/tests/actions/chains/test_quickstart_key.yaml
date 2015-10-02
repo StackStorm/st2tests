@@ -5,6 +5,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "uuidgen | sed 's/-//g' | tr -d ' \n'"
         publish:
@@ -15,6 +18,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 key set user{{uid}} stanley{{uid}}"
         on-success: test_list_keys
@@ -23,6 +29,9 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 key list | grep user"
         on-success: test_get_key
@@ -31,5 +40,8 @@ chain:
         ref: core.local
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 key get user{{uid}} | grep {{uid}}"
