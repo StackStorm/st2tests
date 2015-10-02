@@ -117,6 +117,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run core.http method=POST body='{\"you\": \"too\", \"name\": \"st2\"}' url={{protocol}}://{{hostname}}:9101/v1/webhooks/sample headers='x-auth-token={{token}}'"
         on-success: test_check_output_after_post_via_st2
+        on-failure: test_check_output_after_post_via_st2
     -
         name: test_check_output_after_post_via_st2
         ref: core.local
@@ -128,6 +129,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "sleep 6; tail -1 /tmp/st2.webhook_sample.out | grep 'you' | grep 'too' | grep 'name' | grep 'st2'"
         on-success: test_delete_rule
+        on-failure: test_delete_rule
     -
         name: test_delete_rule
         description: Remove tested rule so we can test its creation
