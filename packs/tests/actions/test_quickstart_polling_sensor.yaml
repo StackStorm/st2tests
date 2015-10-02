@@ -10,3 +10,11 @@ parameters:
     type: "string"
     description: "st2 auth token"
     default: ""
+  protocol:
+    type: "string"
+    description: "http/https"
+    default: "http"
+  hostname:
+    type: "string"
+    description: "St2 host to run tests against"
+    default: "127.0.0.1"

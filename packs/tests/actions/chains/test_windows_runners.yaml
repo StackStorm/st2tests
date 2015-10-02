@@ -9,6 +9,9 @@ chain:
         ref: "core.local"
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "smbclient --version | grep 'Version {{samba_client_version}}'"
         on-success: "test_winexe"
@@ -17,6 +20,9 @@ chain:
         ref: "core.local"
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "winexe 2>&1 | grep 'version {{winexe_version}}'"
         on-success: "is_windows_host_provided"
@@ -25,6 +31,9 @@ chain:
         ref: "core.local"
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "test -n '{{windows_host}}'"
         on-success: "run_windows_cmd_action"
@@ -34,6 +43,9 @@ chain:
         ref: "core.local"
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "echo 'Windows host was not provided - skipping actual tests'; exit 0"
     -
@@ -50,6 +62,9 @@ chain:
         ref: "core.local"
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "echo '{{run_windows_cmd_action.result}}' | grep 'Microsoft Windows'"
         on-success: "run_windows_powershell_script_example"
@@ -67,5 +82,8 @@ chain:
         ref: "core.local"
         params:
             env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "echo '{{run_windows_powershell_script_example.result}}' | grep 'Uptime: .* days, .* hours, .* minutes'"

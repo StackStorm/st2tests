@@ -22,3 +22,11 @@ parameters:
     type: "string"
     description: "Windows password"
     default: ""
+  protocol:
+    type: "string"
+    description: "http/https"
+    default: "http"
+  hostname:
+    type: "string"
+    description: "St2 host to run tests against"
+    default: "127.0.0.1"

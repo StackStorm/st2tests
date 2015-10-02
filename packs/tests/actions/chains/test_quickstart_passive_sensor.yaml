@@ -5,6 +5,9 @@ chain:
     ref: "core.local"
     params:
         env:
+            ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+            ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+            ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
             ST2_AUTH_TOKEN: "{{token}}"
         cmd: "curl http://127.0.0.1:8888/webhooks/passivesensor/test -H 'Content-Type: application/json'"
     on-success: "list_last_trigger_instance_emitted"
@@ -13,6 +16,9 @@ chain:
     ref: "core.local"
     params:
         env:
+            ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+            ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+            ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
             ST2_AUTH_TOKEN: "{{token}}"
         cmd: "st2 trigger-instance list --trigger=fixtures.test_passive_trigger.dummy -n=1 -j -a id | grep id | awk '{print $2}'"
     on-success: "get_last_trigger_instance"
@@ -21,6 +27,9 @@ chain:
     ref: "core.local"
     params:
         env:
+            ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+            ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+            ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
             ST2_AUTH_TOKEN: "{{token}}"
         cmd: "st2 trigger-instance get {{ list_last_trigger_instance_emitted.stdout }} -j -a payload"
     on-success: "assert_trigger_instance_payload_matches_expected"
