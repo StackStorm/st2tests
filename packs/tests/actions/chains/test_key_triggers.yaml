@@ -91,6 +91,7 @@ chain:
                 object:
                     name: a
                     value: b
+                    uid: "key_value_pair:a"
         on-success: update_key
     -
         name: update_key
@@ -134,9 +135,11 @@ chain:
                 new_object:
                     name: a
                     value: c
+                    uid: "key_value_pair:a"
                 old_object:
                     name: a
                     value: b
+                    uid: "key_value_pair:a"
         on-success: check_key_update_trigger_instance
     -
         name: check_key_update_trigger_instance
@@ -169,6 +172,7 @@ chain:
                 object:
                     name: a
                     value: c
+                    uid: "key_value_pair:a"
         on-success: delete_key
     -
         name: delete_key
@@ -212,4 +216,5 @@ chain:
                 object:
                     name: a
                     value: c
+                    uid: "key_value_pair:a"
 default: check_if_key_create_trigger_is_registered
