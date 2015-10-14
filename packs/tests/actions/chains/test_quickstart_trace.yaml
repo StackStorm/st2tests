@@ -9,7 +9,7 @@
           ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
           ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
           ST2_AUTH_TOKEN: "{{token}}"
-        cmd: "st2 run core.local cmd=date --trace-tag='test-trace-tag'"
+        cmd: "st2 run core.local cmd=date --trace-tag='test-trace-tag' -j"
       on-success: sleep
     -
       name: "sleep"
@@ -20,10 +20,10 @@
           ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
           ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
           ST2_AUTH_TOKEN: "{{token}}"
-        cmd: "sleep 10"
-      on-success: test_trace_list
+        cmd: "sleep 3"
+      on-success: test_get_trace_list_by_tag
     -
-      name: "test_trace_list"
+      name: "test_get_trace_list_by_tag"
       ref: "core.local"
       params:
         env:
@@ -31,7 +31,18 @@
           ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
           ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
           ST2_AUTH_TOKEN: "{{token}}"
-        cmd: "st2 trace list --trace-tag='test-trace-tag' | grep execution"
+        cmd: "st2 trace list -n 1 --trace-tag='test-trace-tag' | grep exec"
+      on-success: "test_get_trace_list_by_ex_id"
+    -
+      name: "test_get_trace_list_by_ex_id"
+      ref: "core.local"
+      params:
+        env:
+          ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+          ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+          ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+          ST2_AUTH_TOKEN: "{{token}}"
+        cmd: "st2 trace list -e {{test_trace_tag_during_execution.stdout.id}}"
       on-success: "get_trace_id_for_tag"
     -
       name: "get_trace_id_for_tag"
@@ -42,7 +53,7 @@
           ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
           ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
           ST2_AUTH_TOKEN: "{{token}}"
-        cmd: "st2 trace list --trace-tag='test-trace-tag' | grep  -m 1 id | awk '{print $2}' | tr -d '\n'"
+        cmd: "st2 trace list -n 1 --trace-tag='test-trace-tag' | grep -m 1 id | awk '{print $2}' | tr -d '\n'"
       on-success: "test_trace_id_during_execution"
     -
       name: "test_trace_id_during_execution"
@@ -68,11 +79,8 @@
       on-success: "assert_trace_id_has_two_executions"
     -
       name: "assert_trace_id_has_two_executions"
-      ref: "asserts.object_key_string_equals"
+      ref: "asserts.object_key_number_equals"
       params:
         object: "{{grep_trace_id_executions}}"
         key: "stdout"
-        value: "2"
-
-
-
+        value: 2
