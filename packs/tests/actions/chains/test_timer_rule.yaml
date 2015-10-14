@@ -3,11 +3,11 @@ vars:
         interval_tested_rule: fixtures.tests.interval_timer
         tested_interval: 5
         tested_triggers: 5
-
+default: check_if_test_interval_timer_registered
 chain:
     -
         # Check if tested rule is registered
-        name: check_if_test_interval_timer_enabled
+        name: check_if_test_interval_timer_registered
         ref: core.local
         params:
             env:
@@ -16,6 +16,17 @@ chain:
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 rule get {{ interval_tested_rule }}"
+        on-success: enable_test_interval_timer
+    -
+        name: enable_test_interval_timer
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 rule enable {{ interval_tested_rule }}"
         on-success: wait_for_triggers
     -
         # Wait to make sure it triggered tested_triggers times
@@ -28,6 +39,18 @@ chain:
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "sleep `echo {{ tested_triggers  }}*{{ tested_interval }}+{{ tested_interval }}-1 | bc`"
+        on-success: disable_test_interval_timer
+        on-error: disable_test_interval_timer
+    -
+        name: disable_test_interval_timer
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 rule disable {{ interval_tested_rule }}"
         on-success: check_trigger_intervals
     -
         # Check intervals between triggers
