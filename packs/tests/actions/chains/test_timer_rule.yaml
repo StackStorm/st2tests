@@ -40,7 +40,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "sleep `echo {{ tested_triggers  }}*{{ tested_interval }}+{{ tested_interval }}-1 | bc`"
         on-success: disable_test_interval_timer
-        on-error: disable_test_interval_timer
+        on-failure: disable_test_interval_timer
     -
         name: disable_test_interval_timer
         ref: core.local
