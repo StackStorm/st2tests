@@ -11,4 +11,4 @@
     ref: "core.local"
     parameters:
       cmd: "echo -n 'interval: ' && date +%s"
-  enabled: true
+  enabled: false

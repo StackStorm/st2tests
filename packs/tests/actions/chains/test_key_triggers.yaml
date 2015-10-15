@@ -6,6 +6,17 @@ vars:
     trigger_key_delete: core.st2.key_value_pair.delete
 chain:
     -
+        name: cleanup_environment
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 key delete a || true"
+        on-success: check_if_key_create_trigger_is_registered
+    -
         name: check_if_key_create_trigger_is_registered
         ref: core.local
         params:
@@ -217,4 +228,4 @@ chain:
                     name: a
                     value: c
                     uid: "key_value_pair:a"
-default: check_if_key_create_trigger_is_registered
+default: cleanup_environment
