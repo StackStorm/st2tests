@@ -104,7 +104,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "sleep 6; tail -1 /tmp/st2.webhook_sample.out | grep 'foo' | grep 'bar' | grep 'name' | grep 'st2'"
+            cmd: "sleep 6; tail -1 ~/st2.webhook_sample.out | grep 'foo' | grep 'bar' | grep 'name' | grep 'st2'"
         on-success: setup_post_to_web_hook_via_st2
     -
         name: setup_post_to_web_hook_via_st2
@@ -127,7 +127,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "sleep 6; tail -1 /tmp/st2.webhook_sample.out | grep 'you' | grep 'too' | grep 'name' | grep 'st2'"
+            cmd: "sleep 6; tail -1 ~/st2.webhook_sample.out | grep 'you' | grep 'too' | grep 'name' | grep 'st2'"
         on-success: test_delete_rule
         on-failure: test_delete_rule
     -
