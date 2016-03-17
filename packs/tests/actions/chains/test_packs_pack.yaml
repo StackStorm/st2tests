@@ -1,7 +1,7 @@
 ---
 vars:
         base_repo_url: "https://github.com/StackStorm"
-        pack_to_install_1: "docker"
+        pack_to_install_1: "libcloud"
         pack_to_install_2: "sensu"
         pack_to_install_with_no_config: "bitcoin"
         install_from_repo: "st2contrib"
