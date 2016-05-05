@@ -1,6 +1,6 @@
 *.py[cod]
 
 # RobotFramework Reports
-robotfm/log.html
+log.html
 output.xml
 report.html

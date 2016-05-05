@@ -1,2 +1,3 @@
 robotframework
 docutils
+PyYAML
