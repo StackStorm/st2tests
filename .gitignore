@@ -4,3 +4,6 @@
 log.html
 output.xml
 report.html
+
+# Hubot
+.hubot_history
