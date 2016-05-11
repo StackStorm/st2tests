@@ -18,7 +18,7 @@
 
     *** Test Cases ***
     Verify Key Value Triggers
-        Sleep  15s
+        Sleep  30s
         ${result}=       Run Process  st2  trigger  list  -p  core  -a ref  -j
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain   ${result.stdout}   ${TRIGGER KEY CREATE}
