@@ -57,6 +57,15 @@
         Should Contain   ${result.stdout}   ${channel}
         # Run Keyword If   ${result.rc} != 0    Fatal Error  CHATOPS.POST_MESSAGE HASN'T BEEN RECEIVED.
 
+    Check the complete request-response flow
+        ${channel}=       Generate Random String  32
+        Log To Console   \nCHANNEL: ${channel}
+        ${result}=       Run Process    {  echo  -n;  sleep  5;  echo  'hubot  st2  list  5  actions  pack\=st2';  echo;  sleep  10;}  \|  bin\/hubot  \-\-test   cwd=/opt/stackstorm/chatops/    shell=True
+        Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
+        Should Contain   ${result.stdout}   Give me just a moment to find the actions for you
+        Should Contain   ${result.stdout}   st2.actions.list - Retrieve a list of available StackStorm actions.
+        # Run Keyword If   ${result.rc} != 0    Fatal Error  END-TO-END TEST FAILED.
+
 
     *** Settings ***
     Documentation    Nine-Step Hubot Self-Check Program
