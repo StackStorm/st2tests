@@ -5,9 +5,7 @@
     ${ST2}                /usr/bin/st2
     ${SUCCESS}            Everything seems to be fine!!
     ${FAILURE}            Uh oh! Something went wrong!
-    ${TEST CHANNEL}       Generate Random String  32
     ${HUBOT HELP}         {  echo  -n;  sleep  5;  echo  'hubot  help';  echo;  sleep  2;}  |  bin\/hubot  \-\-test
-    ${HUBOT POST}         {  echo  -n;  sleep  5;  st2 action execute chatops.post_message channel\=${TEST CHANNEL}  message\='Debug. If you see this you are incredibly lucky but please ignore.' >\/dev\/null;  echo;  sleep  2;}  |  bin\/hubot  \-\-test
 
 
     *** Test Cases ***
@@ -51,11 +49,12 @@
 
 
     Check post_message execution and receive status
-        Log To Console   \nCHANNEL: ${TEST CHANNEL}
-        ${result}=       Run Process    ${HUBOT POST}   cwd=/opt/stackstorm/chatops/    shell=True
+        ${channel}=       Generate Random String  32
+        Log To Console   \nCHANNEL: ${channel}
+        ${result}=       Run Process    {  echo  -n;  sleep  5;  st2  action  execute  chatops.post_message  channel\=${channel}   message\='Debug. If you see this you are incredibly lucky but please ignore.'  >\/dev\/null;  echo;  sleep  2;}  \|  bin\/hubot  \-\-test   cwd=/opt/stackstorm/chatops/    shell=True
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain   ${result.stdout}   Chatops message received
-        Should Contain   ${result.stdout}   ${TEST CHANNEL}
+        Should Contain   ${result.stdout}   ${channel}
         # Run Keyword If   ${result.rc} != 0    Fatal Error  CHATOPS.POST_MESSAGE HASN'T BEEN RECEIVED.
 
 
