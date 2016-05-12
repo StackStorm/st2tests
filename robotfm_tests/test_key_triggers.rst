@@ -18,7 +18,7 @@
 
     *** Test Cases ***
     Verify Key Value Triggers
-        Sleep  30s
+        #Sleep  30s
         ${result}=       Run Process  st2  trigger  list  -p  core  -a ref  -j
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain   ${result.stdout}   ${TRIGGER KEY CREATE}
@@ -80,11 +80,12 @@
 
     Check key store actions with trigger instance
         [Arguments]      ${key}  ${value}  ${trigger value}
-        ${result}=       Run Process       st2  trigger-instance  list  -n  1  -j
+        Sleep  2s
+        ${result}=       Run Process       st2  trigger-instance  list   --trigger\=${trigger value}  -n  1  -j
         Should Contain   ${result.stdout}  "trigger": "${trigger value}" 
-        ${result}=       Run Process       st2  trigger-instance  list  -n  1  -a  id  -j
+        ${result}=       Run Process       st2  trigger-instance  list  --trigger\=${trigger value}  -n  1  -a  id  -j
         @{instance id}   Split String      ${result.stdout}    separator="
-        # Log To Console   \nINSTANCE ID: @{instance id}[3]
+        Log To Console   \nINSTANCE ID: @{instance id}[3]
         ${result}=       Run Process       st2  trigger-instance  get  @{instance id}[3]  -j
         Log To Console   \nTRIGGER-INSTANCE\nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain   ${result.stdout}  "name": "${key}"
