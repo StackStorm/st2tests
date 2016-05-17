@@ -8,12 +8,6 @@
         Should Contain   ${result.stdout}    st2 execution get
         # Run Keyword If   ${result.rc} != 0   Fatal Error    ST2 NOT RUNNING
 
-    Check for st2chatops service
-        ${result}=         Run Process    service  st2chatops  status
-        Log To Console     \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
-        Should Be Equal    ${result.rc}   ${0}
-        # Run Keyword If   ${result.rc} != 0   Fatal Error    ST2CHATOPS NOT INSTALLED ON THIS MACHINE
-
     Hubot npm
         ${result}=       Run Process    npm   list    \|  grep  hubot-stackstorm  cwd=/opt/stackstorm/chatops
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
