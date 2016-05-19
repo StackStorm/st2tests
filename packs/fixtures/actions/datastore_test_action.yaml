@@ -1,0 +1,7 @@
+---
+description: Simple python action to test datastore access.
+enabled: true
+entry_point: pythonactions/datastore_test_action.py
+name: datastore_test_action
+parameters: {}
+runner_type: "python-script"
