@@ -57,3 +57,8 @@ chain:
         object: "{{test_exception_python_action}}"
         key: "exit_code"
         value: 0
+    on-success: "test_datastore_access"
+  -
+    name: "test_datastore_access"
+    ref: "fixtures.datastore_test_action"
+    params: {}
