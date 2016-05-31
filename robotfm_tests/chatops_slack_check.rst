@@ -55,21 +55,20 @@
         Should Contain     ${result.stdout}  slackcat posted 1 message lines to chatopsci
         Log To Console     SLACKCAT: \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
 
-    Get execution ID for st2.executions.get and Edit st2chatops.env
-        [Documentation]     ID FOR st2.executions.get
-        ${id}=              Run Keyword    ID Execution List Action    st2.executions.get
-        Log To Console      ST2.EXECUTIONS.GET ID: ${id}
-        Set Suite Variable  ${EXECUTION ID}        ${id}
-        Run Keyword         Replace the token for slack with slackcat in st2chatops.env 
-
-   Execution from hubot
-        [Documentation]     Get execution result for post message
+   Execution from hubot with slackcat token in st2chatops_env
+        [Documentation]     Hubot execution result for post message
+        Run Keyword         Replace the token for slack with slackcat in st2chatops.env
+        Log To Console      \n==========\nID CHATOPS.POST_MESSAGE: ${EXECUTION ID}\n==========\n
         ${result}=          Run Keyword    Execution logs from hubot
-        Should Contain      ${result.stdout}      status : succeeded
+        Should Contain      ${result.stdout}      in channel: chatopsci, from: grobgobglobgrod
+        Should Contain      ${result.stdout}      ref : chatops.post_message
+        Should Contain      ${result.stdout}      id : ${EXECUTION ID}
+
 
 
     *** Keyword ***
     Execution logs from hubot
+        [Documentation]     EXECUTION ID is from Keyword: Get post_message execution id
         ${output}=          Run Process    {  sleep  5;  echo  '!st2  get  execution  ${EXECUTION ID}'
         ...                                |  slackcat  --channel\=chatopsci  --stream  --plain;}
         ...                                |  timeout  15s  bin/hubot  cwd=/opt/stackstorm/chatops/    shell=True
@@ -99,11 +98,12 @@
         [Arguments]      ${action_name}
         ${result}=       Run Process  st2  execution  list  --action\=${action_name}  -a  id  -n  1  -j
         @{instance id}   Split String      ${result.stdout}    separator="
-        Log To Console   \nINSTANCE ID: @{instance id}[3]
+        Log To Console   \nACTION ${action_name} ID: @{instance id}[3]
         [return]         @{instance id}[3]
 
     Get post_message execution id
         ${id}=           Run Keyword    ID Execution List Action    chatops.post_message 
+        Set Suite Variable  ${EXECUTION ID}        ${id}
         ${result}=       Run Process    {  echo  '!st2  get  execution  {id}';}  |  slackcat  --channel\=chatopsci
         ...              --plain  --stream  shell=True
         [return]         ${result} 
@@ -113,7 +113,7 @@
        ...              export  HUBOT_SLACK_TOKEN\=${SLACKCAT_TOKEN}/g'
        ...              ${ST2CHATOPS.ENV}  shell=True
        ${result}=       Grep File    ${ST2CHATOPS.ENV}  export HUBOT_SLACK_TOKEN\=${SLACKCAT_TOKEN}
-       Log To Console   \nSLACKCAT TOKEN: ${result}
+       Log To Console   \nREPLACING SLACK TOKEN with SLACKCAT's: ${result}
        Should Contain   ${result}    export HUBOT_SLACK_TOKEN\=${SLACKCAT_TOKEN}
 
 
