@@ -55,7 +55,7 @@
         Should Contain     ${result.stdout}  slackcat posted 1 message lines to chatopsci
         Log To Console     SLACKCAT: \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
 
-   Execution from hubot with slackcat token in st2chatops_env
+    Execution from hubot with slackcat token in st2chatops_env
         [Documentation]     Hubot execution result for post message
         Run Keyword         Replace the token for slack with slackcat in st2chatops.env
         Log To Console      \n==========\nID CHATOPS.POST_MESSAGE: ${EXECUTION ID}\n==========\n
@@ -137,7 +137,7 @@
         Log To Console   \nADAPTER: ${result}
         Should Contain   ${result}    export HUBOT_ADAPTER\=slack
         Log To Console   ===============================
-    
+ 
     Cleaning the env file and uninstalling slackcat
        [Documentation]  Suite Teardown
        Log To Console   ==========SUITE TEARDOWN==========
