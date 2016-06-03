@@ -26,7 +26,7 @@
         Log To Console      \nOUTPUT: ${result.stdout}
 
     Configure Token for Slackcat
-        ${result}=         Create File  ~/.slackcat   ${SLACKCAT_TOKEN} 
+        ${result}=         Create File  ~/.slackcat   ${SLACKCAT_TOKEN}
         File Should Exist  ~/.slackcat
         ${result}=         Get File  ~/.slackcat
         Log To Console     \nCONTENTS OF ~/.slackcat: ${result}
@@ -37,7 +37,7 @@
         Log To Console     \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         ${result}=         Run Process    service  st2chatops  status
         Log To Console     \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
-        Should Contain     ${result.stdout}    running  
+        Should Contain     ${result.stdout}    running
 
     Check post_message execution and receive status
         ${channel}=        Generate Token
@@ -59,14 +59,14 @@
         Log To Console      \n==========\nID CHATOPS.POST_MESSAGE: ${EXECUTION ID}\n==========\n
         ${result}=          Run Keyword    Execution logs from hubot
         Should Contain      ${result.stdout}  details available at
-        Should Contain      ${result.stdout}  in channel: chatopsci, from: grobgobglobgrod 
+        Should Contain      ${result.stdout}  in channel: chatopsci, from: grobgobglobgrod
         @{lines} =          Split String   ${result.stdout}  separator=DEBUG Received message: '@abe:
         @{output} =         Split String   @{lines}[1]  separator=DEBUG Message '@abe:
         Log To Console      \nSUBSTRING: @{output}[0]
         Should Contain      @{output}[0]   in channel: chatopsci, from: grobgobglobgrod
         Should Contain      @{output}[0]   ref : chatops.post_message
         Should Contain      @{output}[0]   id : ${EXECUTION ID}
- 
+
 
 
 
@@ -106,7 +106,7 @@
         Sleep  5s
         # Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         # Should Contain  ${result.stderr}  ‘slackcat’ saved
-        File Should Exist  slackcat 
+        File Should Exist  slackcat
 
     ID Execution List Action
         [Arguments]      ${action_name}
@@ -116,11 +116,11 @@
         [return]         @{instance id}[3]
 
     Get post_message execution id
-        ${id}=           Run Keyword    ID Execution List Action    chatops.post_message 
+        ${id}=           Run Keyword    ID Execution List Action    chatops.post_message
         Set Suite Variable  ${EXECUTION ID}        ${id}
         ${result}=       Run Process    {  echo  '!st2  get  execution  {id}';}  |  slackcat  --channel\=chatopsci
         ...              --plain  --stream  shell=True
-        [return]         ${result} 
+        [return]         ${result}
 
 
 
@@ -153,7 +153,7 @@
         Log To Console   \nADAPTER: ${result}
         Should Contain   ${result}    export HUBOT_ADAPTER\=slack
         Log To Console   ===============================
- 
+
     Cleaning the env file and uninstalling slackcat
        [Documentation]  Suite Teardown
        Log To Console   ==========SUITE TEARDOWN==========
@@ -161,10 +161,8 @@
        File Should Not Exist  ${ST2CHATOPS.ENV}.orig
        Run Process      sudo  rm  -rf  ${BIN_DIR}/slackcat
        File Should Not Exist    ${BIN_DIR}/slackcat
-       ${result}=       Grep File    ${ST2CHATOPS.ENV}  \# export HUBOT_SLACK_TOKEN\=xoxb-CHANGE-ME-PLEASE
+       ${result}=       Grep File    ${ST2CHATOPS.ENV}  \export HUBOT_SLACK_TOKEN\=
        Log To Console   \nORIGINAL TOKEN: ${result}
-       Should Contain   ${result}    export HUBOT_SLACK_TOKEN\=xoxb-CHANGE-ME-PLEASE
-       ${result}=       Grep File    ${ST2CHATOPS.ENV}  \# export HUBOT_ADAPTER\=slack
+       ${result}=       Grep File    ${ST2CHATOPS.ENV}  \export HUBOT_ADAPTER\=slack
        Log To Console   \nORIGINAL ADAPTER: ${result}
-       Should Contain   ${result}    \# export HUBOT_ADAPTER\=slack
        Log To Console   =================================
