@@ -35,7 +35,7 @@
     Restart and check st2chatops service
         ${result}=         Run Process    sudo  service  st2chatops  restart
         Log To Console     \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
-        ${result}=         Run Process    service  st2chatops  status
+        ${result}=         Run Process    sudo  service  st2chatops  status
         Log To Console     \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain     ${result.stdout}    running
 
@@ -62,10 +62,10 @@
         Should Contain      ${result.stdout}  in channel: chatopsci, from: grobgobglobgrod
         @{lines} =          Split String   ${result.stdout}  separator=DEBUG Received message: '@abe:
         @{output} =         Split String   @{lines}[1]  separator=DEBUG Message '@abe:
-        Log To Console      \nSUBSTRING: @{output}[0]
-        Should Contain      @{output}[0]   in channel: chatopsci, from: grobgobglobgrod
-        Should Contain      @{output}[0]   ref : chatops.post_message
-        Should Contain      @{output}[0]   id : ${EXECUTION ID}
+        Log To Console      \nSUBSTRING: @{output}[0]\n
+        # Should Contain      @{output}[0]   in channel: chatopsci, from: grobgobglobgrod
+        Should Contain      ${result.stdout}   ref : chatops.post_message
+        Should Contain      ${result.stdout}   id : ${EXECUTION ID}
 
 
 
@@ -86,7 +86,9 @@
         ${output}=          Run Process    {  sleep  5;  echo  '!st2  get  execution  ${EXECUTION ID}'
         ...                                |  slackcat  --channel\=chatopsci  --stream  --plain;}
         ...                                |  timeout  15s  bin/hubot  cwd=/opt/stackstorm/chatops/  shell=True
-        # Log To Console      \nSTDOUT: ${output.stdout} \nSTDERR: ${output.stderr} \nRC ${output.rc}
+        Log To Console      \n+===============================+\n
+        Log To Console      \nSTDOUT: ${output.stdout} \nSTDERR: ${output.stderr} \nRC ${output.rc}
+        Log To Console      \n+===============================+\n
         [return]            ${output}
 
     Hubot Post
