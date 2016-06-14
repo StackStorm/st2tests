@@ -33,11 +33,15 @@
         Should Contain     ${result}  ${SLACKCAT_TOKEN}
 
     Restart and check st2chatops service
-        ${result}=         Run Process    sudo  service  st2chatops  restart
+        ${result}=        Run Process  sudo  service  st2chatops  restart   shell=True  stdout=subprocess.PIPE  stderr=subprocess.PIPE
         Log To Console     \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
-        ${result}=         Run Process    service  st2chatops  status
+        ${result}=        Run Process  sudo  service  st2chatops  status    shell=True  stdout=subprocess.PIPE  stderr=subprocess.PIPE
         Log To Console     \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain     ${result.stdout}    running
+        Run Process        sudo  rm  -rf  subprocess.PIPE
+        File Should Not Exist    subprocess.PIPE
+
+
 
     Check post_message execution and receive status
         ${channel}=        Generate Token
@@ -60,12 +64,13 @@
         ${result}=          Run Keyword    Execution logs from hubot
         Should Contain      ${result.stdout}  details available at
         Should Contain      ${result.stdout}  in channel: chatopsci, from: grobgobglobgrod
-        @{lines} =          Split String   ${result.stdout}  separator=DEBUG Received message: '@abe:
-        @{output} =         Split String   @{lines}[1]  separator=DEBUG Message '@abe:
-        Log To Console      \nSUBSTRING: @{output}[0]
-        Should Contain      @{output}[0]   in channel: chatopsci, from: grobgobglobgrod
-        Should Contain      @{output}[0]   ref : chatops.post_message
-        Should Contain      @{output}[0]   id : ${EXECUTION ID}
+        @{output}  Get Regexp Matches   ${result.stdout}  (?ms)result :\n--------\nresult :(.*?)in channel: chatopsci, from: grobgobglobgrod
+        :FOR    ${ELEMENT}    IN    @{output}
+        # \    Log To Console  \n++=========++\n
+        \    ${matched regex}=      Get Lines Containing String  ${ELEMENT}  matched regex
+        \    ${length}=  Get Length  ${matched regex}
+        \    Run Keyword if  ${length} == 0   Set Suite Variable  ${ELEMENT}
+        \    Run Keyword if  ${length} == 0   Verify Correct Substring
 
 
 
@@ -73,6 +78,12 @@
 
 
     *** Keyword ***
+    Verify Correct Substring
+        Log To Console   \nSUBSTRING:\n------------\n${ELEMENT}\n------------\n
+        Should Contain   ${ELEMENT}  in channel: chatopsci, from: grobgobglobgro
+        Should Contain   ${ELEMENT}  ref : chatops.post_message
+        Should Contain   ${ELEMENT}  id : ${EXECUTION ID}
+
     Replace the token for slack with slackcat in st2chatops.env
        ${result}=       Run Process  sudo  sed  -i  -e  's/export  HUBOT_SLACK_TOKEN\=${HUBOT_SLACK_TOKEN}/
        ...              export  HUBOT_SLACK_TOKEN\=${SLACKCAT_TOKEN}/g'
@@ -86,7 +97,9 @@
         ${output}=          Run Process    {  sleep  5;  echo  '!st2  get  execution  ${EXECUTION ID}'
         ...                                |  slackcat  --channel\=chatopsci  --stream  --plain;}
         ...                                |  timeout  15s  bin/hubot  cwd=/opt/stackstorm/chatops/  shell=True
-        # Log To Console      \nSTDOUT: ${output.stdout} \nSTDERR: ${output.stderr} \nRC ${output.rc}
+        Log To Console      \n======+++++++++++============= COMPLETE STDOUT ====================+++++++++++++\n
+        Log To Console      \nSTDOUT: ${output.stdout} \nSTDERR: ${output.stderr} \nRC ${output.rc}
+        Log To Console      \n======+++++++++++=============+++++++++++++++++====================+++++++++++++\n
         [return]            ${output}
 
     Hubot Post
