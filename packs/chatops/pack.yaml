@@ -1,0 +1,9 @@
+---
+name: chatops
+description: Use st2 to test st2+chatops.
+keywords:
+    - chatops
+    - hubot
+version: 0.1
+author: st2-dev
+email: info@stackstorm.com

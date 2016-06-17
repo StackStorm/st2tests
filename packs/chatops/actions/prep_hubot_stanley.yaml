@@ -1,0 +1,29 @@
+---
+  name: "prep_hubot_stanley"
+  runner_type: "run-remote-script"
+  description: "prepare hubot-stanley"
+  enabled: true
+  entry_point: "scripts/prep_hubot_stanley.sh"
+  parameters:
+    hubot_stackstorm_repo_target:
+      type: "string"
+      description: "Location of cloned hubot-stackstorm on disk."
+      required: true
+      position: 0
+    hubot_stanley_repo_target:
+      type: "string"
+      description: "Location of cloned hubot-stanley on disk."
+      required: true
+      position: 1
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"

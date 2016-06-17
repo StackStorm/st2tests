@@ -1,0 +1,57 @@
+---
+name: "chatops_itests"
+description: "Chatops integration tests."
+runner_type: "action-chain"
+enabled: true
+entry_point: "workflows/chatops_itests.yaml"
+parameters:
+    token:
+      type: "string"
+      description: "st2 auth token"
+      default: ""
+    repos_base:
+      type: "string"
+      description: "Base for all repos to be cloned to"
+      default: "/home/stanley"
+    st2_repo:
+      type: "string"
+      description: "Url of the st2 repo to clone"
+      default: "https://github.com/StackStorm/st2.git"
+      required: true
+    st2_repo_branch:
+      type: "string"
+      description: "st2 branch to test"
+      default: "master"
+      required: true
+    st2_repo_target:
+      type: "string"
+      default: "{{repos_base}}/st2_{{st2_repo_branch}}"
+      description: "Prefix to dir to clone st2 to."
+    hubot_stackstorm_repo:
+      type: "string"
+      description: "Url of the hubot-stackstorm repo to clone"
+      default: "https://github.com/StackStorm/hubot-stackstorm.git"
+      required: true
+    hubot_stackstorm_repo_branch:
+      type: "string"
+      description: "st2 branch to test"
+      default: "master"
+      required: true
+    hubot_stackstorm_repo_target:
+      type: "string"
+      default: "{{repos_base}}/hubot_stackstorm_{{hubot_stackstorm_repo_branch}}"
+      description: "Prefix to dir to clone hubot stackstorm to."
+    hubot_stanley_repo:
+      type: "string"
+      description: "Url of the st2 repo to clone"
+      default: "https://github.com/StackStorm/hubot-stanley.git"
+      required: true
+    hubot_stanley_repo_branch:
+      type: "string"
+      description: "st2 branch to test"
+      default: "master"
+      required: true
+    hubot_stanley_repo_target:
+      type: "string"
+      default: "{{repos_base}}/hubot_stanley_{{hubot_stanley_repo_branch}}"
+      description: "Prefix to dir to clone hubot stanley to."

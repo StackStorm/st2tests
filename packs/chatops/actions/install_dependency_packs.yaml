@@ -1,0 +1,24 @@
+---
+  name: "install_dependency_packs"
+  runner_type: "run-remote-script"
+  description: "Install required dependency packs"
+  enabled: true
+  entry_point: "scripts/install_dependency_packs.sh"
+  parameters:
+    hubot_stackstorm_repo_target:
+      type: "string"
+      description: "Location of cloned stackstorm on disk."
+      required: true
+      position: 0
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
