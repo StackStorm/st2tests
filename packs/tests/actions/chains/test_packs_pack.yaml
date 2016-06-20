@@ -161,8 +161,8 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            # sensors, actions, rules, aliases, policy types, policies, configs -> 7
-            cmd: "st2 run packs.load register=all | grep -c 'Registered' | grep 7"
+            # triggers, sensors, actions, rules, aliases, policy types, policies, configs -> 8
+            cmd: "st2 run packs.load register=all | grep -c 'Registered' | grep 8"
         on-success: test_pack_install_with_no_config
         on-failure: error_handler
     -
