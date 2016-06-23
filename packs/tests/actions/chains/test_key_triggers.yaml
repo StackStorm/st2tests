@@ -95,14 +95,17 @@ chain:
         on-success: assert_trigger_instance_payload_matches_expected_create
     -
         name: assert_trigger_instance_payload_matches_expected_create
-        ref: asserts.object_equals
+        ref: asserts.object_contains
         params:
             object: "{{ retrieve_key_create_trigger_instance.stdout.payload }}"
             expected:
                 object:
                     name: a
                     value: b
-                    uid: "key_value_pair:a"
+                    encrypted: false
+                    secret: false
+                    scope: system
+                    uid: "key_value_pair:system:a"
         on-success: update_key
     -
         name: update_key
@@ -139,18 +142,24 @@ chain:
         on-success: assert_trigger_instance_payload_matches_expected_change
     -
         name: assert_trigger_instance_payload_matches_expected_change
-        ref: asserts.object_equals
+        ref: asserts.object_contains
         params:
             object: "{{ retrieve_key_change_trigger_instance.stdout.payload }}"
             expected:
                 new_object:
                     name: a
                     value: c
-                    uid: "key_value_pair:a"
+                    encrypted: false
+                    secret: false
+                    scope: system
+                    uid: "key_value_pair:system:a"
                 old_object:
                     name: a
                     value: b
-                    uid: "key_value_pair:a"
+                    encrypted: false
+                    secret: false
+                    scope: system
+                    uid: "key_value_pair:system:a"
         on-success: check_key_update_trigger_instance
     -
         name: check_key_update_trigger_instance
@@ -176,14 +185,17 @@ chain:
         on-success: assert_trigger_instance_payload_matches_expected_update
     -
         name: assert_trigger_instance_payload_matches_expected_update
-        ref: asserts.object_equals
+        ref: asserts.object_contains
         params:
             object: "{{ retrieve_key_update_trigger_instance.stdout.payload }}"
             expected:
                 object:
                     name: a
                     value: c
-                    uid: "key_value_pair:a"
+                    encrypted: false
+                    secret: false
+                    scope: system
+                    uid: "key_value_pair:system:a"
         on-success: delete_key
     -
         name: delete_key
@@ -220,12 +232,15 @@ chain:
         on-success: assert_trigger_instance_payload_matches_expected_delete
     -
         name: assert_trigger_instance_payload_matches_expected_delete
-        ref: asserts.object_equals
+        ref: asserts.object_contains
         params:
             object: "{{ retrieve_key_delete_trigger_instance.stdout.payload }}"
             expected:
                 object:
                     name: a
                     value: c
-                    uid: "key_value_pair:a"
+                    encrypted: false
+                    secret: false
+                    scope: system
+                    uid: "key_value_pair:system:a"
 default: cleanup_environment
