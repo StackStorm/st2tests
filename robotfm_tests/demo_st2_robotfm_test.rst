@@ -66,15 +66,15 @@ and can be called via settings section as shown below
 
     *** Settings ***
     Library             Process
-    Variables           variables/st2_rfm_demo.yaml
+    Variables           demo_variables/st2_rfm_demo.yaml
 
 Contents of "variables/st2_rfm_demo.yaml" file::
 
 
     NAME:  '"new"'
-  
-  
-For more details refer: 
+
+
+For more details refer:
 `Robot Framework User Guide`_.
 
 

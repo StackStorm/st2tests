@@ -59,6 +59,7 @@
 
     Execution from hubot with slackcat token in st2chatops_env
         [Documentation]     Hubot execution result for post message
+        ...                 Needs slackcat-abe.token and slack-grobgobglobgrod.token in /opt/stackstorm/chatops/
         Run Keyword         Replace the token for slack with slackcat in st2chatops.env
         Log To Console      \n==========\nID CHATOPS.POST_MESSAGE: ${EXECUTION ID}\n==========\n
         ${result}=          Run Keyword    Execution logs from hubot

@@ -1,25 +1,25 @@
 .. code:: robotframework
 
      *** Variables ***
-     ${SLEEP}           10
-     ${HALF SLEEP}      5
-     ${SUCCESS STATUS}    "status": "succeeded 
+     ${SLEEP}           20
+     ${HALF SLEEP}      10
+     ${SUCCESS STATUS}    "status": "succeeded
      ${RUNNING STATUS}    "status": "running
      ${CANCELED STATUS}   "status": "canceled"
      ${FAILED STATUS}     "status": "failed"
 
      *** Test Cases ***
-     Run examples.mistral-test-cancel 
+     Run examples.mistral-test-cancel
          ${result}=           Run Process  st2  run  examples.mistral-test-cancel  sleep\=${SLEEP}  -j  -a
          @{Execution ID}      Split String  ${result.stdout}
          Set Suite Variable   @{Execution ID}
          Log To Console       \nRUN EXECUTION: \n ${result.stdout}
          Log To Console       Execution ID: @{Execution ID}[-1]
          Sleep  1s
- 
+
      Get Execution Result
-         ${result}=          Run Process  st2  execution  get  @{Execution ID}[-1]  -j 
-         Log To Console      \nEXECUTION GET: \n ${result.stdout}  
+         ${result}=          Run Process  st2  execution  get  @{Execution ID}[-1]  -j
+         Log To Console      \nEXECUTION GET: \n ${result.stdout}
          Sleep  1s
          Should Contain X Times   ${result.stdout}  ${RUNNING STATUS}  2
 
@@ -31,7 +31,7 @@
          ${Sleep}=            Evaluate  ${SLEEP} - ${HALF SLEEP}
          Sleep  ${Sleep}s     Wait for the ${Sleep} seconds
 
-     Check Canceled Execution       
+     Check Canceled Execution
          ${result}=           Run Process  st2  execution  get  @{Execution ID}[-1]      -j
          Log To Console       \nEXECUTION GET AFTER CANCELLATION:\n ${result.stdout}
          Should Contain X Times   ${result.stdout}  ${RUNNING STATUS}  1
@@ -44,7 +44,7 @@
          Log To Console       \nEXECUTION GET AFTER COMPLETION: \n ${result.stdout}
          Should Contain       ${result.stdout}  ${CANCELED STATUS}
          Should Contain       ${result.stdout}  ${SUCCESS STATUS}
-         Should Not Contain   ${result.stdout}  ${RUNNING STATUS}  
+         Should Not Contain   ${result.stdout}  ${RUNNING STATUS}
 
 
     *** Keywords ***

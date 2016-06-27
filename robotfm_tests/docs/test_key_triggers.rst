@@ -5,7 +5,7 @@
     ${VALUE}                robot_value
     ${UPDATED VALUE}        new_robot_value
     &{ELEMENTS}             robot2=key5  robot1=key4  1=2
-    ${JSON FILE}            robotfm_tests/variables/test_key_triggers.json
+    ${JSON FILE}            robotfm_tests/docs/variables/test_key_triggers.json
 
     ${TRIGGER KEY CREATE}   core.st2.key_value_pair.create
     ${TRIGGER KEY UPDATE}   core.st2.key_value_pair.update
@@ -82,7 +82,7 @@
         [Arguments]      ${key}  ${value}  ${trigger value}
         Sleep  2s
         ${result}=       Run Process       st2  trigger-instance  list   --trigger\=${trigger value}  -n  1  -j
-        Should Contain   ${result.stdout}  "trigger": "${trigger value}" 
+        Should Contain   ${result.stdout}  "trigger": "${trigger value}"
         ${result}=       Run Process       st2  trigger-instance  list  --trigger\=${trigger value}  -n  1  -a  id  -j
         @{instance id}   Split String      ${result.stdout}    separator="
         Log To Console   \nINSTANCE ID: @{instance id}[3]
