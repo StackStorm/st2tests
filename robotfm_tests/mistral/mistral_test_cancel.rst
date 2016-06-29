@@ -1,8 +1,8 @@
 .. code:: robotframework
 
      *** Variables ***
-     ${SLEEP}           20
-     ${HALF SLEEP}      10
+     ${SLEEP}           30
+     ${HALF SLEEP}      15
      ${SUCCESS STATUS}    "status": "succeeded
      ${RUNNING STATUS}    "status": "running
      ${CANCELED STATUS}   "status": "canceled"
@@ -15,7 +15,7 @@
          Set Suite Variable   @{Execution ID}
          Log To Console       \nRUN EXECUTION: \n ${result.stdout}
          Log To Console       Execution ID: @{Execution ID}[-1]
-         Sleep  1s
+         Sleep  5s
 
      Get Execution Result
          ${result}=          Run Process  st2  execution  get  @{Execution ID}[-1]  -j
