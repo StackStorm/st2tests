@@ -12,14 +12,13 @@ Executing this guide
 Install following modules::
 
 
-    pip install robotframework
-    pip install docutils
+    pip install robotframework pyyaml docutils
 
 
 Command to execute this test suite::
 
 
-    pybot st2_rfm_demo.rst
+    pybot demo_st2_robotfm_test.rst
 
 Test cases
 ==========
