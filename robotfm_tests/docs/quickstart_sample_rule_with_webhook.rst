@@ -31,13 +31,13 @@
         Should Contain   ${result.stdout}  ${UID SAMPLE WEBHOOK}
         Should Contain   ${result.stdout}  ${ENABLED}
 
-   Verify error message for duplicate rule
+    Verify error message for duplicate rule
         ${result}=       Run Process    st2  rule  create  /usr/share/doc/st2/examples/rules/sample_rule_with_webhook.yaml  -j
         Should Contain   ${result.stdout}  ERROR: 409 Client Error: Conflict
         Should Contain   ${result.stdout}  MESSAGE: Tried to save duplicate unique keys (E11000 duplicate key error index:
         ...                                st2.rule_d_b.$uid_1  dup key: { : "rule:examples:sample_rule_with_webhook" }) for url:
 
-   Verify rule status
+    Verify rule status
         ${TOKEN}=        Run Process    st2  auth  -p  pass  st2admin  -t  shell=True
         Log To Console   \nTOKEN: ${TOKEN.stdout} \nSTDERR: ${TOKEN.stderr} \nRC ${TOKEN.rc}
         ${result}=       Run  curl -k https://localhost/api/v1/webhooks/sample -d '{"foo": "bar", "name": "st2"}' -H 'Content-Type: application/json' -H 'X-Auth-Token: ${TOKEN.stdout}'
