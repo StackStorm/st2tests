@@ -38,7 +38,7 @@
         ...                                st2.rule_d_b.$uid_1  dup key: { : "rule:examples:sample_rule_with_webhook" }) for url:
 
     Verify rule status
-        ${TOKEN}=        Run Process    st2  auth  -p  pass  st2admin  -t  shell=True
+        ${TOKEN}=        Run Process    st2  auth  -p  Ch@ngeMe  st2admin  -t  shell=True
         Log To Console   \nTOKEN: ${TOKEN.stdout} \nSTDERR: ${TOKEN.stderr} \nRC ${TOKEN.rc}
         ${result}=       Run  curl -k https://localhost/api/v1/webhooks/sample -d '{"foo": "bar", "name": "st2"}' -H 'Content-Type: application/json' -H 'X-Auth-Token: ${TOKEN.stdout}'
         Log To Console   \nOUTPUT: ${result}
@@ -81,3 +81,18 @@
     *** Settings ***
     Library            Process
     Library            OperatingSystem
+    Suite Setup        Check examples pack
+
+    *** Keywords ***
+    Check examples pack
+        [Documentation]  This is only for CI setup
+        ${result}=       Run Process    st2  action  list  -p  examples
+        Run Keyword Unless  '''${result.stdout}''' == 'No matching items found'    Remove the examples pack
+    Remove the examples pack
+        ${result}=       Run Process  st2  run  packs.uninstall  packs\=examples  -j
+        Should Contain X Times   ${result.stdout}  "status": "succeeded  4
+        Should Contain   ${result.stdout}    "action": "packs.unload"
+        Should Contain   ${result.stdout}    "action": "packs.delete"
+        Should Contain   ${result.stdout}    "action": "packs.restart_component"
+        ${result}=       Run Process    st2  action  list  -p  examples
+        Should Contain   ${result.stdout}  No matching items found
