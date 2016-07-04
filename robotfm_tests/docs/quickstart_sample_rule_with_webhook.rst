@@ -34,8 +34,8 @@
     Verify error message for duplicate rule
         ${result}=       Run Process    st2  rule  create  /usr/share/doc/st2/examples/rules/sample_rule_with_webhook.yaml  -j
         Should Contain   ${result.stdout}  ERROR: 409 Client Error: Conflict
-        Should Contain   ${result.stdout}  MESSAGE: Tried to save duplicate unique keys (E11000 duplicate key error index:
-        ...                                st2.rule_d_b.$uid_1  dup key: { : "rule:examples:sample_rule_with_webhook" }) for url:
+        Should Contain   ${result.stdout}  MESSAGE: Tried to save duplicate unique keys
+        Should Contain   ${result.stdout}  duplicate key error index: st2.rule_d_b.$uid_1  dup key: { : "rule:examples:sample_rule_with_webhook" }) for url:
 
     Verify rule status
         ${TOKEN}=        Run Process    st2  auth  -p  Ch@ngeMe  st2admin  -t  shell=True
