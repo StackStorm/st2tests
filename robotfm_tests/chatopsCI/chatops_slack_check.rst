@@ -66,24 +66,27 @@
         Should Contain      ${result.stdout}  details available at
         Should Contain      ${result.stdout}  in channel: chatopsci, from: grobgobglobgrod
         @{output}  Get Regexp Matches   ${result.stdout}  (?ms)result :\n--------\nresult :(.*?)in channel: chatopsci, from: grobgobglobgrod
+        Set Suite Variable  ${status}  Invalid chatops.post_message ID
         :FOR    ${ELEMENT}    IN    @{output}
-        # \    Log To Console  \n++=========++\n
-        \    ${matched regex}=      Get Lines Containing String  ${ELEMENT}  matched regex
-        \    ${length}=  Get Length  ${matched regex}
-        \    Run Keyword if  ${length} == 0   Set Suite Variable  ${ELEMENT}
-        \    Run Keyword if  ${length} == 0   Verify Correct Substring
-
-
+        \    Log To Console  \n++=========++\n
+        \    ${regex}=      Get Lines Containing String  ${ELEMENT}  matched regex
+        \    ${length}=  Get Length  ${regex}
+        \    Run Keyword if    ${length} == 0 and "id : ${EXECUTION ID}" in '''${ELEMENT}'''  Verify Correct Substring  ${ELEMENT}
+        \    Log To console  Status: ${status}
+        Pass execution if  '''${status}''' == "Valid chatops.post_message ID"  PASS
+        Should Be Equal  ${status}  Valid chatops.post_message ID
 
 
 
 
     *** Keyword ***
     Verify Correct Substring
+        [Arguments]     ${ELEMENT}
         Log To Console   \nSUBSTRING:\n------------\n${ELEMENT}\n------------\n
         Should Contain   ${ELEMENT}  in channel: chatopsci, from: grobgobglobgro
         Should Contain   ${ELEMENT}  ref : chatops.post_message
         Should Contain   ${ELEMENT}  id : ${EXECUTION ID}
+        Set Suite Variable   ${status}  Valid chatops.post_message ID
 
     Replace the token for slack with slackcat in st2chatops.env
        ${result}=       Run Process  sudo  sed  -i  -e  's/export  HUBOT_SLACK_TOKEN\=${HUBOT_SLACK_TOKEN}/
