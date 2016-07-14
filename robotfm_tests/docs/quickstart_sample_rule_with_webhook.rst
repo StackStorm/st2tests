@@ -43,10 +43,10 @@
         ${result}=       Run  curl -k https://localhost/api/v1/webhooks/sample -d '{"foo": "bar", "name": "st2"}' -H 'Content-Type: application/json' -H 'X-Auth-Token: ${TOKEN.stdout}'
         Log To Console   \nOUTPUT: ${result}
         Should Contain   ${result}      {"foo": "bar", "name": "st2"}
-        ${result}=       Run  sudo tail -n 1 /home/stanley/st2.webhook_sample.out
-        Should Contain   ${result}     {'foo': 'bar', 'name': 'st2'
-        ${result}=       Run  sudo rm -rf /home/stanley/st2.webhook_sample.out
-        File Should Not Exist   /home/stanley/st2.webhook_sample.out
+        Sleep            2s
+        ${result}=       Run Process  sudo  tail  -n  1  /home/stanley/st2.webhook_sample.out  shell=True
+        Should Contain   ${result.stdout}     {'foo': 'bar', 'name': 'st2'}
+
 
     Verify rule deletion(and error message)
         ${result}=       Run Process    st2  rule  delete  examples.sample_rule_with_webhook  -j
@@ -65,7 +65,7 @@
         ${result}=       Run Process    st2  action  list  -p  examples
         Should Contain   ${result.stdout}  No matching items found
         ${result}=       Run Process  st2ctl  reload  --register-all
-        Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
+        Log To Console   \nSTDOUT: ${result.stdout} \nRC: ${result.rc} \nSTDERR: ${result.stderr}
         ${result}=       Run Process    st2  action  list  -p  examples  -j
         Should Contain   ${result.stdout}  ${PACK EXAMPLES}
 
@@ -82,12 +82,19 @@
     Library            Process
     Library            OperatingSystem
     Suite Setup        Check examples pack
+    Suite Teardown     Clean files
 
     *** Keywords ***
     Check examples pack
+        Log To Console   ___________________________SUITE SETUP___________________________
         [Documentation]  This is only for CI setup
         ${result}=       Run Process    st2  action  list  -p  examples
         Run Keyword Unless  '''${result.stdout}''' == 'No matching items found'    Remove the examples pack
+        ${file exist}    Run Process    sudo  ls   /home/stanley/st2.webhook_sample.out  shell=True
+        Log To Console   \nINITIAL FILE STATUS:\n\tSTDOUT: ${file exist.stdout} \n\tRC: ${file exist.rc} \n\tSTDERR: ${file exist.stderr}
+        Run Keyword If   ${file exist.rc} == 0  Delete st2.webhook_sample.out
+        Log To Console   ___________________________SUITE SETUP___________________________
+
     Remove the examples pack
         ${result}=       Run Process  st2  run  packs.uninstall  packs\=examples  -j
         Should Contain X Times   ${result.stdout}  "status": "succeeded  4
@@ -96,3 +103,16 @@
         Should Contain   ${result.stdout}    "action": "packs.restart_component"
         ${result}=       Run Process    st2  action  list  -p  examples
         Should Contain   ${result.stdout}  No matching items found
+
+    Delete st2.webhook_sample.out
+        ${result}=       Run Process  sudo  rm  -rf  /home/stanley/st2.webhook_sample.out  shell=True
+        File Should Not Exist   /home/stanley/st2.webhook_sample.out
+        Log To Console   FILE DELETED
+
+    Clean Files
+        Log To Console   ___________________________SUITE TEARDOWN___________________________
+        Run Keyword      Delete st2.webhook_sample.out
+        ${file exist}    Run Process    sudo  ls   /home/stanley/st2.webhook_sample.out
+        Log To Console   \nFILE STATUS:\n\tSTDOUT: ${file exist.stdout} \n\tSTDERR: ${file exist.rc} \n\tRC: ${file exist.stderr}
+        Log To Console   ___________________________SUITE TEARDOWN___________________________
+
