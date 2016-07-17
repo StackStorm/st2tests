@@ -121,7 +121,7 @@
     Install Slackcat
         ${result}=      Run Process  wget  https://github.com/vektorlab/slackcat/releases/download/v1.0/slackcat-1.0-linux-amd64  -O  slackcat
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
-        Should Contain  ${result.stderr}  ‘slackcat’ saved
+        Should Contain  ${result.stderr}  saved
         File Should Exist  slackcat
 
     ID Execution List Action
