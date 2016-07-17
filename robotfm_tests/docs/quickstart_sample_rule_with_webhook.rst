@@ -43,10 +43,8 @@
         ${result}=       Run  curl -k https://localhost/api/v1/webhooks/sample -d '{"foo": "bar", "name": "st2"}' -H 'Content-Type: application/json' -H 'X-Auth-Token: ${TOKEN.stdout}'
         Log To Console   \nOUTPUT: ${result}
         Should Contain   ${result}      {"foo": "bar", "name": "st2"}
-        Sleep            2s
-        ${result}=       Run Process  sudo  tail  -n  1  /home/stanley/st2.webhook_sample.out  shell=True
-        Should Contain   ${result.stdout}     {'foo': 'bar', 'name': 'st2'}
-
+        ${result}=       Wait Until Keyword Succeeds  5s  1s  Check Tail
+        Log To Console   \nFILE CONTENTS:\n${result.stdout}\nSTDERR:\n${result.stderr}\nRC:\n${result.rc}
 
     Verify rule deletion(and error message)
         ${result}=       Run Process    st2  rule  delete  examples.sample_rule_with_webhook  -j
@@ -108,6 +106,11 @@
         ${result}=       Run Process  sudo  rm  -rf  /home/stanley/st2.webhook_sample.out  shell=True
         File Should Not Exist   /home/stanley/st2.webhook_sample.out
         Log To Console   FILE DELETED
+
+    Check Tail
+        ${result}=  Run Process  sudo  tail  -n  1  /home/stanley/st2.webhook_sample.out  shell=True
+        Should Contain   ${result.stdout}     {'foo': 'bar', 'name': 'st2'}
+        [return]    ${result}
 
     Clean Files
         Log To Console   ___________________________SUITE TEARDOWN___________________________

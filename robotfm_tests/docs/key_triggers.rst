@@ -18,9 +18,8 @@
 
     *** Test Cases ***
     Verify Key Value Triggers
-        #Sleep  30s
         ${result}=       Run Process  st2  trigger  list  -p  core  -a ref  -j
-        Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
+        Log To Console   \nTRIGGER LIST:\nSTDOUT:\n${result.stdout}\nSTDERR:\n${result.stderr}\nRC:\n${result.rc}
         Should Contain   ${result.stdout}   ${TRIGGER KEY CREATE}
         Should Contain   ${result.stdout}   ${TRIGGER KEY UPDATE}
         Should Contain   ${result.stdout}   ${TRIGGER KEY CHANGE}
@@ -47,9 +46,12 @@
         Should Contain      ${result.stdout}   &{ELEMENTS}[1]
         Should Not Contain  ${result.stdout}   key1
         Should Not Contain  ${result.stdout}   key2
+        Log To Console      \nFROM JSON:\nSTDOUT:\n${result.stdout}\nSTDERR:\n${result.stderr}\nRC:\n${result.rc}
         ${result}=          Run Process        st2  key  delete_by_prefix  -p  ro
         Should Contain      ${result.stdout}   Deleted 2 keys\nDeleted key ids: robot1, robot2
+        Log To Console      \nDELETE BY PREFIX:\nSTDOUT:\n${result.stdout}\n\nSTDERR:\n${result.stderr}\nRC:\n${result.rc}
         ${result}=          Run Process        st2  key  delete  1  -j
+        Log To Console      \nDELETE:\nSTDOUT:\n${result.stdout}\nSTDERR:\n${result.stderr}\nRC:\n${result.rc}
         Should Contain      ${result.stdout}   Resource with id "1" has been successfully deleted.
 
     Key Value pair operations with expiry
@@ -61,14 +63,18 @@
         Should Contain       ${result.stdout}  expire_timestamp
         Should Contain       ${result.stdout}  "name": "${KEY}"
         Should Contain       ${result.stdout}  "value": "${VALUE}"
-        Sleep  1m
-        ${result}=           Run Process       st2  key  set  list  -j
-        Should Not Contain   ${result.stdout}  "name": "${KEY}"
-        Should Not Contain   ${result.stdout}  "value": "${VALUE}"
-
+        Log To Console       \nKEY VALUE PAIR WITH EXPIRY: \nOUTPUT:\n${result.stdout}\nERR:\n${result.stderr}\nRC:\n${result.rc}
+        ${result}=           Wait Until Keyword Succeeds  1m  30s  Get Key List
+        Log To Console       \nKEY VALUE PAIR LIST(WITHOUT EXPIRY):\nOUTPUT:\n${result.stdout}\nERR:\n${result.stderr}\nRC:\n${result.rc}
 
 
     *** Keywords ***
+    Get Key List
+        ${result}=           Run Process       st2  key  list  -j
+        Should Not Contain   ${result.stdout}  "name": "${KEY}"
+        Should Not Contain   ${result.stdout}  "value": "${VALUE}"
+        [return]             ${result}
+
     Set and update key
         [Arguments]      ${key}  ${value}   ${trigger value}
         ${result}=       Run Process        st2  key  set  ${key}  ${value}  -j
@@ -80,7 +86,6 @@
 
     Check key store actions with trigger instance
         [Arguments]      ${key}  ${value}  ${trigger value}
-        Sleep  2s
         ${result}=       Run Process       st2  trigger-instance  list   --trigger\=${trigger value}  -n  1  -j
         Should Contain   ${result.stdout}  "trigger": "${trigger value}"
         ${result}=       Run Process       st2  trigger-instance  list  --trigger\=${trigger value}  -n  1  -a  id  -j
@@ -102,9 +107,11 @@
         Should Contain   ${result.stdout}    Key Value Pair "${key}" is not found.
 
     Check and Delete Key
+       Log To Console    _______________________SUITE SETUP/TEARDOWN______________________
        ${result}=       Run Process  st2  key  list  -j
        Run Keyword If   "${KEY}" in '''${result.stdout}'''  Delete Key  ${KEY}
        ...       ELSE   Key Not Found  ${KEY}
+       Log To Console    _______________________SUITE SETUP/TEARDOWN______________________
 
     *** Settings ***
     Library            Process

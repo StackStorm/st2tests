@@ -67,11 +67,12 @@
 
     *** Keywords ***
     Check Installation Pack 1
-        Log To Console    "###### Suite Setup/Teardown ######"
+        Log To Console    ___________________________SUITE SETUP___________________________
         ${result}=        Run Process    st2  action  list  --pack  ${PACK TO INSTALL 1}  -j
         # Log To Console    STDOUT:\n ${result.stdout}
         Run Keyword If    '${PACK VAR 1}' in '''${result.stdout}'''  Uninstall Pack 1
         ...       ELSE    Check Installation Pack 2
+        Log To Console    ___________________________SUITE SETUP___________________________
 
 
     Uninstall Pack 1
@@ -89,12 +90,13 @@
         # Log To Console    Uninstalling Pack: ${PACK TO INSTALL 2} :\n${result.stdout}
 
     Suite Cleanup
+        Log To Console    ___________________________SUITE TEARDOWN___________________________
         Run Keyword       Check Installation Pack 1
         ${result}=        Run Process  st2  run  packs.delete  packs\=${PACK TO INSTALL NO CONFIG}  -j
         # Log To Console    ${result.stdout}
         Should Contain    ${result.stdout}  ${SUCCESS STATUS}
         # Should Contain    ${result.stdout}  DEBUG${SPACE*3}Deleting pack directory "/opt/stackstorm/packs/${PACK TO INSTALL NO CONFIG}"${\n}
-
+        Log To Console    ___________________________SUITE TEARDOWN___________________________
 
     *** Settings ***
     Library             Process
