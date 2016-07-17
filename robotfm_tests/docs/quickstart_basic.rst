@@ -37,11 +37,8 @@
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain   ${result.stdout}  ${SUCCESS STATUS}
         Should Contain   ${result.stdout}  "cmd": "date -R"
-        ${result}=       Run Process       st2  execution  list  -n  1  -j
-        Sleep  1s
+        ${result}=       Wait Until Keyword Succeeds  2s  1s  Execution List
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
-        Should Contain   ${result.stdout}  ${SUCCESS STATUS}
-        Should Contain   ${result.stdout}  ${CORE LOCAL}
 
     Verify sensor list and trigger list
         ${result}=       Run Process       st2  sensor  list  -j
@@ -62,6 +59,12 @@
         Should Contain   ${result.stdout}  "cmd": "uname -a"
         Should Contain   ${result.stdout}  "hosts": "localhost"
 
+    *** Keywords ***
+    Execution List
+        ${result}=       Run Process       st2  execution  list  -n  1  -j
+        Should Contain   ${result.stdout}  ${SUCCESS STATUS}
+        Should Contain   ${result.stdout}  ${CORE LOCAL}
+        [return]         ${result}
 
     *** Settings ***
     Library            Process

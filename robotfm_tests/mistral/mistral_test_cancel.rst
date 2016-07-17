@@ -1,8 +1,7 @@
 .. code:: robotframework
 
      *** Variables ***
-     ${SLEEP}           30
-     ${HALF SLEEP}      15
+     ${SLEEP}             10
      ${SUCCESS STATUS}    "status": "succeeded
      ${RUNNING STATUS}    "status": "running
      ${CANCELED STATUS}   "status": "canceled"
@@ -15,40 +14,52 @@
          Set Suite Variable   @{Execution ID}
          Log To Console       \nRUN EXECUTION: \n ${result.stdout}
          Log To Console       Execution ID: @{Execution ID}[-1]
-         Sleep  5s
 
      Get Execution Result
-         ${result}=          Run Process  st2  execution  get  @{Execution ID}[-1]  -j
-         Log To Console      \nEXECUTION GET: \n ${result.stdout}
-         Sleep  1s
-         Should Contain X Times   ${result.stdout}  ${RUNNING STATUS}  2
+         ${result}=  Wait Until Keyword Succeeds  10s  1s  Execution Result
+         Log To Console      \nGET EXECUTION: \n ${result.stdout}
 
      Cancel examples.mistral-test-cancel
-         ${result}=           Run Process  st2  execution  cancel  @{Execution ID}[-1]  -j
-         Sleep  2s
+         ${result}=  Wait Until Keyword Succeeds  10s  1s  Execution Cancel
          Log To Console       \nEXECUTION CANCEL: \n ${result.stdout}
-         Should Contain       ${result.stdout}   action execution with id @{Execution ID}[-1] canceled.
-         ${Sleep}=            Evaluate  ${SLEEP} - ${HALF SLEEP}
-         Sleep  ${Sleep}s     Wait for the ${Sleep} seconds
 
      Check Canceled Execution
-         ${result}=           Run Process  st2  execution  get  @{Execution ID}[-1]      -j
-         Log To Console       \nEXECUTION GET AFTER CANCELLATION:\n ${result.stdout}
-         Should Contain X Times   ${result.stdout}  ${RUNNING STATUS}  1
-         Should Contain       ${result.stdout}  ${CANCELED STATUS}
-         ${Sleep}=            Evaluate  ${HALF SLEEP}+2
-         Sleep  ${Sleep}s     Wait for the ${Sleep} seconds
+         ${result}=  Wait Until Keyword Succeeds  ${SLEEP}s  1s         Canceled Execution
+         Log To Console       \nGET EXECUTION AFTER CANCELLATION:\n ${result.stdout}
 
      Executed successfully examples.mistral-test-cancel
-         ${result}=           Run Process  st2  execution  get  @{Execution ID}[-1]       -j
-         Log To Console       \nEXECUTION GET AFTER COMPLETION: \n ${result.stdout}
-         Should Contain       ${result.stdout}  ${CANCELED STATUS}
-         Should Contain       ${result.stdout}  ${SUCCESS STATUS}
-         Should Not Contain   ${result.stdout}  ${RUNNING STATUS}
+         ${Sleep}=   Evaluate  ${SLEEP}+5
+         ${result}=  Wait Until Keyword Succeeds  ${Sleep}s  1s  Final Execution
+         Log To Console       \nGET EXECUTION AFTER COMPLETION: \n ${result.stdout}
+
 
 
     *** Keywords ***
+    Execution Result
+        ${result}=          Run Process  st2  execution  get  @{Execution ID}[-1]  -j
+        Should Contain X Times   ${result.stdout}  ${RUNNING STATUS}  2
+        [return]            ${result}
+
+    Execution Cancel
+        ${result}=           Run Process  st2  execution  cancel  @{Execution ID}[-1]  -j
+        Should Contain  ${result.stdout}   action execution with id @{Execution ID}[-1] canceled.
+        [return]             ${result}
+
+    Canceled Execution
+         ${result}=           Run Process  st2  execution  get  @{Execution ID}[-1]      -j
+         Should Contain X Times   ${result.stdout}  ${RUNNING STATUS}  1
+         Should Contain       ${result.stdout}  ${CANCELED STATUS}
+         [return]             ${result}
+
+    Final Execution
+         ${result}=           Run Process  st2  execution  get  @{Execution ID}[-1]       -j
+         Should Contain       ${result.stdout}  ${CANCELED STATUS}
+         Should Contain       ${result.stdout}  ${SUCCESS STATUS}
+         Should Not Contain   ${result.stdout}  ${RUNNING STATUS}
+         [return]             ${result}
+
     Copy and Load Examples Pack
+        Log To Console   ___________________________SUITE SETUP___________________________
         ${result}=    Run Process     sudo  cp  \-r  /usr/share/doc/st2/examples/  /opt/stackstorm/packs/
         Should Be Equal As Integers   ${result.rc}  0
         # Copy Directory   /usr/share/doc/st2/examples/   /opt/stackstorm/packs/
@@ -56,14 +67,13 @@
         ${result}=    Run Process     st2  run  packs.setup_virtualenv  packs\=examples  -j
         Should Contain                ${result.stdout}  ${SUCCESS STATUS}
         ${result}=    Run Process     st2ctl  reload  \-\-register\-all
-        # Log To Console    SETUP: ${result.stdout} ___ ${result.stderr} ___ ${result.rc}
-        Sleep  5s
+        Log To Console    \nSETUP:\n\tOUTPUT:\n${result.stdout}\n\tERR:\n${result.stderr}\n\tRC:\n${result.rc}
+        Log To Console   ___________________________SUITE SETUP___________________________
 
     Uninstall Examples Pack
+        Log To Console   ___________________________SUITE TEARDOWN___________________________
         ${result}=                   Run Process  st2  run  packs.uninstall  packs\=examples  -j
         Should Contain X Times       ${result.stdout}  ${SUCCESS STATUS}  4
-        # Run Process                 sudo  rm  \-rf  /opt/stackstorm/packs/examples/
-        # Remove Directory        /opt/stackstorm/packs/examples/
         Directory Should Not Exist  /opt/stackstorm/packs/examples/
 
     *** Settings ***
