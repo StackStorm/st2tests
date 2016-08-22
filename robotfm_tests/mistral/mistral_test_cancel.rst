@@ -1,7 +1,7 @@
 .. code:: robotframework
 
      *** Variables ***
-     ${SLEEP}             10
+     ${SLEEP}             20
      ${SUCCESS STATUS}    "status": "succeeded
      ${RUNNING STATUS}    "status": "running
      ${CANCELED STATUS}   "status": "canceled"
