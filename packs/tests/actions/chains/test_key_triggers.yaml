@@ -104,8 +104,8 @@ chain:
                     value: b
                     encrypted: false
                     secret: false
-                    scope: system
-                    uid: "key_value_pair:system:a"
+                    scope: st2kv.system
+                    uid: "key_value_pair:st2kv.system:a"
         on-success: update_key
     -
         name: update_key
@@ -151,15 +151,15 @@ chain:
                     value: c
                     encrypted: false
                     secret: false
-                    scope: system
-                    uid: "key_value_pair:system:a"
+                    scope: st2kv.system
+                    uid: "key_value_pair:st2kv.system:a"
                 old_object:
                     name: a
                     value: b
                     encrypted: false
                     secret: false
-                    scope: system
-                    uid: "key_value_pair:system:a"
+                    scope: st2kv.system
+                    uid: "key_value_pair:st2kv.system:a"
         on-success: check_key_update_trigger_instance
     -
         name: check_key_update_trigger_instance
@@ -194,8 +194,8 @@ chain:
                     value: c
                     encrypted: false
                     secret: false
-                    scope: system
-                    uid: "key_value_pair:system:a"
+                    scope: st2kv.system
+                    uid: "key_value_pair:st2kv.system:a"
         on-success: delete_key
     -
         name: delete_key
@@ -241,6 +241,6 @@ chain:
                     value: c
                     encrypted: false
                     secret: false
-                    scope: system
-                    uid: "key_value_pair:system:a"
+                    scope: st2kv.system
+                    uid: "key_value_pair:st2kv.system:a"
 default: cleanup_environment
