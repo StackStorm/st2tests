@@ -1,6 +1,7 @@
 ---
+ref: fixtures
 name: fixtures
 description: Fixtures needed for end-to-end st2 testing.
-version: 0.1
+version: 0.1.0
 author: Lakshmi Kannan
 email: support@stackstorm.com
