@@ -1,9 +1,9 @@
 ---
 vars:
         base_repo_url: "https://github.com/StackStorm"
-        pack_to_install_1: "libcloud"
-        pack_to_install_2: "chef"
-        pack_to_install_with_no_config: "bitcoin"
+        pack_to_install_1: "datadog"
+        pack_to_install_2: "consul"
+        pack_to_install_with_no_config: "freight"
         install_from_repo: "st2contrib"
         test_timeout: 180
 
