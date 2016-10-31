@@ -58,7 +58,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 run packs.uninstall packs={{ pack_to_install_2 }}"
             timeout: "{{test_timeout}}"
-        on-success: test_packs_install_multiple_packs_from_repo
+        on-success: test_packs_install_multiple_packs
         on-failure: error_handler
     -
         name: test_packs_install_multiple_packs
