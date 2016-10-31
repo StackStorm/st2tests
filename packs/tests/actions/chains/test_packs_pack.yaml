@@ -45,7 +45,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 action list --pack {{ pack_to_install_2 }} | grep 'No matching items found'"
             timeout: "{{test_timeout}}"
-        on-success: test_packs_install_multiple_packs_from_repo
+        on-success: test_packs_install_multiple_packs
         on-failure: setup_uninstall_pack_to_install_2
     -
         name: setup_uninstall_pack_to_install_2
