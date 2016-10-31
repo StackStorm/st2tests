@@ -61,7 +61,7 @@ chain:
         on-success: test_packs_install_multiple_packs_from_repo
         on-failure: error_handler
     -
-        name: test_packs_install_multiple_packs_from_repo
+        name: test_packs_install_multiple_packs
         ref: core.local
         params:
             env:
@@ -69,7 +69,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.install packs={{ pack_to_install_1 }},{{ pack_to_install_2 }} repo_url={{ base_repo_url }}/{{ install_from_repo }}"
+            cmd: "st2 run packs.install packs={{ pack_to_install_1 }},{{ pack_to_install_2 }}"
             timeout: "{{test_timeout}}"
         on-success: test_check_pack_to_install_1_installed
         on-failure: error_handler
