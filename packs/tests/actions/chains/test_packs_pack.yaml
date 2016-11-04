@@ -136,19 +136,6 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 action list --pack {{ pack_to_install_2 }} | grep 'No matching items found'"
             timeout: "{{test_timeout}}"
-        on-success: test_packs_download
-        on-failure: error_handler
-    -
-        name: test_packs_download
-        ref: core.local
-        params:
-            env:
-              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
-              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
-              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
-              ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.download packs={{ pack_to_install_1 }}"
-            timeout: "{{test_timeout}}"
         on-success: test_packs_load_register_all
         on-failure: error_handler
     -
