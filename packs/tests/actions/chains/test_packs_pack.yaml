@@ -30,7 +30,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.uninstall packs={{ pack_to_install_1 }}"
+            cmd: "st2 pack remove {{ pack_to_install_1 }}"
             timeout: "{{test_timeout}}"
         on-success: setup_check_pack_to_install_2_installed
         on-failure: error_handler
@@ -56,7 +56,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.uninstall packs={{ pack_to_install_2 }}"
+            cmd: "st2 pack remove {{ pack_to_install_2 }}"
             timeout: "{{test_timeout}}"
         on-success: test_packs_install_multiple_packs
         on-failure: error_handler
@@ -69,7 +69,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.install packs={{ pack_to_install_1 }},{{ pack_to_install_2 }}"
+            cmd: "st2 pack install  {{ pack_to_install_1 }} {{ pack_to_install_2 }}"
             timeout: "{{test_timeout}}"
         on-success: test_check_pack_to_install_1_installed
         on-failure: error_handler
@@ -108,7 +108,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.uninstall packs={{ pack_to_install_1 }},{{ pack_to_install_2 }}"
+            cmd: "st2 pack remove {{ pack_to_install_1 }} {{ pack_to_install_2 }}"
             timeout: "{{test_timeout}}"
         on-success: test_check_pack_to_install_1_uninstalled
         on-failure: error_handler
@@ -136,32 +136,6 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 action list --pack {{ pack_to_install_2 }} | grep 'No matching items found'"
             timeout: "{{test_timeout}}"
-        on-success: test_packs_download
-        on-failure: error_handler
-    -
-        name: test_packs_download
-        ref: core.local
-        params:
-            env:
-              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
-              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
-              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
-              ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.download packs={{ pack_to_install_1 }}"
-            timeout: "{{test_timeout}}"
-        on-success: test_packs_setup_virtualenv
-        on-failure: error_handler
-    -
-        name: test_packs_setup_virtualenv
-        ref: core.local
-        params:
-            env:
-              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
-              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
-              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
-              ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.setup_virtualenv packs={{ pack_to_install_1 }} | grep 'Successfuly set up'"
-            timeout: "{{test_timeout}}"
         on-success: test_packs_load_register_all
         on-failure: error_handler
     -
@@ -175,7 +149,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             # triggers, sensors, actions, rules, aliases, policy types, policies, configs -> 9
             # 9 post pluggable runners
-            cmd: "st2 run packs.load register=all | grep -c 'Registered' | grep 9"
+            cmd: "st2 pack register | grep -c 'Registered' | grep 9"
             timeout: "{{test_timeout}}"
         on-success: test_pack_install_with_no_config
         on-failure: error_handler
@@ -188,7 +162,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.download packs={{ pack_to_install_with_no_config }}"
+            cmd: "st2 pack install {{ pack_to_install_with_no_config }}"
             timeout: "{{test_timeout}}"
         on-success: test_pack_reinstall_with_no_config
         on-failure: error_handler
@@ -201,7 +175,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 run packs.download packs={{ pack_to_install_with_no_config }}"
+            cmd: "st2 pack install {{ pack_to_install_with_no_config }}"
             timeout: "{{test_timeout}}"
         on-success: success_handler
         on-failure: error_handler
