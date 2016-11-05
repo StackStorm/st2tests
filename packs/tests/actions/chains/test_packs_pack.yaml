@@ -149,7 +149,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             # triggers, sensors, actions, rules, aliases, policy types, policies, configs -> 9
             # 9 post pluggable runners
-            cmd: "st2 pack register | grep -c 'Registered' | grep 9"
+            cmd: "st2 pack register"  # --fail-on-failure support needed. https://stackstorm.atlassian.net/browse/STORM-2456
             timeout: "{{test_timeout}}"
         on-success: test_pack_install_with_no_config
         on-failure: error_handler
