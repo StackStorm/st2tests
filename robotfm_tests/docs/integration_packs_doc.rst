@@ -12,7 +12,7 @@
 
 
     Verify multiple packs can be installed from repo
-        ${result}=          Run Process  st2  run  packs.install  packs\=${PACK TO INSTALL 1},${PACK TO INSTALL 2}  repo_url\=${BASE REPO URL}/${INSTALL FROM REPO}  -j
+        ${result}=          Run Process  st2 pack install  ${PACK TO INSTALL 1} ${PACK TO INSTALL 2}  repo_url\=${BASE REPO URL}/${INSTALL FROM REPO}
         # Log To Console     \nINSTALL: ${result.stdout}
         Should Not Contain  ${result.stdout}   ${FAIL STATUS}
         ${result}=          Run Process    st2  action  list  --pack  ${PACK TO INSTALL 1}  -j
@@ -24,7 +24,7 @@
 
 
     Verify multiple packs can be uninstalled
-        ${result}=          Run Process  st2  run  packs.uninstall  packs\=${PACK TO INSTALL 1},${PACK TO INSTALL 2}  -j
+        ${result}=          Run Process  st2 pack remove  ${PACK TO INSTALL 1} ${PACK TO INSTALL 2}
         # Log To Console     \nUninstalling Pack: ${PACK TO INSTALL 1} and ${PACK TO INSTALL 2} :\n${result.stdout}
 
         [Documentation]     Verify packs were uninstalled successfully in previous test step
@@ -35,35 +35,20 @@
         Should Contain      ${result.stdout}  No matching items found
 
 
-    Verify packs can be downloaded using packs.download
-        ${result}=          Run Process    st2  run  packs.download  packs\=${PACK TO INSTALL 1}  -j
-        # Log To Console      \nDOWNLOAD: ${result.stdout}
-        Should Contain      ${result.stdout}  ${SUCCESS STATUS}
-        Should Contain      ${result.stdout}  ${PACK 1 SUCCESS}
-
-
-    Verify "packs.setup_virtualenv" for a pack downloaded in previous step
-        ${result}=          Run Process  st2  run  packs.setup_virtualenv  packs\=${PACK TO INSTALL 1}   -j
-        Should Contain      ${result.stdout}  "result": "Successfuly set up virtualenv for the following packs: ${PACK TO INSTALL 1}"
-        Should Contain      ${result.stdout}  ${SUCCESS STATUS}
-
-
-    Verify "packs.load register=all" after download, setup virtual env
-        ${result}=          Run Process  st2  run  packs.load  register\=all  -j
+    Verify "st2 pack register" works
+        ${result}=          Run Process  st2  pack register
         Should Contain      ${result.stdout}  "failed": false,
         Should Contain      ${result.stdout}  "return_code": 0,
 
 
     Verify pack install with no config
-        ${result}=          Run Process  st2  run  packs.download  packs\=${PACK TO INSTALL NO CONFIG}  -j
+        ${result}=          Run Process  st2 pack install ${PACK TO INSTALL NO CONFIG}
         Should Contain      ${result.stdout}  "${PACK TO INSTALL NO CONFIG}": "Success."
         # Should Contain      ${result.stdout}  DEBUG${SPACE*3}Moving pack from /root/st2contrib/packs/${PACK TO INSTALL NO CONFIG} to /opt/stackstorm/packs/.${\n}
 
     Verify pack reinstall with no Config
-        ${result}=          Run Process  st2  run  packs.download  packs\=${PACK TO INSTALL NO CONFIG}  -j
+        ${result}=          Run Process  st2 pack install ${PACK TO INSTALL NO CONFIG}
         Should Contain      ${result.stdout}  "${PACK TO INSTALL NO CONFIG}": "Success."
-        # Should Contain      ${result.stdout}  DEBUG${SPACE*3}Removing existing pack bitcoin in /opt/stackstorm/packs/${PACK TO INSTALL NO CONFIG} to replace.${\n}
-
 
     *** Keywords ***
     Check Installation Pack 1
@@ -76,7 +61,7 @@
 
 
     Uninstall Pack 1
-        ${result}=        Run Process  st2  run  packs.uninstall  packs\=${PACK TO INSTALL 1}  -j
+        ${result}=        Run Process  st2  pack remove ${PACK TO INSTALL 1}  -j
         # Log To Console    Uninstalling Pack: ${PACK TO INSTALL 1} :\n${result.stdout}
         Run Keyword       Check Installation Pack 2
 
