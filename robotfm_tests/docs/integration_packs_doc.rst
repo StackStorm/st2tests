@@ -15,6 +15,7 @@
         ${result}=          Run Process  st2  run  packs.install  packs\=${PACK TO INSTALL 1},${PACK TO INSTALL 2}  repo_url\=${BASE REPO URL}/${INSTALL FROM REPO}  -j
         # Log To Console     \nINSTALL: ${result.stdout}
         Should Not Contain  ${result.stdout}   ${FAIL STATUS}
+        Should Not Contain  ${result.stdout}   ${TIMEOUT STATUS}
         ${result}=          Run Process    st2  action  list  --pack  ${PACK TO INSTALL 1}  -j
         # Log To Console     \nLIST: ${result.stdout}
         Should Contain      ${result.stdout}  ${PACK VAR 1}

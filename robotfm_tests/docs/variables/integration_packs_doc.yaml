@@ -6,5 +6,6 @@ INSTALL FROM REPO:           "st2contrib"
 PACK VAR 1:                  '"pack": "libcloud"'
 PACK VAR 2:                  '"pack": "chef"'
 FAIL STATUS:                 '"status": "failed"'
+TIMEOUT STATUS:              '"status": "timeout"'
 SUCCESS STATUS:              '"status": "succeeded"'
 PACK 1 SUCCESS:              '"libcloud": "Success."'
