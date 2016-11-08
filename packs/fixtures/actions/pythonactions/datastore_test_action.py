@@ -28,7 +28,7 @@ class DatastoreTestAction(Action):
         # print('Wrote key: %s value: %s to datastore.' % (test_name, test_value))
 
         # Get
-        val = client.keys.get_by_name(name_or_id=test_name)
+        val = client.keys.get_by_name(name=test_name)
         if val.value != test_value:
             raise Exception('KeyValue access failed on GET: %s' % test_name)
         # print('Got value: %s from datastore.' % val.value)
