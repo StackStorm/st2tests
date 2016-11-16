@@ -51,8 +51,8 @@
 
     Verify "packs.load register=all" after download, setup virtual env
         ${result}=          Run Process  st2  run  packs.load  register\=all  -j
-        Should Contain      ${result.stdout}  "failed": false,
-        Should Contain      ${result.stdout}  "return_code": 0,
+        Should Contain      ${result.stdout}  "status": "succeeded",
+        Should Contain      ${result.stdout}  "exit_code": 0,
 
 
     Verify pack install with no config
