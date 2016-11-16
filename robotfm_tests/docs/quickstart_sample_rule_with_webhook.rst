@@ -73,7 +73,6 @@
         Should Contain X Times   ${result.stdout}  "status": "succeeded  3
         Should Contain   ${result.stdout}    "action": "packs.unload"
         Should Contain   ${result.stdout}    "action": "packs.delete"
-        Should Contain   ${result.stdout}    "action": "packs.restart_component"
         ${result}=       Run Process    st2  action  list  -p  examples
         Should Contain   ${result.stdout}  No matching items found
 
@@ -99,7 +98,6 @@
         Should Contain X Times   ${result.stdout}  "status": "succeeded  3
         Should Contain   ${result.stdout}    "action": "packs.unload"
         Should Contain   ${result.stdout}    "action": "packs.delete"
-        Should Contain   ${result.stdout}    "action": "packs.restart_component"
         ${result}=       Run Process    st2  action  list  -p  examples
         Should Contain   ${result.stdout}  No matching items found
 
