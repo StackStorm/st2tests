@@ -12,7 +12,7 @@
 
 
     Verify multiple packs can be installed from repo
-        ${result}=          Run Process  st2  run  packs.install  packs\=${PACK TO INSTALL 1},${PACK TO INSTALL 2}  repo_url\=${BASE REPO URL}/${INSTALL FROM REPO}  -j
+        ${result}=          Run Process  st2  run  packs.install  packs\=${PACK TO INSTALL 1},${PACK TO INSTALL 2}  -j
         # Log To Console     \nINSTALL: ${result.stdout}
         Should Not Contain  ${result.stdout}   ${FAIL STATUS}
         Should Not Contain  ${result.stdout}   ${TIMEOUT STATUS}
