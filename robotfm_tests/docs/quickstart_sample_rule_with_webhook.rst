@@ -70,7 +70,7 @@
 
     Verify examples pack uninstall
         ${result}=       Run Process  st2  run  packs.uninstall  packs\=examples  -j
-        Should Contain X Times   ${result.stdout}  "status": "succeeded  4
+        Should Contain X Times   ${result.stdout}  "status": "succeeded  3
         Should Contain   ${result.stdout}    "action": "packs.unload"
         Should Contain   ${result.stdout}    "action": "packs.delete"
         Should Contain   ${result.stdout}    "action": "packs.restart_component"
@@ -96,7 +96,7 @@
 
     Remove the examples pack
         ${result}=       Run Process  st2  run  packs.uninstall  packs\=examples  -j
-        Should Contain X Times   ${result.stdout}  "status": "succeeded  4
+        Should Contain X Times   ${result.stdout}  "status": "succeeded  3
         Should Contain   ${result.stdout}    "action": "packs.unload"
         Should Contain   ${result.stdout}    "action": "packs.delete"
         Should Contain   ${result.stdout}    "action": "packs.restart_component"
