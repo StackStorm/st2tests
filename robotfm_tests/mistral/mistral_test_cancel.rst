@@ -73,7 +73,7 @@
     Uninstall Examples Pack
         Log To Console   ___________________________SUITE TEARDOWN___________________________
         ${result}=                   Run Process  st2  run  packs.uninstall  packs\=examples  -j
-        Should Contain X Times       ${result.stdout}  ${SUCCESS STATUS}  4
+        Should Contain X Times       ${result.stdout}  ${SUCCESS STATUS}  3
         Directory Should Not Exist  /opt/stackstorm/packs/examples/
 
     *** Settings ***
