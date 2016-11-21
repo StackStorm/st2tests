@@ -1,7 +1,7 @@
 .. code:: robotframework
 
      *** Variables ***
-     ${SLEEP}             20
+     ${SLEEP}             10
      ${SUCCESS STATUS}    "status": "succeeded
      ${RUNNING STATUS}    "status": "running
      ${CANCELED STATUS}   "status": "canceled"
@@ -24,7 +24,8 @@
          Log To Console       \nEXECUTION CANCEL: \n ${result.stdout}
 
      Check Canceled Execution
-         ${result}=  Wait Until Keyword Succeeds  ${SLEEP}s  1s         Canceled Execution
+         ${Sleep}=   Evaluate  ${SLEEP}+5
+         ${result}=  Wait Until Keyword Succeeds  ${Sleep}s  1s         Canceled Execution
          Log To Console       \nGET EXECUTION AFTER CANCELLATION:\n ${result.stdout}
 
      Executed successfully examples.mistral-test-cancel
