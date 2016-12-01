@@ -1,5 +1,9 @@
 import json
 
+# This is to test imports within actions folder to check
+# if we messed up sys.path for actions.
+from base import DummyClass
+
 from st2actions.runners.pythonrunner import Action
 from st2client.client import Client
 from st2client.models import KeyValuePair
@@ -13,8 +17,11 @@ __all__ = [
 class DatastoreTestAction(Action):
 
     def run(self):
+        t_cls = DummyClass()
+        print('Tests begin: %s' % t_cls.now())
         self._test_datastore_actions_via_client()
         self._test_datastore_actions_via_action_service()
+        print('Tests end: %s' % t_cls.now())
 
     def _test_datastore_actions_via_client(self):
         print('Test datastore access via raw client.')
