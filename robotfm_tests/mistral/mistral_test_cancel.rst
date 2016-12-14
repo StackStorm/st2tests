@@ -16,19 +16,23 @@
          Log To Console       Execution ID: @{Execution ID}[-1]
 
      Get Execution Result
+         Sleep  2s
          ${result}=  Wait Until Keyword Succeeds  10s  1s  Execution Result
          Log To Console      \nGET EXECUTION: \n ${result.stdout}
 
      Cancel examples.mistral-test-cancel
+         Sleep  4s
          ${result}=  Wait Until Keyword Succeeds  10s  1s  Execution Cancel
          Log To Console       \nEXECUTION CANCEL: \n ${result.stdout}
 
      Check Canceled Execution
+         Sleep  4s
          ${Sleep}=   Evaluate  ${SLEEP}+10
          ${result}=  Wait Until Keyword Succeeds  ${Sleep}s  1s         Canceled Execution
          Log To Console       \nGET EXECUTION AFTER CANCELLATION:\n ${result.stdout}
 
      Executed successfully examples.mistral-test-cancel
+         Sleep  2s
          ${Sleep}=   Evaluate  ${SLEEP}+10
          ${result}=  Wait Until Keyword Succeeds  ${Sleep}s  1s  Final Execution
          Log To Console       \nGET EXECUTION AFTER COMPLETION: \n ${result.stdout}
