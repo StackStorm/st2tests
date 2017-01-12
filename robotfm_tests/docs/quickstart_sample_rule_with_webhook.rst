@@ -113,7 +113,5 @@
 
     Clean Files
         Log To Console   ___________________________SUITE TEARDOWN___________________________
-        ${file exist}    Run Process    sudo  ls   /home/stanley/st2.webhook_sample.out  shell=True
-        Run Keyword If   ${file exist.rc} == 0  Delete st2.webhook_sample.out
-        Log To Console   \nFILE STATUS:\n\tSTDOUT: ${file exist.stdout} \n\tSTDERR: ${file exist.rc} \n\tRC: ${file exist.stderr}
+        Run Keyword      Delete st2.webhook_sample.out
         Log To Console   ___________________________SUITE TEARDOWN___________________________
