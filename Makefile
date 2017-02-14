@@ -50,9 +50,9 @@ pylint: requirements .pylint
 	@echo "================== pylint ===================="
 	@echo
 	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/fixtures/actions/pythonactions/*.py || exit 1;
-	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/fixtures/actions/pythonactions/scripts/*.py || exit 1;
-	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/fixtures/actions/pythonactions/scripts/*/*.py || exit 1;
-	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/fixtures/actions/sensors/*.py || exit 1;
+	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/fixtures/actions/scripts/*.py || exit 1;
+	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/fixtures/actions/scripts/*/*.py || exit 1;
+	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/fixtures/sensors/*.py || exit 1;
 	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/asserts/actions/*.py || exit 1;
 	
 .PHONY: flake8
@@ -64,9 +64,9 @@ flake8: requirements .flake8
 	@echo "==================== flake ===================="
 	@echo
 	. $(VIRTUALENV_DIR)/bin/activate; flake8 --config ./lint-configs/python/.flake8 packs/fixtures/actions/pythonactions/*.py
-	. $(VIRTUALENV_DIR)/bin/activate; flake8 --config ./lint-configs/python/.flake8 packs/fixtures/actions/pythonactions/scripts/*.py
-	. $(VIRTUALENV_DIR)/bin/activate; flake8 --config ./lint-configs/python/.flake8 packs/fixtures/actions/pythonactions/*/*.py
-	. $(VIRTUALENV_DIR)/bin/activate; flake8 --config ./lint-configs/python/.flake8 packs/fixtures/actions/sensors/*.py
+	. $(VIRTUALENV_DIR)/bin/activate; flake8 --config ./lint-configs/python/.flake8 packs/fixtures/actions/scripts/*.py
+	. $(VIRTUALENV_DIR)/bin/activate; flake8 --config ./lint-configs/python/.flake8 packs/fixtures/actions/scripts/*/*.py
+	. $(VIRTUALENV_DIR)/bin/activate; flake8 --config ./lint-configs/python/.flake8 packs/fixtures/sensors/*.py
 	. $(VIRTUALENV_DIR)/bin/activate; flake8 --config ./lint-configs/python/.flake8 packs/asserts/actions/*.py
 
 .PHONY: lint
