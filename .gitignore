@@ -7,3 +7,5 @@ report.html
 
 # Hubot
 .hubot_history
+
+virtualenv/
