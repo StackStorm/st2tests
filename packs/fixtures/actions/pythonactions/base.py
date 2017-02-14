@@ -4,6 +4,7 @@ __all__ = [
     'DummyClass'
 ]
 
+
 class DummyClass(object):
 
     def now(self):
