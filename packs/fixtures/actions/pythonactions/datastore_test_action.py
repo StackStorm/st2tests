@@ -1,3 +1,4 @@
+import os
 import json
 
 # This is to test imports within actions folder to check
@@ -46,6 +47,14 @@ class DatastoreTestAction(Action):
 
     def _test_datastore_actions_via_action_service(self):
         print('Test datastore access via action_service')
+
+        # Note: "decrypt" option requires admin access and when we generate service token that
+        # token isn't granted admin access so it won't work.
+        # To make the tests also pass on st2enteprise with RBAC we use explicit admin token
+        admin_token = os.environ.get('ST2_AUTH_TOKEN')
+        self.action_service.datastore_service._get_api_client()
+        os.environ['ST2_AUTH_TOKEN'] = admin_token
+
         data = {'somedata': 'foobar'}
         data_json_str = json.dumps(data)
 
