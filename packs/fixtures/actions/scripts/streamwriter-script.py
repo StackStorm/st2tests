@@ -35,6 +35,7 @@ def main(args):
     if obj_arg:
         sys.stdout.write(' OBJ: %s' % obj_arg)
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--stream', help='Stream.', required=True)
