@@ -65,7 +65,7 @@ flake8: requirements .flake8
 lint: requirements .lint
 
 .PHONY: .lint
-.lint: .flake8
+.lint: .flake8 .pylint
 
 .PHONY: requirements
 requirements: virtualenv
