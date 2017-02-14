@@ -45,6 +45,8 @@ chain:
         value: 0
     on-success: "test_exception_python_action"
   -
+    # Verify that passing in an invalid parameter results in an exception and
+    # non zero exit code
     name: "test_exception_python_action"
     ref: "fixtures.streamwriter"
     params:
@@ -61,4 +63,9 @@ chain:
   -
     name: "test_datastore_access"
     ref: "fixtures.datastore_test_action"
-    params: {}
+    params:
+        env:
+            ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+            ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+            ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+            ST2_AUTH_TOKEN: "{{token}}"
