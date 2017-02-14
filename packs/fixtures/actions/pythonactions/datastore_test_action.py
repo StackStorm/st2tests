@@ -70,15 +70,15 @@ class DatastoreTestAction(Action):
 
         # decrypted value should match
         value = self.action_service.get_value('cache', decrypt=True)
-        if value != 'foo':
+        if not value or value != 'foo':
             raise Exception('Retrieved incorrect value from datastore: %s. Expected: %s' %
-                            (value.value, 'foo'))
+                            (value, 'foo'))
 
         # non-decrypted value should not match
         value = self.action_service.get_value('cache')
-        if value == 'foo':
+        if not value or value == 'foo':
             raise Exception('Retrieved incorrect value from datastore: %s. Did not expect: %s' %
-                            (value.value, 'foo'))
+                            (value, 'foo'))
 
         # Delete a value
         self.action_service.delete_value('cache')
