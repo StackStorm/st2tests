@@ -6,8 +6,7 @@ VIRTUALENV_DIR ?= virtualenv
 BINARIES := bin
 
 # All components are prefixed by st2
-COMPONENTS := $(wildcard st2*)
-COMPONENTS += $(wildcard contrib/runners/*)
+COMPONENTS := $(wildcard /tmp/st2/st2*)
 
 # Components that implement a component-controlled test-runner. These components provide an
 # in-component Makefile. (Temporary fix until I can generalize the pecan unittest setup. -mar)
@@ -19,12 +18,10 @@ space_char :=
 space_char +=
 comma := ,
 COMPONENT_PYTHONPATH = $(subst $(space_char),:,$(realpath $(COMPONENTS)))
-COMPONENTS_TEST := $(foreach component,$(filter-out $(COMPONENT_SPECIFIC_TESTS),$(COMPONENTS)),$(component))
-COMPONENTS_TEST_COMMA := $(subst $(space_char),$(comma),$(COMPONENTS_TEST))
 
 PYTHON_TARGET := 2.7
 
-REQUIREMENTS := test-requirements.txt
+REQUIREMENTS := test-requirements.txt requirements.txt
 PIP_OPTIONS := $(ST2_PIP_OPTIONS)
 
 NOSE_OPTS := --rednose --immediate
