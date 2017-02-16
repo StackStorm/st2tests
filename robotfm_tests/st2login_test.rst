@@ -3,7 +3,7 @@
     *** Settings ***
     Library          Process
     Library          String 
-    Library      OperatingSystem 
+    Library          OperatingSystem 
  
     *** Test Cases ***
     Verify st2 is installed
