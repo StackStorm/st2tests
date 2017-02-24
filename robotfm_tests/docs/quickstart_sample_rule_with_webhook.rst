@@ -36,7 +36,7 @@
         Should Contain   ${result.stdout}  ERROR: 409 Client Error: Conflict
         Should Contain   ${result.stdout}  MESSAGE: Tried to save duplicate unique keys
         Should Contain   ${result.stdout}  duplicate key error
-        Should Contain   ${result.stdout}  { : "rule:examples:sample_rule_with_webhook" }
+        Should Contain   ${result.stdout}  sample_rule_with_webhook
 
     Verify rule status
         ${TOKEN}=        Run Process    st2  auth  -p  Ch@ngeMe  st2admin  -t  shell=True
