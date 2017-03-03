@@ -3,6 +3,7 @@ ST2 Self-Test Pack
 
 About
 -----
+
 This pack contains a set of end-to-end tests, that allow to verify st2, using st2 itself. Currently the set contains the following tests:
 
 * **tests.test_packs_pack** verifies functionality provided by [Packs pack](http://docs.stackstorm.com/packs.html#getting-a-pack).
@@ -10,11 +11,13 @@ This pack contains a set of end-to-end tests, that allow to verify st2, using st
 * **tests.test_quickstart_rules** tests rule creation, validation and deletion, as described in [Define a Rule](http://docs.stackstorm.com/start.html#define-a-rule) section of [Quick Start](http://docs.stackstorm.com/start.html)
 * **tests.test_quickstart_key** verifies key create/get example, used in [Datastore](http://docs.stackstorm.com/start.html#datastore) section of [Quick Start](http://docs.stackstorm.com/start.html)
 * **tests.test_windows_runners** verifies Windows runner prerequisites and if Windows host was specified, runs an action using core.windows_cmd. This workflow requires 3 parameters: windows_host, windows_username and windows_password.
+* **tests.test_run_pack_tests_tool** verifies that ``st2-run-pack-tests`` tool works out of the box on package based StackStorm installations.
 
 All tests utilize [ActionChain](http://docs.stackstorm.com/actionchain.html).
 
 Usage
 -----
+
 When |st2| is installed using all-in-one installation with [st2_deploy.sh](http://docs.stackstorm.com/install/index.html), the test pack can be used as part of the [self-check script](http://docs.stackstorm.com/troubleshooting.html#running-self-verification). Alternatively, each of the tests can be executed as follows:
 
 1. Switch to `root` user and save an authentication token into `ST2_AUTH_TOKEN` variable:
