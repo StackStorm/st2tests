@@ -70,7 +70,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2-run-pack-tests /opt/stackstorm/packs/{{ pack_to_install_2 }} -j"
             timeout: "{{test_timeout}}"
-        on-success: test_check_pack_to_install_1_installed
+        on-success: success_handler
         on-failure: error_handler
     -
         name: success_handler
