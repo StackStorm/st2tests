@@ -1,5 +1,5 @@
 ---
-name: "test_run_pack_tests_tools"
+name: "test_run_pack_tests_tool"
 description: "Test which verifies that st2-run-pack-tests works correctly out of the box."
 runner_type: "action-chain"
 enabled: true
