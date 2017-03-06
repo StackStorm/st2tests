@@ -43,7 +43,7 @@
         Log To Console   \nTOKEN: ${TOKEN.stdout} \nSTDERR: ${TOKEN.stderr} \nRC ${TOKEN.rc}
         ${result}=       Run  curl -k https://localhost/api/v1/webhooks/sample -d '{"foo": "bar", "name": "st2"}' -H 'Content-Type: application/json' -H 'X-Auth-Token: ${TOKEN.stdout}'
         Log To Console   \nOUTPUT: ${result}
-        Should Contain   ${result}      {"foo": "bar", "name": "st2"}
+        Should Contain   ${result}      {\n    "foo": "bar",\n    "name": "st2"\n}
         ${result}=       Wait Until Keyword Succeeds  5s  1s  Check Tail
         Log To Console   \nFILE CONTENTS:\n${result.stdout}\nSTDERR:\n${result.stderr}\nRC:\n${result.rc}
 
