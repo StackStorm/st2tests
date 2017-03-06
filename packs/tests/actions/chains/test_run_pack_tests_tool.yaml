@@ -4,7 +4,7 @@ vars:
     # Note: Pack 1 should have no external dependencies beyond Python stdlib ones.
     pack_to_install_1: "csv"
     pack_to_install_2: "xml"
-    test_timeout: 160
+    test_timeout: 180
 
 chain:
     -
