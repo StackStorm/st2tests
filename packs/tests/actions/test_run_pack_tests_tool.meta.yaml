@@ -1,0 +1,19 @@
+---
+name: "test_run_pack_tests_tool"
+description: "Test which verifies that st2-run-pack-tests works correctly out of the box."
+runner_type: "action-chain"
+enabled: true
+entry_point: "chains/test_run_pack_tests_tool.yaml"
+parameters:
+  token:
+    type: "string"
+    description: "st2 auth token"
+    default: ""
+  protocol:
+    type: "string"
+    description: "http/https"
+    default: "http"
+  hostname:
+    type: "string"
+    description: "St2 host to run tests against"
+    default: "127.0.0.1"
