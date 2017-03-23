@@ -43,7 +43,7 @@
         Log To Console   \nTOKEN: ${TOKEN.stdout} \nSTDERR: ${TOKEN.stderr} \nRC ${TOKEN.rc}
         ${result}=       Run  curl -k https://localhost/api/v1/webhooks/sample -d '{"foo": "bar", "name": "st2"}' -H 'Content-Type: application/json' -H 'X-Auth-Token: ${TOKEN.stdout}'
         Log To Console   \nOUTPUT: ${result}
-        Should Contain   ${result}      {"foo": "bar", "name": "st2"}
+        Should Contain   ${result}      {\n    "foo": "bar",\n    "name": "st2"\n}
         ${result}=       Wait Until Keyword Succeeds  5s  1s  Check Tail
         Log To Console   \nFILE CONTENTS:\n${result.stdout}\nSTDERR:\n${result.stderr}\nRC:\n${result.rc}
 
@@ -108,7 +108,7 @@
 
     Check Tail
         ${result}=  Run Process  sudo  tail  -n  1  /home/stanley/st2.webhook_sample.out  shell=True
-        Should Contain   ${result.stdout}     {'foo': 'bar', 'name': 'st2'}
+        Should Contain   ${result.stdout}     {u'foo': u'bar', u'name': u'st2'}
         [return]    ${result}
 
     Clean Files
