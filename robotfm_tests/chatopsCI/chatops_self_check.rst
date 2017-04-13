@@ -28,7 +28,7 @@
         # Run Keyword If   ${result.rc} != 0   Fatal Error   CHATOPS.NOTIFY RULE NOT PRESENT/ENABLED
 
     Check Hubot help and load commands
-        ${result}=       Run Keyword  Hubot Help 
+        ${result}=       Run Keyword  Hubot Help
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain   ${result.stdout}    ! help - Displays all of the help commands
         Should Contain   ${result.stdout}    commands are loaded
@@ -47,7 +47,7 @@
     Check the complete request-response flow
         ${channel}=      Generate Token
         Log To Console   \nCHANNEL: ${channel}
-        ${result}=       Run Keyword  Complete Flow  ${channel} 
+        ${result}=       Run Keyword  Complete Flow  ${channel}
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain   ${result.stdout}   Give me just a moment to find the actions for you
         Should Contain   ${result.stdout}   st2.actions.list - Retrieve a list of available StackStorm actions.
@@ -70,7 +70,7 @@
 
     Complete Flow
         [Arguments]    ${channel}
-        ${result}=     Run Process  {  echo  -n;  sleep  5;  echo  'hubot  st2  list  5  actions  pack\=st2';  echo;  sleep  10;}
+        ${result}=     Run Process  {  echo  -n;  sleep  10;  echo  'hubot  st2  list  5  actions  pack\=st2';  echo;  sleep  25;}
         ...                         |  bin\/hubot  \-\-test   cwd=/opt/stackstorm/chatops/    shell=True
         [return]       ${result}
 
