@@ -100,7 +100,7 @@
         [Documentation]     EXECUTION ID is from Keyword: Get post_message execution id
         ${output}=          Run Process    {  sleep  5;  echo  '!st2  get  execution  ${EXECUTION ID}'
         ...                                |  slackcat  --channel\=chatopsci  --stream  --plain;}
-        ...                                |  timeout  15s  bin/hubot  cwd=/opt/stackstorm/chatops/  shell=True
+        ...                                |  timeout  25s  bin/hubot  cwd=/opt/stackstorm/chatops/  shell=True
         Log To Console      \n======+++++++++++============= COMPLETE STDOUT ====================+++++++++++++\n
         Log To Console      \nSTDOUT: ${output.stdout} \nSTDERR: ${output.stderr} \nRC ${output.rc}
         Log To Console      \n======+++++++++++=============+++++++++++++++++====================+++++++++++++\n
