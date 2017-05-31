@@ -1,0 +1,25 @@
+---
+name: "notify_users_workflow_st2ask"
+pack: "st2"
+description: Triggers a mistral workflow for notifying users when an st2.ask action is detected
+enabled: true
+
+trigger:
+  type: core.st2.generic.actiontrigger
+
+criteria:
+  trigger.action_ref:
+      type: equals
+      pattern: st2.ask
+  trigger.status:
+      type: equals
+      pattern: pending
+
+# This example shows how a user might create a more elaborate workflow for notifying the right group
+# when an st2.ask action has been detected. In this case, the "tag" parameter from the original
+# st2.ask execution is simply passed into this workflow, and the workflow contains the logic on
+# who to inform, and how.
+action:
+  ref: testpack.notify_approvers
+  parameters:
+    ask_tag: "{{trigger.parameters.tag}}"

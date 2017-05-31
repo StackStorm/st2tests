@@ -25,6 +25,10 @@ StackStorm has a built-in trigger called `core.st2.generic.actiontrigger` which 
 
 > Please read `st2-ask/example_rule.md` for an example of this
 
+However, it's not uncommon to have different groups to provide approvals for different `st2.ask` actions. For this reason, `st2.ask` has a `tag` parameter, which is an arbitrary field for attaching a useful label to a specific instance of `st2.ask` in your workflows. In `st2-ask/example_rule.md`, you'll notice that we're explicitly looking for this field in our rule criteria (i.e. only watching for `st2.ask` instances tagged "managers")
+
+It may be more appropriate to put all of the complex logic of who to notify, and using what mechanism (i.e. Slack, email, etc) to a workflow. See `st2-ask/example_rule_workflow.md` for a modified version of this rule that simply passes the original `tag` value for `st2.ask` as a parameter to this workflow. This would allow us to only require one rule for notification purposes.
+
 ## Satisfying an `st2.ask` Execution
 
 Finally, once we've invoked `st2.ask` in a workflow, and notified approvers/responders, they need a way to respond and allow the workflow to continue. They can do this via the Web UI, or via the command-line using the `st2` client. For either of these options, the idea is to pass data into the action execution that will satisfy the schema.
