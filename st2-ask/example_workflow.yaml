@@ -20,12 +20,12 @@ examples.mistral-ask:
 
 
         # We hit our first approval task. The first time this action runs, the execution context will be empty, so
-        # naturally, this data will fail to validate, so the action will return an `awaits` status, and this workflow
+        # naturally, this data will fail to validate, so the action will return an `pending` status, and this workflow
         # will be paused. It will remain in this state until someone passes additional data into the executions API.
         # When this happens, the action will re-run, and re-attempt to validate the data in the context. If this data
         # validates, the action will return a success status and will continue with the workflow.
         #
-        # If it does not validate, it will return to `awaits` status.
+        # If it does not validate, it will return to `pending` status.
         #
         # Note that the optional "schema" parameter is supplied down in the "ask_for_2fa_token" task, but is omitted here.
         # By default, `st2.ask` will use the default JSON schema (with a bit of built-in logic) that validates a
@@ -51,13 +51,13 @@ examples.mistral-ask:
         # but for the second factor, we need to ask someone to intervene.
         #
         # In this instance of `st2.ask`, the same initial treatment applies. The execution context is empty,
-        # so naturally, it will fail to validate, and the action will return `awaits` status.
+        # so naturally, it will fail to validate, and the action will return `pending` status.
         #
         # Note that we're providing our own JSON schema to the `schema` parameter here. `st2.ask` will
         # use this to validate data stored in the execution context instead of the default schema that
         # validates a simple approve/reject response from the user.
         # When we do this, the action doesn't have a way of knowing what a "rejected" approval means,
-        # so this will block in `awaits` status until someone sends data into the context that will validate
+        # so this will block in `pending` status until someone sends data into the context that will validate
         # the schema.
         # In this event, the user may want to look into writing their own action that has more detailed checks of
         # the data once validated, if they need this.

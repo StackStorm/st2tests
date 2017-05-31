@@ -1,7 +1,7 @@
 ---
 name: "notify_slack_execution_change"
 pack: "st2"
-description: "Watches for an execution status of "awaits" for a certain action ref
+description: "Watches for an execution status of "pending" for a certain action ref
 enabled: true
 
 trigger:
@@ -13,7 +13,7 @@ criteria:
       pattern : st2.ask
   trigger.status:
       type: equals
-      pattern : awaits
+      pattern : pending
 
 action:
   ref: slack.post_message

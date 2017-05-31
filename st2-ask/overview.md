@@ -21,7 +21,7 @@ An example workflow can be found at `st2-ask/example_workflow.md`. This shows `s
 
 Of course, when `st2.ask` is invoked, it's important to quickly notify those that can provide a response to an `st2.ask` execution. Using Rules for this is not only a very idiomatic way to do this in StackStorm, it also allows for a lot of different notification options by simply leveraging existing packs like `slack` or `email` either in the Rule itself, or in a more elaborate workflow that uses a combination of these.
 
-StackStorm has a built-in trigger called `core.st2.generic.actiontrigger` which can be watched by Rules to know when an execution has changed status. Using two simple string matches within the criteria, we can narrow this down to only execution changes to the `awaits` status from the `st2.ask` action. In response to such an event, we can send a simple message via slack containing the execution ID, as an example, so the user knows which execution has paused.
+StackStorm has a built-in trigger called `core.st2.generic.actiontrigger` which can be watched by Rules to know when an execution has changed status. Using two simple string matches within the criteria, we can narrow this down to only execution changes to the `pending` status from the `st2.ask` action. In response to such an event, we can send a simple message via slack containing the execution ID, as an example, so the user knows which execution has paused.
 
 > Please read `st2-ask/example_rule.md` for an example of this
 
