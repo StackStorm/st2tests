@@ -70,6 +70,8 @@ examples.mistral-ask:
                     properties:
                         second_factor:
                            type: string
+                           description: Please enter passcode for the second factor authentication
+                           secret: true
                     required: ["second_factor"]
             publish:
                 second_factor: <% task(ask_for_2fa_token).result.second_factor %>
