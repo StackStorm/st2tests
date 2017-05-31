@@ -29,7 +29,7 @@ StackStorm has a built-in trigger called `core.st2.generic.actiontrigger` which 
 
 Finally, once we've invoked `st2.ask` in a workflow, and notified the approvers, they need a way to approve, or otherwise allow the workflow to continue. They can do this via the Web UI, or via the command-line using the `st2` command. For either of these options, the idea is to provide a JSON or YAML data structure that will satisfy the schema (and any additional checks) implemented in the `st2.ask` action.
 
-> Note that both options are API-driven, which means the approve functionality can (and should) be protected by the RBAC functionality available in Brocade Workflow Composer. It also means that providing an approval response to an `st2.ask` action can be done programmatically, if you would like to build your own tooling to do this.
+> Note that both options are API-driven, which means the approve functionality can (and should) be protected by the RBAC functionality available in Brocade Workflow Composer. A new [`execution`](https://docs.stackstorm.com/rbac.html#execution) permission, `respond` will be available for this. It also means that providing an approval response to an `st2.ask` action can be done programmatically, if you would like to build your own tooling to do this.
 
 Let's explore approving via the CLI first. A new resource, known as as `approval` can be created in the same way that a rule or action is created. Let's say we've received a notification that execution `59023cfc02ebd51154291652` is waiting for approval, and in this case, the default schema is being used, which means we need only create a simple approval response. The following YAML file (also shown at `st2-ask/simple_approval.yaml`) will suffice for this:
 
