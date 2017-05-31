@@ -38,7 +38,7 @@ vagrant@st2vagrant:~$ st2 respond 59023cfc02ebd51154291652 approve=yes
 Data for st2.ask is received and validated. Resuming execution 59023cfc02ebd51154291652...
 ```
 
-In the workflow example we discussed in the first section, we have another instance of `st2.ask` that requires a token ID for two-factor authentication, instead of the default, simple approval data. In this case, we would provide the key required by that schema, namely `second_factor`.
+In `st2-ask/example_workflow.md` we have another instance of `st2.ask` that requires a token ID for two-factor authentication, instead of the default, simple approval data, called `ask_for_2fa_token`. In this case, we would provide the key required by that schema, namely `second_factor`.
 
 > Note also that in the first example, we provided this key inline as a parameter to the `st2 respond` command. In this example, we omitted these, which means all required keys will be prompted interactively. This is beneficial when responding with keys that are marked `secret` in the schema, so that we can keep those values hidden from prying eyes.
 
@@ -48,13 +48,27 @@ Please enter passcode for the second factor authentication: < entered interactiv
 Data for st2.ask is received and validated. Resuming execution 59023cfc02ebd51154291653...
 ```
 
-Finally, the same data could also be provided via the Web UI (TBD, I'm not a web designer):
+You may want to use a schema that requires multiple fields - for instance, in the event that you want multiple people to provide a response in order to continue. See the `multi_stage_approval` task in `st2-ask/example_workflow.md`, and you'll notice that the schema parameter includes two keys: "bob_response" and "fred_response". Let's say that bob responds first. He would provide his key in the same way we did before, but because there are more required values, he would see a different message:
+
+```
+vagrant@st2vagrant:~$ st2 respond 59023cfc02ebd51154291654 bob_response=12345
+Data received, but more data is required for execution 59023cfc02ebd51154291654 to proceed. Remaining in "pending" state.
+```
+
+This value would be passed to the execution, but as mentioned in the output, more is required. So now, Fred must respond. Since his is the last key that's required by this schema, he'll see the message indicating the workflow is resuming:
+
+```
+vagrant@st2vagrant:~$ st2 respond 59023cfc02ebd51154291654 fred_response=54321
+Data for st2.ask is received and validated. Resuming execution 59023cfc02ebd51154291654...
+```
+
+Everything shown above could also be provided via the Web UI (TBD, I'm not a web designer):
 
 ![st2web-approve](https://cloud.githubusercontent.com/assets/4230395/26609100/0f6950e6-4554-11e7-9cc3-e564085c0e8f.png)
 
 # TODOs
 
 - [ ] how to target specific audiences for different st2.ask execution
-- [ ] how will an approval that requires more than one person looks like
+- [x] how will an approval that requires more than one person looks like
 - [x] revisit the CLI UX when responding (i don't like the st2 approval approach)
 - [x] what's the story on authenticating the approver? will anyone be able to approve or respond to a st2.ask execution?
