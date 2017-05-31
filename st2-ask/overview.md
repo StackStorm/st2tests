@@ -48,19 +48,16 @@ Please enter passcode for the second factor authentication: < entered interactiv
 Data for st2.ask is received and validated. Resuming execution 59023cfc02ebd51154291653...
 ```
 
-You may want to use a schema that requires multiple fields - for instance, in the event that you want multiple people to provide a response in order to continue. See the `multi_stage_approval` task in `st2-ask/example_workflow.md`, and you'll notice that the schema parameter includes two keys: "bob_response" and "fred_response". Let's say that bob responds first. He would provide his key in the same way we did before, but because there are more required values, he would see a different message:
+You may have a workflow that requires multiple responses. Providing multiple st2.ask statements is the best way to do this.
+
+You may want to use a schema that requires multiple fields - for instance, in the event that you want multiple people to provide a response in order to continue. See the `bob_response` and `fred_response` tasks in `st2-ask/example_workflow.md`. The `bob_response` task would fire first, so Bob must first provide a response:
 
 ```
-vagrant@st2vagrant:~$ st2 respond 59023cfc02ebd51154291654 bob_response=12345
-Data received, but more data is required for execution 59023cfc02ebd51154291654 to proceed. Remaining in "pending" state.
-```
-
-This value would be passed to the execution, but as mentioned in the output, more is required. So now, Fred must respond. Since his is the last key that's required by this schema, he'll see the message indicating the workflow is resuming:
-
-```
-vagrant@st2vagrant:~$ st2 respond 59023cfc02ebd51154291654 fred_response=54321
+vagrant@st2vagrant:~$ st2 respond 59023cfc02ebd51154291654 bob_token=54321
 Data for st2.ask is received and validated. Resuming execution 59023cfc02ebd51154291654...
 ```
+
+Fred would respond similarly to the next `st2.ask` execution.
 
 Everything shown above could also be provided via the Web UI (TBD, I'm not a web designer):
 
