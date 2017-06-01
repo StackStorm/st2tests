@@ -36,6 +36,8 @@ examples.mistral-ask:
         # So, if someone approves this, such as via an `st2 approve` command, it will continue to task2
         basic_approval:
             action: st2.ask
+            input:
+                tag: managers
             on-success:
                 - task2
 
@@ -73,6 +75,7 @@ examples.mistral-ask:
                            description: Please enter passcode for the second factor authentication
                            secret: true
                     required: ["second_factor"]
+                tag: devs
             publish:
                 second_factor: <% task(ask_for_2fa_token).result.second_factor %>
             on-success:
@@ -106,6 +109,7 @@ examples.mistral-ask:
                            description: Please enter bob's token
                            secret: true
                     required: ["bob_token"]
+                tag: bob
             publish:
                 bob_token: <% task(bob_response).result.bob_token %>
 
@@ -121,6 +125,7 @@ examples.mistral-ask:
                            description: Please enter fred's token
                            secret: true
                     required: ["fred_token"]
+                tag: fred
             publish:
                 fred_token: <% task(fred_response).result.fred_token %>
 
