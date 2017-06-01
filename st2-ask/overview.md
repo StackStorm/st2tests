@@ -69,7 +69,4 @@ Everything shown above could also be provided via the Web UI (TBD, I'm not a web
 
 # TODOs
 
-- [ ] how to target specific audiences for different st2.ask execution
-- [x] how will an approval that requires more than one person looks like
-- [x] revisit the CLI UX when responding (i don't like the st2 approval approach)
-- [x] what's the story on authenticating the approver? will anyone be able to approve or respond to a st2.ask execution?
+- [ ] Figure out auth, or controlling who can respond, beyond the RBAC answer of simply locking down the API endpoint. See if we can/should go deeper than this
