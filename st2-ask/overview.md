@@ -13,9 +13,9 @@ A workflow is certainly the most likely place to find a reference to `st2.ask`. 
 - A blocking task that will effectively pause the workflow, waiting for a response in order to proceed (i.e. pause based on available info, not just time).
 - Allow users to inject data into the workflow at runtime. One strong use case for this is two-factor authentication. Usernames and passwords can be stored within `st2kv` and referenced within action parameters in a workflow, but it's impossible to do this with something like a 2FA token that must be provided in realtime.
 
-An example workflow can be found at `st2-ask/example_workflow.md`. This shows `st2.ask` in action, both with a simple, binary approve/reject response, as well as a more complicated response that requires some customization, as well as the ability to publish results from this action as a variable to be used by the final task. Please see the comments inline for further explanation.
+An example workflow can be found at `st2-ask/example_workflow.yaml`. This shows `st2.ask` in action, both with a simple, binary approve/reject response, as well as a more complicated response that requires some customization, as well as the ability to publish results from this action as a variable to be used by the final task. Please see the comments inline for further explanation.
 
-> Please read `st2-ask/example_workflow.md` for an example of this
+> Please read `st2-ask/example_workflow.yaml` for an example of this
 
 ## Notifying Approvers using Rules
 
@@ -23,11 +23,11 @@ Of course, when `st2.ask` is invoked, it's important to quickly notify those tha
 
 StackStorm has a built-in trigger called `core.st2.generic.actiontrigger` which can be watched by Rules to know when an execution has changed status. Using two simple string matches within the criteria, we can narrow this down to only execution changes to the `pending` status from the `st2.ask` action. In response to such an event, we can send a simple message via slack containing the execution ID, as an example, so the user knows which execution has paused.
 
-> Please read `st2-ask/example_rule.md` for an example of this
+> Please read `st2-ask/example_rule.yaml` for an example of this
 
-However, it's not uncommon to have different groups to provide approvals for different `st2.ask` actions. For this reason, `st2.ask` has a `tag` parameter, which is an arbitrary field for attaching a useful label to a specific instance of `st2.ask` in your workflows. In `st2-ask/example_rule.md`, you'll notice that we're explicitly looking for this field in our rule criteria (i.e. only watching for `st2.ask` instances tagged "managers")
+However, it's not uncommon to have different groups to provide approvals for different `st2.ask` actions. For this reason, `st2.ask` has a `tag` parameter, which is an arbitrary field for attaching a useful label to a specific instance of `st2.ask` in your workflows. In `st2-ask/example_rule.yaml`, you'll notice that we're explicitly looking for this field in our rule criteria (i.e. only watching for `st2.ask` instances tagged "managers")
 
-It may be more appropriate to put all of the complex logic of who to notify, and using what mechanism (i.e. Slack, email, etc) to a workflow. See `st2-ask/example_rule_workflow.md` for a modified version of this rule that simply passes the original `tag` value for `st2.ask` as a parameter to this workflow. This would allow us to only require one rule for notification purposes.
+It may be more appropriate to put all of the complex logic of who to notify, and using what mechanism (i.e. Slack, email, etc) to a workflow. See `st2-ask/example_rule_workflow.yaml` for a modified version of this rule that simply passes the original `tag` value for `st2.ask` as a parameter to the example workflow shown in `st2-ask/complex_notification_workflow.yaml`. This would allow us to only require one rule for notification purposes.
 
 ## Satisfying an `st2.ask` Execution
 
@@ -42,7 +42,7 @@ vagrant@st2vagrant:~$ st2 respond 59023cfc02ebd51154291652 approve=yes
 Data for st2.ask is received and validated. Resuming execution 59023cfc02ebd51154291652...
 ```
 
-In `st2-ask/example_workflow.md` we have another instance of `st2.ask` that requires a token ID for two-factor authentication, instead of the default, simple approval data, called `ask_for_2fa_token`. In this case, we would provide the key required by that schema, namely `second_factor`.
+In `st2-ask/example_workflow.yaml` we have another instance of `st2.ask` that requires a token ID for two-factor authentication, instead of the default, simple approval data, called `ask_for_2fa_token`. In this case, we would provide the key required by that schema, namely `second_factor`.
 
 > Note also that in the first example, we provided this key inline as a parameter to the `st2 respond` command. In this example, we omitted these, which means all required keys will be prompted interactively. This is beneficial when responding with keys that are marked `secret` in the schema, so that we can keep those values hidden from prying eyes.
 
@@ -54,7 +54,7 @@ Data for st2.ask is received and validated. Resuming execution 59023cfc02ebd5115
 
 You may have a workflow that requires multiple responses. Providing multiple st2.ask statements is the best way to do this.
 
-You may want to use a schema that requires multiple fields - for instance, in the event that you want multiple people to provide a response in order to continue. See the `bob_response` and `fred_response` tasks in `st2-ask/example_workflow.md`. The `bob_response` task would fire first, so Bob must first provide a response:
+You may want to use a schema that requires multiple fields - for instance, in the event that you want multiple people to provide a response in order to continue. See the `bob_response` and `fred_response` tasks in `st2-ask/example_workflow.yaml`. The `bob_response` task would fire first, so Bob must first provide a response:
 
 ```
 vagrant@st2vagrant:~$ st2 respond 59023cfc02ebd51154291654 bob_token=54321

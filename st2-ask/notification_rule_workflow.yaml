@@ -22,4 +22,5 @@ criteria:
 action:
   ref: testpack.notify_approvers
   parameters:
-    ask_tag: "{{trigger.parameters.tag}}"
+    st2ask_tag: "{{trigger.parameters.tag}}"
+    st2ask_execution: "{{trigger.execution_id}}"
