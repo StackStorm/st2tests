@@ -75,7 +75,7 @@ examples.mistral-ask:
                            description: Please enter passcode for the second factor authentication
                            secret: true
                     required: ["second_factor"]
-                tag: devs
+                tag: developers
             publish:
                 second_factor: <% task(ask_for_2fa_token).result.second_factor %>
             on-success:
