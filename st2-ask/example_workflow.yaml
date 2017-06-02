@@ -38,6 +38,7 @@ examples.mistral-ask:
             action: st2.ask
             input:
                 tag: managers
+                # Note that the "users" and "roles" parameters are omitted here, so anyone can respond to this task
             on-success:
                 - task2
 
@@ -76,6 +77,14 @@ examples.mistral-ask:
                            secret: true
                     required: ["second_factor"]
                 tag: developers
+
+                # The "roles" param is one way of restricting who is able to respond to this instance of st2.ask
+                # In this case, only those in a role labeled "developers" will be allowed to respond to this action
+                #
+                # NOTE this requires RBAC support, which is only available in the Enterprise version of StackStorm.
+                # See the "users" param for a similar way that doesn't require RBAC
+                roles:
+                    - developers
             publish:
                 second_factor: <% task(ask_for_2fa_token).result.second_factor %>
             on-success:
@@ -110,6 +119,12 @@ examples.mistral-ask:
                            secret: true
                     required: ["bob_token"]
                 tag: bob
+
+                # The "users" param is similar to "roles" in that it restricts who can respond to this instance of st2.ask.
+                # This is a less flexible option, because you must explicitly mention specific usernames, but it doesn't require
+                # the RBAC functionality, and as a result, this is allowed in the community edition of StackStorm
+                users:
+                    - bob
             publish:
                 bob_token: <% task(bob_response).result.bob_token %>
 
@@ -126,6 +141,12 @@ examples.mistral-ask:
                            secret: true
                     required: ["fred_token"]
                 tag: fred
+
+                # The "users" param is similar to "roles" in that it restricts who can respond to this instance of st2.ask.
+                # This is a less flexible option, because you must explicitly mention specific usernames, but it doesn't require
+                # the RBAC functionality, and as a result, this is allowed in the community edition of StackStorm
+                users:
+                    - fred
             publish:
                 fred_token: <% task(fred_response).result.fred_token %>
 
