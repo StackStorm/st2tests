@@ -1,0 +1,7 @@
+---
+  name: "two_responses_specific_users"
+  description: "Workflow requiring a confirmation response from specific users."
+  runner_type: "mistral-v2"
+  pack: st2ask
+  enabled: true
+  entry_point: "workflows/two_responses_specific_users.yaml"
