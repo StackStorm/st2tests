@@ -1,0 +1,7 @@
+---
+  name: "any_response"
+  description: "Workflow requiring a confirmation response from any authenticated user."
+  runner_type: "mistral-v2"
+  pack: st2ask
+  enabled: true
+  entry_point: "workflows/any_response.yaml"
