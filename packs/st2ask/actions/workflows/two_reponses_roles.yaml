@@ -1,0 +1,54 @@
+---
+version: '2.0'
+
+st2ask.two_responses_roles:
+    description: An st2.ask workflow that demonstrates two responses from any user in the specified roles
+    type: direct
+
+    task-defaults:
+        on-error:
+            - rejected
+
+    tasks:
+
+        init:
+            action: core.noop
+            on-complete:
+                - manager_approval
+                - developer_approval
+
+        # This st2.ask example illustrates how multiple responders can be used to satisfy a workflow
+        # In this case, we create two separate st2.ask tasks, one for each approver.
+        manager_approval:
+            action: st2.ask
+            input:
+                tag: managers
+
+                # The "roles" param is one way of restricting who is able to respond to this instance of st2.ask
+                # In this case, only those in a role labeled "managers" will be allowed to respond to this action
+                #
+                # NOTE this requires RBAC support, which is only available in the Enterprise version of StackStorm.
+                # See the "users" param for a similar way that doesn't require RBAC
+                roles:
+                    - managers
+
+        developer_approval:
+            action: st2.ask
+            input:
+                tag: developers
+
+                # The "roles" param is one way of restricting who is able to respond to this instance of st2.ask
+                # In this case, only those in a role labeled "developers" will be allowed to respond to this action
+                #
+                # NOTE this requires RBAC support, which is only available in the Enterprise version of StackStorm.
+                # See the "users" param for a similar way that doesn't require RBAC
+                roles:
+                    - developers
+
+        do_risky_thing_that_needs_two_approvers:
+            action: testpack.do_risky_thing_that_needs_two_approvers
+
+        rejected:
+            action: core.local
+            input:
+                cmd: echo "Workflow approval was rejected, or some other failure occurred."

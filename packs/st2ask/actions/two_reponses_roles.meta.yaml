@@ -1,0 +1,7 @@
+---
+  name: "two_responses_roles"
+  description: An st2.ask workflow that demonstrates two responses from any user in the specified roles
+  runner_type: "mistral-v2"
+  pack: st2ask
+  enabled: true
+  entry_point: "workflows/two_responses_roles.yaml"

@@ -17,7 +17,7 @@ st2ask.two_responses_specific_users:
                 - bob_response
                 - fred_response
 
-        # This st2.ask example illustrates how multiple responders can be used to satisfy an st2.ask action.
+        # This st2.ask example illustrates how multiple responders can be used to satisfy a workflow.
         # In this case, we create two separate st2.ask tasks, one for each approver.
         bob_response:
             action: st2.ask
