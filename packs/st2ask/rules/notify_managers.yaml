@@ -1,0 +1,31 @@
+---
+name: "notify_slack_execution_change_managers"
+pack: "st2ask"
+description: Notify managers of an st2.ask action that is tagged "managers"
+enabled: true
+
+trigger:
+  type: core.st2.generic.actiontrigger
+
+criteria:
+  trigger.action_ref:
+      type: equals
+      pattern: st2.ask
+  trigger.status:
+      type: equals
+      pattern: pending
+  # In order to control who to notify, the "tag" parameter for the st2.ask action would be
+  # used to indicate metadata about this specific instance (would be set in the workflow).
+  # Since it's in the parameters, we can get a handle on it here in the rule and use it to
+  # inform our decision on who to notify.
+  #
+  # This is a very static, simple example - and would require one rule for each notification "group"
+  trigger.parameters.tag:
+      type: equals
+      pattern: managers
+
+action:
+  ref: slack.post_message
+  parameters:
+    channel: "#managers"
+    message: '{{trigger.execution_id}} is awaiting an approval action'
