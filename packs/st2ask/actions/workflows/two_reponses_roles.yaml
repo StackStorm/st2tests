@@ -14,27 +14,45 @@ st2ask.two_responses_roles:
         init:
             action: core.noop
             on-complete:
-                - manager_approval
+                - operations_approval
                 - developer_approval
 
         # This st2.ask example illustrates how multiple responders can be used to satisfy a workflow
         # In this case, we create two separate st2.ask tasks, one for each approver.
-        manager_approval:
+        operations_approval:
             action: st2.ask
             input:
-                tag: managers
+                schema:
+                    title: response_data
+                    type: object
+                    properties:
+                        continue:
+                           type: boolean
+                           description: Would you like to continue the workflow?
+                    required: ["continue"]
+                tag: operations
 
                 # The "roles" param is one way of restricting who is able to respond to this instance of st2.ask
-                # In this case, only those in a role labeled "managers" will be allowed to respond to this action
+                # In this case, only those in a role labeled "operations" will be allowed to respond to this action
                 #
                 # NOTE this requires RBAC support, which is only available in the Enterprise version of StackStorm.
                 # See the "users" param for a similar way that doesn't require RBAC
                 roles:
-                    - managers
+                    - operations
+            on-success:
+                - do_risky_thing_that_needs_two_approvers
 
         developer_approval:
             action: st2.ask
             input:
+                schema:
+                    title: response_data
+                    type: object
+                    properties:
+                        continue:
+                           type: boolean
+                           description: Would you like to continue the workflow?
+                    required: ["continue"]
                 tag: developers
 
                 # The "roles" param is one way of restricting who is able to respond to this instance of st2.ask
@@ -44,8 +62,11 @@ st2ask.two_responses_roles:
                 # See the "users" param for a similar way that doesn't require RBAC
                 roles:
                     - developers
+            on-success:
+                - do_risky_thing_that_needs_two_approvers
 
         do_risky_thing_that_needs_two_approvers:
+            join: all
             action: testpack.do_risky_thing_that_needs_two_approvers
 
         rejected:

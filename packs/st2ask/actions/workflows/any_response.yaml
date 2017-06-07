@@ -27,68 +27,28 @@ st2ask.any_response:
         #
         # If it does not validate, it will return to `pending` status.
         #
-        # Note that the optional "schema" parameter is supplied down in the "ask_for_2fa_token" task, but is omitted here.
-        # By default, `st2.ask` will use the default JSON schema (with a bit of built-in logic) that validates a
-        # simple approve/reject response stored in the execution context.
-        # When this happens, the `st2.ask` will have a bit of conditional logic to detect the approve/reject status
-        # and return a success or failed state.
-        #
-        # So, if someone approves this, such as via an `st2 approve` command, it will continue to task2
-        basic_approval:
-            action: st2.ask
-            input:
-                tag: managers
-                # Note that the "users" and "roles" parameters are omitted here, so anyone can respond to this task
-            on-success:
-                - task2
-
-        task2:
-            action: core.local
-            input:
-                cmd: echo "Got to task1"    
-            on-complete:
-                - ask_for_2fa_token
-
-        # Now, we arrive at our second approval example. We know that one of the upcoming tasks "send_request_with_2fa"
-        # requires a password AND a second factor for authentication. We can provide the password here (or in st2kv of course)
-        # but for the second factor, we need to ask someone to intervene.
-        #
-        # In this instance of `st2.ask`, the same initial treatment applies. The execution context is empty,
-        # so naturally, it will fail to validate, and the action will return `pending` status.
-        #
-        # Note that we're providing our own JSON schema to the `schema` parameter here. `st2.ask` will
-        # use this to validate data stored in the execution context instead of the default schema that
-        # validates a simple approve/reject response from the user.
-        # When we do this, the action doesn't have a way of knowing what a "rejected" approval means,
-        # so this will block in `pending` status until someone sends data into the context that will validate
-        # the schema.
-        ask_for_2fa_token:
+        # If someone provides valid data, such as via an `st2 approve` command,
+        # it will continue to task "complete"
+        confirm:
             action: st2.ask
             input:
                 schema:
                     title: response_data
                     type: object
                     properties:
-                        second_factor:
-                           type: string
-                           description: Please enter passcode for the second factor authentication
-                           secret: true
-                    required: ["second_factor"]
-                tag: developers
-            publish:
-                second_factor: <% task(ask_for_2fa_token).result.second_factor %>
+                        continue:
+                           type: boolean
+                           description: Would you like to continue the workflow?
+                    required: ["continue"]
+                tag: operations
+                # Note that the "users" and "roles" parameters are omitted here, so anyone can respond to this task
             on-success:
-                - send_request_with_2fa
+                - complete
 
-        # Here, we're using the "second_factor" variable published in the previous st2.ask action as input to this action.
-        # This demonstrates not only the ability for st2.ask to pause a workflow, but to retrieve information at runtime
-        # that's required for a future action.
-        send_request_with_2fa:
-            action: testpack.request_with_2fa
+        complete:
+            action: core.local
             input:
-                username: foo
-                password: bar
-                token: <% $.second_factor %>
+                cmd: echo "Workflow complete!"
 
         rejected:
             action: core.local

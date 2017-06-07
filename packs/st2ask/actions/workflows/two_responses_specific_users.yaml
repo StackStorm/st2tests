@@ -40,6 +40,8 @@ st2ask.two_responses_specific_users:
                     - bob
             publish:
                 bob_token: <% task(bob_response).result.bob_token %>
+            on-success:
+                - do_risky_thing_that_needs_two_approvers
 
         fred_response:
             action: st2.ask
@@ -62,9 +64,12 @@ st2ask.two_responses_specific_users:
                     - fred
             publish:
                 fred_token: <% task(fred_response).result.fred_token %>
+            on-success:
+                - do_risky_thing_that_needs_two_approvers
 
         # Again, we're using the variables published by the previous action to drive this one.
         do_risky_thing_that_needs_two_approvers:
+            join: all
             action: testpack.do_risky_thing_that_needs_two_approvers
             input:
                 bob_token: <% $.bob_token %>

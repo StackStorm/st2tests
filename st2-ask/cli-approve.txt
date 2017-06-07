@@ -1,6 +1,0 @@
-vagrant@st2vagrant:~$ st2 respond 59023cfc02ebd51154291652 approve=yes
-Data for st2.ask is received and validated. Resuming execution 59023cfc02ebd51154291652...
-
-vagrant@st2vagrant:~$ st2 respond 59023cfc02ebd51154291653
-Please enter passcode for the second factor authentication: < entered interactively - hidden because secret: true >
-Data for st2.ask is received and validated. Resuming execution 59023cfc02ebd51154291653...
