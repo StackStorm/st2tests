@@ -1,0 +1,9 @@
+---
+  host:
+    type: "string"
+    default: "localhost"
+    required: false
+  port:
+    type: "integer"
+    default: 19009
+    required: false
