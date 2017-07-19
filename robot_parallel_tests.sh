@@ -1,20 +1,19 @@
 #!/bin/bash
+
+## NOTE: SUITES can be a directory or a test file
+## SUITES can also include optional params provided by pabot like "--processes <integer>"
+## Execution example: bash /tmp/st2tests/robot_parallel_tests.sh '--processes 4 robotfm_tests/cli/ robotfm_tests/demo_st2_robotfm_test.rst' 0
 SUITES=$1
 VERBOSE=$2
-GREEN='\033[0;32m'
-NC='\033[0m'
-
 
 elapsed_time()
 {
-    echo -e "${GREEN}"
     echo -e "$result" | grep -i -e "Elapsed time"
-    echo -e "${NC}"
 }
 
 verbose_output()
 {
-    if [ "${VERBOSE}" -eq "1" ]; then
+    if [[ "${VERBOSE}" -eq "1" ]];then
         cat pabot_results/*/stdout.txt
     else
         for filename in pabot_results/*/
@@ -37,11 +36,11 @@ main()
         pabot_command="pabot ${SUITES}"
     fi
 
-    result=$(eval $pabot_command)
+    result=$(eval $pabot_command) 2>&1
 
     if [[ $? -eq 0 ]]; then
         if [[ "$result" =~ "does not exist" ]]; then
-            echo "Error: Check the Suites Name: ${SUITES}"
+            echo "Error: Check the Suites Name: ${SUITES} or it is some pabot exception"
             exit 3
         fi
         echo "$result" | grep -iv "Elapsed time"
@@ -50,8 +49,7 @@ main()
         echo "Robot Tests Executed Successfully"
         echo "#################################"
         verbose_output
-    elif [[ $? -eq 1 ]]; then
-        exit 1
+        exit 0
     else
         echo "##################"
         echo "Robot Tests Failed"
