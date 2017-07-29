@@ -18,7 +18,7 @@ verbose_output()
     else
         for filename in pabot_results/*/
         do
-            echo -e "\nExecuting: ${filename:14:-1}\n"
+            echo -e "\nExecuting: ${filename:14}\n"
             if grep -q "| FAIL |" "$filename/stdout.txt";then
                 cat "$filename/stdout.txt"
             fi
