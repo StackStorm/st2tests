@@ -2,6 +2,10 @@
 # See ../requirements.txt
 # import datetime
 
+# This is to test imports from pack's lib folder to check
+# if we messed up PYTHONPATH for sensors.
+from common_lib import get_environ
+
 from st2reactor.sensor.base import PollingSensor
 
 SAMPLE_PAYLOAD = {
@@ -28,7 +32,7 @@ class TestPollingSensor(PollingSensor):
         pass
 
     def poll(self):
-        # Stopped
+        self.logger.info('PHTHONPATH: %s', get_environ('PYTHONPATH'))
         self._dispatch_trigger(self._trigger_ref, data=SAMPLE_PAYLOAD)
 
     def cleanup(self):

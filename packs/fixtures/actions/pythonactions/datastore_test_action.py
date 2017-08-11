@@ -5,6 +5,10 @@ import json
 # if we messed up sys.path for actions.
 from base import DummyClass
 
+# This is to test imports from pack's lib folder to check
+# if we messed up PYTHONPATH for actions.
+from common_lib import get_environ
+
 from st2actions.runners.pythonrunner import Action
 from st2client.client import Client
 from st2client.models import KeyValuePair
@@ -19,6 +23,7 @@ class DatastoreTestAction(Action):
 
     def run(self):
         t_cls = DummyClass()
+        print('PYTHONPATH: %s', get_environ('PYTHONPATH'))
         print('Tests begin: %s' % t_cls.now())
         self._test_datastore_actions_via_client()
         self._test_datastore_actions_via_action_service()
