@@ -37,6 +37,7 @@ class TestPassiveSensor(Sensor):
 
     def setup(self):
         self.logger.info('PYTHONPATH: %s', get_environ('PYTHONPATH'))
+
         @self.app.route('/webhooks/<path:endpoint>', methods=['POST', 'GET'])
         def handle_ep(endpoint):
             if endpoint == 'passivesensor/test':
