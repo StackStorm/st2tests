@@ -33,9 +33,10 @@ class TestPassiveSensor(Sensor):
         self.host = self._config['host']
         self.port = self._config['port']
         self.app = Flask(__name__)
+        self.logger = self.sensor_service.get_logger(name=self.__class__.__name__)
 
     def setup(self):
-        self.logger.info('PHTHONPATH: %s', get_environ('PYTHONPATH'))
+        self.logger.info('PYTHONPATH: %s', get_environ('PYTHONPATH'))
         @self.app.route('/webhooks/<path:endpoint>', methods=['POST', 'GET'])
         def handle_ep(endpoint):
             if endpoint == 'passivesensor/test':
