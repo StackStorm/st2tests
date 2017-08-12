@@ -4,6 +4,7 @@
      ${SLEEP}             20
      ${SUCCESS STATUS}    "status": "succeeded
      ${RUNNING STATUS}    "status": "running
+     ${CANCELING STATUS}  "status": "canceling"
      ${CANCELED STATUS}   "status": "canceled"
      ${FAILED STATUS}     "status": "failed"
 
@@ -40,7 +41,7 @@
     *** Keywords ***
     Execution Result
         ${result}=          Run Process  st2  execution  get  @{Execution ID}[-1]  -j
-        Should Contain X Times   ${result.stdout}  ${RUNNING STATUS}  2
+        Should Contain      ${result.stdout}  ${RUNNING STATUS}
         [return]            ${result}
 
     Execution Cancel
@@ -48,9 +49,15 @@
         Should Contain  ${result.stdout}   action execution with id @{Execution ID}[-1] canceled.
         [return]             ${result}
 
+    Canceling Execution
+         ${result}=           Run Process  st2  execution  get  @{Execution ID}[-1]      -j
+         Should Contain       ${result.stdout}  ${RUNNING STATUS}
+         Should Contain       ${result.stdout}  ${CANCELING STATUS}
+         [return]             ${result}
+
     Canceled Execution
          ${result}=           Run Process  st2  execution  get  @{Execution ID}[-1]      -j
-         Should Contain X Times   ${result.stdout}  ${RUNNING STATUS}  1
+         Should Contain       ${result.stdout}  ${SUCCESS STATUS}
          Should Contain       ${result.stdout}  ${CANCELED STATUS}
          [return]             ${result}
 
