@@ -30,7 +30,7 @@
     Check Hubot help and load commands
         ${result}=       Run Keyword  Hubot Help
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
-        Should Contain   ${result.stdout}    ! help - Displays all of the help commands
+        Should Contain   ${result.stdout}    !help - Displays all of the help commands
         Should Contain   ${result.stdout}    commands are loaded
         # Run Keyword If   ${result.rc} != 0   Fatal Error  HUBOT DOESN'T RESPOND TO THE "HELP" COMMAND OR DOESN'T TRY TO LOAD COMMANDS FROM STACKSTORM.
 

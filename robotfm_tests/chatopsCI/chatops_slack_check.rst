@@ -22,7 +22,7 @@
         File Should Exist   ${BIN_DIR}/slackcat
         Run Process         sudo  chmod  +x  ${BIN_DIR}/slackcat
         ${result}=          Run Process  ls  -al  ${BIN_DIR}/slackcat
-        Should Contain      ${result.stdout}  -rwxrwxr-x
+        Should Contain      ${result.stdout}  xr-x
         Log To Console      \nOUTPUT: ${result.stdout}
 
     Configure Token for Slackcat
@@ -44,12 +44,12 @@
 
 
     Check post_message execution and receive status
-        ${channel}=        Generate Token
-        # Log To Console   \nCHANNEL: ${channel}
-        ${result}=         Run Keyword  Hubot Post  ${channel}
+        ${random}=        Generate Token
+        # Log To Console   \nRandom: ${random}
+        ${result}=         Run Keyword  Hubot Post  ${random}
         # Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain     ${result.stdout}   Chatops message received
-        Should Contain     ${result.stdout}   ${channel}
+        Should Contain     ${result.stdout}   ${random}
 
     Post message on the channel and verify
         [Documentation]    ID FOR POST MESSAGE
@@ -64,8 +64,8 @@
         Log To Console      \n==========\nID CHATOPS.POST_MESSAGE: ${EXECUTION ID}\n==========\n
         ${result}=          Run Keyword    Execution logs from hubot
         Should Contain      ${result.stdout}  details available at
-        Should Contain      ${result.stdout}  in channel: chatopsci, from: grobgobglobgrod
-        @{output}  Get Regexp Matches   ${result.stdout}  (?ms)result :\n--------\nresult :(.*?)in channel: chatopsci, from: grobgobglobgrod
+        Should Contain      ${result.stdout}  in channel: chatopsci, from: bot
+        @{output}  Get Regexp Matches   ${result.stdout}  (?ms)result :\n--------\nresult :(.*?)in channel: chatopsci, from: bot
         Set Suite Variable  ${status}  Invalid chatops.post_message ID
         :FOR    ${ELEMENT}    IN    @{output}
         \    Log To Console  \n++=========++\n
@@ -83,7 +83,7 @@
     Verify Correct Substring
         [Arguments]     ${ELEMENT}
         Log To Console   \nSUBSTRING:\n------------\n${ELEMENT}\n------------\n
-        Should Contain   ${ELEMENT}  in channel: chatopsci, from: grobgobglobgro
+        Should Contain   ${ELEMENT}  in channel: chatopsci, from: bot
         Should Contain   ${ELEMENT}  ref : chatops.post_message
         Should Contain   ${ELEMENT}  id : ${EXECUTION ID}
         Set Suite Variable   ${status}  Valid chatops.post_message ID
@@ -107,9 +107,9 @@
         [return]            ${output}
 
     Hubot Post
-        [Arguments]    ${channel}
-        ${result}=     Run Process    {  echo  -n;  sleep  5;  st2  action  execute  chatops.post_message  channel\=${channel}
-        ...                           message\='Debug. If you see this you are incredibly lucky but please ignore.'
+        [Arguments]    ${random}
+        ${result}=     Run Process    {  echo  -n;  sleep  5;  st2  action  execute  chatops.post_message  channel\=#chatopsci
+        ...                           message\='Debug. Please ignore. ${random}'
         ...                           >\/dev\/null;  echo;  sleep  2;}  |  bin\/hubot  \-\-test
         ...                           cwd=/opt/stackstorm/chatops/    shell=True
         [return]       ${result}
