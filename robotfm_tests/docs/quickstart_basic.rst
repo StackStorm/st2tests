@@ -9,10 +9,15 @@
     ${PACK CORE}        "pack": "core"
 
     *** Test Cases ***
-    Verify st2 version and help
+    Verify st2 version and usage / help
         ${result}=       Run Process       st2  --version
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain   ${result.stderr}  st2
+        ${result}=       Run Process       st2
+        Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
+        Should Contain   ${result.stderr}  usage
+        Should Contain   ${result.stderr}  CLI for StackStorm event-driven automation platform.
+        Should Contain   ${result.stderr}  Enable debug mode
         ${result}=       Run Process       st2  -h
         Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
         Should Contain   ${result.stdout}  usage
