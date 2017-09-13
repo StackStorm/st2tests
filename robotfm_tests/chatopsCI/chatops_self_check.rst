@@ -56,7 +56,7 @@
 
     *** Keyword ***
     Hubot Help
-        ${result}=     Run Process    {  echo  -n;  sleep  5;  echo  'hubot  help';  echo;  sleep  2;}  |  bin\/hubot  \-\-test
+        ${result}=     Run Process    {  echo  -n;  sleep  5;  echo  'hubot  help';  echo;  sleep  5;}  |  bin\/hubot  \-\-test
         ...                           cwd=/opt/stackstorm/chatops/  shell=True
         [return]      ${result}
 
@@ -64,7 +64,7 @@
         [Arguments]    ${channel}
         ${result}=     Run Process    {  echo  -n;  sleep  5;  st2  action  execute  chatops.post_message  channel\=${channel}
         ...                           message\='Debug. If you see this you are incredibly lucky but please ignore.'
-        ...                           >\/dev\/null;  echo;  sleep  2;}  |  bin\/hubot  \-\-test
+        ...                           >\/dev\/null;  echo;  sleep  5;}  |  bin\/hubot  \-\-test
         ...                           cwd=/opt/stackstorm/chatops/    shell=True
         [return]       ${result}
 
