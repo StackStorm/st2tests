@@ -110,7 +110,7 @@
         [Arguments]    ${random}
         ${result}=     Run Process    {  echo  -n;  sleep  5;  st2  action  execute  chatops.post_message  channel\=#chatopsci
         ...                           message\='Debug. Please ignore. ${random}'
-        ...                           >\/dev\/null;  echo;  sleep  2;}  |  bin\/hubot  \-\-test
+        ...                           >\/dev\/null;  echo;  sleep  5;}  |  bin\/hubot  \-\-test
         ...                           cwd=/opt/stackstorm/chatops/    shell=True
         [return]       ${result}
 
