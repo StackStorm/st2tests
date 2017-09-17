@@ -44,13 +44,8 @@ TEST:Restart and check st2chatops service
 
 TEST:Check post_message execution and receive status
     ${random}=        KEYWORD:Generate Token
-    # Log To Console   \nRandom: ${random}
+    Log To Console   \nCHANNEL: ${random}
     ${result}=        Wait Until Keyword Succeeds  3x  5s   KEYWORD:Hubot Post  ${random}
-    # ${result}=         Run Keyword  KEYWORD:Hubot Post  ${random}
-    # Process Log To Console  ${result}
-    # Should Contain     ${result.stdout}   Chatops message received
-    # Should Contain     ${result.stdout}   ${random}
-    Log To Console     \n
 
 TEST:Post message on the channel and verify
     [Documentation]    ID FOR POST MESSAGE
@@ -65,26 +60,7 @@ TEST:Execution from hubot with slackcat token in st2chatops_env
     Run Keyword         KEYWORD:Replace the token for slack with slackcat in st2chatops.env
     Log To Console      \n<===============================>\nCHATOPS.POST_MESSAGE EXECUTION ID: ${EXECUTION ID}\n<===============================>\n
 
-    ${result}=          Run Keyword    KEYWORD:Execution logs from hubot
-    Should Contain      ${result.stdout}  details available at
-    Should Contain      ${result.stdout}  in channel: chatopsci, from: bot
-
-    ${regex_value}      Set Variable   (?ms)result :\n--------\nresult :(.*?)in channel: chatopsci, from: bot
-    @{output}  Get Regexp Matches   ${result.stdout}  ${regex_value}
-
-    Set Suite Variable  ${status}  Invalid chatops.post_message ID
-    :FOR    ${ELEMENT}    IN    @{output}
-    \    Log To Console  \n<========== MATCH ==========>\n
-    \    ${regex}=      Get Lines Containing String  ${ELEMENT}  matched regex
-    \    ${length}=  Get Length  ${regex}
-    \    Run Keyword if    ${length} == 0 and "id : ${EXECUTION ID}" in '''${ELEMENT}'''  KEYWORD:Verify Correct Substring  ${ELEMENT}
-    \    Log To console  Status: ${status}\n
-
-    Pass execution if  '''${status}''' == "Valid chatops.post_message ID"  PASS
-    Should Be Equal  ${status}  Valid chatops.post_message ID
-
-
-
+    ${result}=          Wait Until Keyword Succeeds  3x  5s   KEYWORD:Execution logs from hubot
 
 *** Keyword ***
 KEYWORD:Verify Correct Substring
@@ -106,13 +82,27 @@ KEYWORD:Replace the token for slack with slackcat in st2chatops.env
 KEYWORD:Execution logs from hubot
     [Documentation]     EXECUTION ID is from Keyword: Get post_message execution id
 
-    ${output}=          Run Process    {  sleep  5;  echo  '!st2  get  execution  ${EXECUTION ID}'
+    ${result}=          Run Process    {  sleep  5;  echo  '!st2  get  execution  ${EXECUTION ID}'
     ...                                |  slackcat  --channel\=chatopsci  --stream  --plain;}
     ...                                |  timeout  25s  bin/hubot  cwd=/opt/stackstorm/chatops/  shell=True
     Log To Console      \n<===================> COMPLETE HUBOT STDOUT START <===================>
-    Process Log To Console      ${output}
+    Process Log To Console      ${result}
     Log To Console      \n=================== COMPLETE HUBOT STDOUT END ===================\n
-    [return]            ${output}
+    Should Contain      ${result.stdout}  details available at
+    Should Contain      ${result.stdout}  in channel: chatopsci, from: bot
+
+    ${regex_value}      Set Variable   (?ms)result :\n--------\nresult :(.*?)in channel: chatopsci, from: bot
+    @{output}  Get Regexp Matches   ${result.stdout}  ${regex_value}
+
+    Set Suite Variable  ${status}  Invalid chatops.post_message ID
+    :FOR    ${ELEMENT}    IN    @{output}
+    \    Log To Console  \n<========== MATCH ==========>\n
+    \    ${regex}=      Get Lines Containing String  ${ELEMENT}  matched regex
+    \    ${length}=  Get Length  ${regex}
+    \    Run Keyword if    ${length} == 0 and "id : ${EXECUTION ID}" in '''${ELEMENT}'''  KEYWORD:Verify Correct Substring  ${ELEMENT}
+    \    Log To console  STATUS: ${status}\n
+
+    Should Be Equal  ${status}  Valid chatops.post_message ID
 
 KEYWORD:Hubot Post
     [Arguments]    ${random}
@@ -122,7 +112,6 @@ KEYWORD:Hubot Post
     ...                           cwd=/opt/stackstorm/chatops/    shell=True
     Should Contain     ${result.stdout}   Chatops message received
     Should Contain     ${result.stdout}   ${random}
-    #[return]       ${result}
 
 KEYWORD:Generate Token
     ${token}=      Generate Random String  32

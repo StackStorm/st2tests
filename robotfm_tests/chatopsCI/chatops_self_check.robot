@@ -35,10 +35,8 @@ TEST:Check Hubot help and load commands
 TEST:Check post_message execution and receive status
     ${channel}=       KEYWORD:Generate Token
     Log To Console   \nCHANNEL: ${channel}
-    ${result}=       Run Keyword  KEYWORD:Hubot Post  ${channel}
+    ${result}=        Wait Until Keyword Succeeds  3x  5s   KEYWORD:Hubot Post  ${channel}
     Process Log To Console    ${result}
-    Should Contain   ${result.stdout}   Chatops message received
-    Should Contain   ${result.stdout}   ${channel}
     # Run Keyword If   ${result.rc} != 0    Fatal Error  CHATOPS.POST_MESSAGE HASN'T BEEN RECEIVED.
 
 TEST:Check the complete request-response flow
@@ -63,7 +61,8 @@ KEYWORD:Hubot Post
     ...                           message\='Debug. If you see this you are incredibly lucky but please ignore.'
     ...                           >\/dev\/null;  echo;  sleep  5;}  |  bin\/hubot  \-\-test
     ...                           cwd=/opt/stackstorm/chatops/    shell=True
-    [return]       ${result}
+    Should Contain     ${result.stdout}   Chatops message received
+    Should Contain     ${result.stdout}   ${random}
 
 KEYWORD:Complete Flow
     [Arguments]    ${channel}
@@ -80,3 +79,4 @@ Documentation    Nine-Step Hubot Self-Check Script
 Library          Process
 Library          String
 Resource         ../common/keywords.robot
+
