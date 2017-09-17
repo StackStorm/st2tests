@@ -99,7 +99,7 @@ KEYWORD:Check Installation Pack 2
     Run Keyword If    '${PACK VAR 2}' in '''${result.stdout}'''  KEYWORD:NEW-Uninstall Pack 2
 
 KEYWORD:NEW-Uninstall Pack 2
-    ${result}=        Run Process  st2  run  packs  remove  ${PACK TO INSTALL 2}  -j
+    ${result}=        Run Process  st2  pack  remove  ${PACK TO INSTALL 2}  -j
     # Log To Console    Uninstalling Pack: ${PACK TO INSTALL 2} :\n${result.stdout}
 
 TEARDOWN:Suite Cleanup
