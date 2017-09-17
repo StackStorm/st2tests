@@ -33,7 +33,7 @@ TEST:Check Hubot help and load commands
 
 
 TEST:Check post_message execution and receive status
-    ${channel}=       Generate Token
+    ${channel}=       KEYWORD:Generate Token
     Log To Console   \nCHANNEL: ${channel}
     ${result}=       Run Keyword  KEYWORD:Hubot Post  ${channel}
     Process Log To Console    ${result}
@@ -42,7 +42,7 @@ TEST:Check post_message execution and receive status
     # Run Keyword If   ${result.rc} != 0    Fatal Error  CHATOPS.POST_MESSAGE HASN'T BEEN RECEIVED.
 
 TEST:Check the complete request-response flow
-    ${channel}=      Generate Token
+    ${channel}=      KEYWORD:Generate Token
     Log To Console   \nCHANNEL: ${channel}
     ${result}=       Run Keyword  KEYWORD:Complete Flow  ${channel}
     Process Log To Console    ${result}
