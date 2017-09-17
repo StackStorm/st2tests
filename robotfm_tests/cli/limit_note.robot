@@ -12,7 +12,7 @@ ${DEFAULT LIMIT NOTE 2}   are displayed. Use -n/--last flag for more results.
 
 
 *** Test Cases ***
-Verify default note in the execution, trace, trigger-instance, rule and rule-enforcement list
+TEST:Verify default note in the execution, trace, trigger-instance, rule and rule-enforcement list
     ${count}=        Run  ${EXECUTION LIST} | grep \-c 'stanley'
     Log To Console   \nCOUNT EXECUTION:\n${count}
     ${result}=       Run Keyword If  ${count}==50   Run Process  st2  execution  list
@@ -56,7 +56,7 @@ Verify default note in the execution, trace, trigger-instance, rule and rule-enf
     ...              ${DEFAULT LIMIT NOTE 1} key value pairs ${DEFAULT LIMIT NOTE 2}
 
 
-Verify note when limit is 1
+TEST:Verify note when limit is 1
     ${count}=          Run  ${EXECUTION LIST} | grep \-c 'stanley'
     Log To Console     \nCOUNT EXECUTION:\n${count}
     ${result}=         Run Keyword If  ${count}>1  Run Process  st2  execution  list  -n  1
@@ -98,7 +98,7 @@ Verify note when limit is 1
     ...                ${SINGLE LIMIT NOTE 2}
 
 
-Verify no note with json/yaml output
+TEST:Verify no note with json/yaml output
     ${result_1}=       Run Process  st2  execution  list  -n  1  -j
     ${result_2}=       Run Process  st2  execution  list  -n  1  -y
     Log To Console     \nEXECUTION LIST JSON:

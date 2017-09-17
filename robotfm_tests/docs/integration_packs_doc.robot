@@ -1,14 +1,14 @@
 # **integration_packs_doc.rst**: This test suite covers same functionality as: `test_packs_pack.yaml <https://github.com/StackStorm/st2tests/blob/master/packs/tests/actions/chains/test_packs_pack.yaml>`_.
 
 *** Test Cases ***
-Verify packs are not present before a clean install
+TEST:Verify packs are not present before a clean install
     ${result}=          Run Process    st2  action  list  --pack  ${PACK TO INSTALL 1}  --pack  ${PACK TO INSTALL 2}  -j
     # Process Log To Console     ${result}
     Should Not Contain  ${result.stdout}  ${PACK VAR 1}
     Should Not Contain  ${result.stdout}  ${PACK VAR 2}
 
 
-NEW-Verify multiple packs can be installed from repo
+TEST:NEW-Verify multiple packs can be installed from repo
     ${result}=          Run Process  st2  pack  install  ${PACK TO INSTALL 1}  ${PACK TO INSTALL 2}
     Process Log To Console     ${result}
     Should Not Contain  ${result.stdout}   ${FAIL STATUS}
@@ -28,7 +28,7 @@ NEW-Verify multiple packs can be installed from repo
     Should Contain      ${result.stdout}  ${PACK VAR 2}
 
 
-NEW-Verify multiple packs can be removed
+TEST:NEW-Verify multiple packs can be removed
     ${result}=          Run Process  st2  pack  remove  ${PACK TO INSTALL 1}  ${PACK TO INSTALL 2}  -j
     # Log To Console     \nUninstalling Pack: ${PACK TO INSTALL 1} and ${PACK TO INSTALL 2} :\n${result.stdout}
 
@@ -40,20 +40,20 @@ NEW-Verify multiple packs can be removed
     Should Contain      ${result.stdout}  No matching items found
 
 
-OLD-Verify packs can be downloaded using packs.download
+TEST:OLD-Verify packs can be downloaded using packs.download
     ${result}=          Run Process    st2  run  packs.download  packs\=${PACK TO INSTALL 1}  -j
     # Process Log To Console  ${result}
     Should Contain      ${result.stdout}  ${SUCCESS STATUS}
     Should Contain      ${result.stdout}  ${PACK 1 SUCCESS}
 
 
-OLD-Verify "packs.setup_virtualenv" for a pack downloaded in previous step
+TEST:OLD-Verify "packs.setup_virtualenv" for a pack downloaded in previous step
     ${result}=          Run Process  st2  run  packs.setup_virtualenv  packs\=${PACK TO INSTALL 1}   -j
     Should Contain      ${result.stdout}  "result": "Successfuly set up virtualenv for the following packs: ${PACK TO INSTALL 1}"
     Should Contain      ${result.stdout}  ${SUCCESS STATUS}
 
 
-NEW-Verify "packs register" to register all packs
+TEST:NEW-Verify "packs register" to register all packs
     ${result}=          Run Process  st2  pack  register  -j
     Should Contain      ${result.stdout}  "actions":
     Should Contain      ${result.stdout}  "aliases":
@@ -67,53 +67,53 @@ NEW-Verify "packs register" to register all packs
     Should Contain      ${result.stdout}  "triggers":
 
 
-OLD-Verify pack install with no config
+TEST:OLD-Verify pack install with no config
     ${result}=          Run Process  st2  run  packs.download  packs\=${PACK TO INSTALL NO CONFIG}  -j
     Should Contain      ${result.stdout}  "${PACK TO INSTALL NO CONFIG}": "Success."
     # Should Contain      ${result.stdout}  DEBUG${SPACE*3}Moving pack from /root/st2contrib/packs/${PACK TO INSTALL NO CONFIG} to /opt/stackstorm/packs/.${\n}
 
-OLD-Verify pack reinstall with no Config
+TEST:OLD-Verify pack reinstall with no Config
     ${result}=          Run Process  st2  run  packs.download  packs\=${PACK TO INSTALL NO CONFIG}  -j
     Should Contain      ${result.stdout}  "${PACK TO INSTALL NO CONFIG}": "Success."
     # Should Contain      ${result.stdout}  DEBUG${SPACE*3}Removing existing pack bitcoin in /opt/stackstorm/packs/${PACK TO INSTALL NO CONFIG} to replace.${\n}
 
 
 *** Keywords ***
-Check Installation Pack 1
+SETUP:Check Installation Pack 1
     Log To Console    ___________________________SUITE SETUP___________________________
     ${result}=        Run Process    st2  action  list  --pack  ${PACK TO INSTALL 1}  -j
     # Log To Console    STDOUT:\n ${result.stdout}
-    Run Keyword If    '${PACK VAR 1}' in '''${result.stdout}'''  OLD-Uninstall Pack 1
-    ...       ELSE    Check Installation Pack 2
-    Log To Console    ___________________________SUITE SETUP___________________________
+    Run Keyword If    '${PACK VAR 1}' in '''${result.stdout}'''  KEYWORD:OLD-Uninstall Pack 1
+    ...       ELSE    KEYWORD:Check Installation Pack 2
+    Log To Console    ___________________________SUITE SETUP___________________________\n
 
 
-OLD-Uninstall Pack 1
+KEYWORD:OLD-Uninstall Pack 1
     ${result}=        Run Process  st2  run  packs.uninstall  packs\=${PACK TO INSTALL 1}  -j
     # Log To Console    Uninstalling Pack: ${PACK TO INSTALL 1} :\n${result.stdout}
-    Run Keyword       Check Installation Pack 2
+    Run Keyword       KEYWORD:Check Installation Pack 2
 
-Check Installation Pack 2
+KEYWORD:Check Installation Pack 2
     ${result}=        Run Process    st2  action  list  --pack  ${PACK TO INSTALL 2}  -j
     # Log To Console    STDOUT:\n ${result.stdout}
-    Run Keyword If    '${PACK VAR 2}' in '''${result.stdout}'''  NEW-Uninstall Pack 2
+    Run Keyword If    '${PACK VAR 2}' in '''${result.stdout}'''  KEYWORD:NEW-Uninstall Pack 2
 
-NEW-Uninstall Pack 2
+KEYWORD:NEW-Uninstall Pack 2
     ${result}=        Run Process  st2  run  packs  remove  ${PACK TO INSTALL 2}  -j
     # Log To Console    Uninstalling Pack: ${PACK TO INSTALL 2} :\n${result.stdout}
 
-Suite Cleanup
+TEARDOWN:Suite Cleanup
     Log To Console    ___________________________SUITE TEARDOWN___________________________
-    Run Keyword       Check Installation Pack 1
+    Run Keyword       SETUP:Check Installation Pack 1
     ${result}=        Run Process  st2  run  packs.delete  packs\=${PACK TO INSTALL NO CONFIG}  -j
     # Log To Console    ${result.stdout}
     Should Contain    ${result.stdout}  ${SUCCESS STATUS}
     # Should Contain    ${result.stdout}  DEBUG${SPACE*3}Deleting pack directory "/opt/stackstorm/packs/${PACK TO INSTALL NO CONFIG}"${\n}
-    Log To Console    ___________________________SUITE TEARDOWN___________________________
+    Log To Console    ___________________________SUITE TEARDOWN___________________________\n
 
 *** Settings ***
 Library             Process
 Variables           variables/integration_packs_doc.yaml
 Resource            ../common/keywords.robot
-Suite Setup         Check Installation Pack 1
-Suite Teardown      Suite Cleanup
+Suite Setup         SETUP:Check Installation Pack 1
+Suite Teardown      TEARDOWN:Suite Cleanup

@@ -15,7 +15,7 @@ ${CANCELED STATUS}      "status": "canceled"
 ${FAILED STATUS}        "status": "failed"
 
 *** Test Cases ***
-Verify Key Value Triggers
+TEST:Verify Key Value Triggers
     ${result}=       Run Process  st2  trigger  list  -p  core  -a ref  -j
     Log To Console   \nTRIGGER LIST:\n
     Process Log To Console   ${result}
@@ -24,17 +24,17 @@ Verify Key Value Triggers
     Should Contain   ${result.stdout}   ${TRIGGER KEY CHANGE}
     Should Contain   ${result.stdout}   ${TRIGGER KEY DELETE}
 
-Create, Update and Value Change key value pair
-    [Template]                 Set and update key
+TEST:Create, Update and Value Change key value pair
+    [Template]                 KEYWORD:Set and update key
     ${KEY}  ${VALUE}           ${TRIGGER KEY CREATE}
     ${KEY}  ${VALUE}           ${TRIGGER KEY UPDATE}
     ${KEY}  ${UPDATED VALUE}   ${TRIGGER KEY CHANGE}
 
-Delete a key
-    Run Keyword      Delete Key        ${KEY}
-    Run Keyword      Check key store actions with trigger instance  ${KEY}  ${UPDATED VALUE}  ${TRIGGER KEY DELETE}
+TEST:Delete a key
+    Run Keyword      KEYWORD:Delete Key        ${KEY}
+    Run Keyword      KEYWORD:Check key store actions with trigger instance  ${KEY}  ${UPDATED VALUE}  ${TRIGGER KEY DELETE}
 
-Load and Delete Key Value pairs from json file
+TEST:Load and Delete Key Value pairs from json file
     ${result}=          Run Process        st2  key  load  ${JSON FILE}  -j
     Should Contain      ${result.stdout}   &{ELEMENTS}[robot2]
     Should Contain      ${result.stdout}   &{ELEMENTS}[robot1]
@@ -56,7 +56,7 @@ Load and Delete Key Value pairs from json file
     Process Log To Console   ${result}
     Should Contain      ${result.stdout}   Resource with id "1" has been successfully deleted.
 
-Key Value pair operations with expiry
+TEST:Key Value pair operations with expiry
     ${result}=           Run Process       st2  key  set  ${KEY}  ${VALUE}  -l  1  -j
     Should Contain       ${result.stdout}  expire_timestamp
     Should Contain       ${result.stdout}  "name": "${KEY}"
@@ -67,19 +67,19 @@ Key Value pair operations with expiry
     Should Contain       ${result.stdout}  "value": "${VALUE}"
     Log To Console      \nKEY VALUE PAIR WITH EXPIRY:\n
     Process Log To Console   ${result}
-    ${result}=           Wait Until Keyword Succeeds  1m  30s  Get Key List
+    ${result}=           Wait Until Keyword Succeeds  1m  30s  KEYWORD:Get Key List
     Log To Console       \nKEY VALUE PAIR LIST(WITHOUT EXPIRY):\n
     Process Log To Console   ${result}
 
 
 *** Keywords ***
-Get Key List
+KEYWORD:Get Key List
     ${result}=           Run Process       st2  key  list  -j
     Should Not Contain   ${result.stdout}  "name": "${KEY}"
     Should Not Contain   ${result.stdout}  "value": "${VALUE}"
     [return]             ${result}
 
-Set and update key
+KEYWORD:Set and update key
     [Arguments]      ${key}  ${value}   ${trigger value}
     ${result}=       Run Process        st2  key  set  ${key}  ${value}  -j
     ${message}=      Convert To Uppercase    ${trigger value}
@@ -87,9 +87,9 @@ Set and update key
     Process Log To Console   ${result}
     Should Contain   ${result.stdout}   "name": "${key}"
     Should Contain   ${result.stdout}   "value": "${value}"
-    Run Keyword      Check key store actions with trigger instance  ${key}  ${value}  ${trigger value}
+    Run Keyword      KEYWORD:Check key store actions with trigger instance  ${key}  ${value}  ${trigger value}
 
-Check key store actions with trigger instance
+KEYWORD:Check key store actions with trigger instance
     [Arguments]      ${key}  ${value}  ${trigger value}
     ${result}=       Run Process       st2  trigger-instance  list   --trigger\=${trigger value}  -n  1  -j
     Should Contain   ${result.stdout}  "trigger": "${trigger value}"
@@ -102,22 +102,22 @@ Check key store actions with trigger instance
     Should Contain   ${result.stdout}  "name": "${key}"
     Should Contain   ${result.stdout}  "value": "${value}"
 
-Delete Key
+KEYWORD:Delete Key
     [Arguments]      ${key}
     ${result}=       Run Process        st2  key  delete  ${key}
     Should Contain   ${result.stdout}    Resource with id "${key}" has been successfully deleted.
 
-Key Not Found
+KEYWORD:Key Not Found
     [Arguments]      ${key}
     ${result}=       Run Process        st2  key  delete  ${key}
     Should Contain   ${result.stdout}    Key Value Pair "${key}" is not found.
 
-Check and Delete Key
+SETUP/TEARDOWN:Check and Delete Key
    Log To Console    _______________________SUITE SETUP/TEARDOWN______________________
    Log To Console    _________________________________________________________________
    ${result}=       Run Process  st2  key  list  -j
-   Run Keyword If   "${KEY}" in '''${result.stdout}'''  Delete Key  ${KEY}
-   ...       ELSE   Key Not Found  ${KEY}
+   Run Keyword If   "${KEY}" in '''${result.stdout}'''  KEYWORD:Delete Key  ${KEY}
+   ...       ELSE   KEYWORD:Key Not Found  ${KEY}
    Log To Console    _______________________SUITE SETUP/TEARDOWN______________________
    Log To Console    _________________________________________________________________
 
@@ -125,5 +125,5 @@ Check and Delete Key
 Library            Process
 Library            String
 Resource           ../common/keywords.robot
-Suite Setup        Check and Delete Key
-Suite Teardown     Check and Delete Key
+Suite Setup        SETUP/TEARDOWN:Check and Delete Key
+Suite Teardown     SETUP/TEARDOWN:Check and Delete Key
