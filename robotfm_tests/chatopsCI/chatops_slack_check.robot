@@ -44,7 +44,7 @@ TEST:Restart and check st2chatops service
 
 TEST:Check post_message execution and receive status
     ${random}=        KEYWORD:Generate Token
-    Log To Console   \nCHANNEL: ${random}
+    Log To Console   \nRANDOM: ${random}
     ${result}=        Wait Until Keyword Succeeds  3x  5s   KEYWORD:Hubot Post  ${random}
 
 TEST:Post message on the channel and verify

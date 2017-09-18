@@ -36,7 +36,6 @@ TEST:Check post_message execution and receive status
     ${channel}=       KEYWORD:Generate Token
     Log To Console   \nCHANNEL: ${channel}
     ${result}=        Wait Until Keyword Succeeds  3x  5s   KEYWORD:Hubot Post  ${channel}
-    Process Log To Console    ${result}
     # Run Keyword If   ${result.rc} != 0    Fatal Error  CHATOPS.POST_MESSAGE HASN'T BEEN RECEIVED.
 
 TEST:Check the complete request-response flow
@@ -62,7 +61,7 @@ KEYWORD:Hubot Post
     ...                           >\/dev\/null;  echo;  sleep  5;}  |  bin\/hubot  \-\-test
     ...                           cwd=/opt/stackstorm/chatops/    shell=True
     Should Contain     ${result.stdout}   Chatops message received
-    Should Contain     ${result.stdout}   ${random}
+    Should Contain     ${result.stdout}   ${channel}
 
 KEYWORD:Complete Flow
     [Arguments]    ${channel}
