@@ -49,9 +49,8 @@ TEST:Check post_message execution and receive status
 
 TEST:Post message on the channel and verify
     [Documentation]    ID FOR POST MESSAGE
-    ${result}=         Run Keyword  KEYWORD:Get post_message execution id
+    ${result}=          Wait Until Keyword Succeeds  3x  5s  KEYWORD:Get post_message execution id for slackcat
     Should Contain     ${result.stdout}  slackcat posted 1 message lines to chatopsci
-    Process Log To Console  ${result}
 
 TEST:Execution from hubot with slackcat token in st2chatops_env
     [Documentation]     Hubot execution result for post message
@@ -65,7 +64,7 @@ TEST:Execution from hubot with slackcat token in st2chatops_env
 *** Keyword ***
 KEYWORD:Verify Correct Substring
     [Arguments]     ${ELEMENT}
-    Log To Console   \nMATCH SUBSTRING:\n<===================:\n${ELEMENT}\n:===================>\n
+    Log To Console   \nMATCHED SUBSTRING:\n===================>:\n${ELEMENT}\n:<===================\n
     Should Contain   ${ELEMENT}  in channel: chatopsci, from: bot
     Should Contain   ${ELEMENT}  ref : chatops.post_message
     Should Contain   ${ELEMENT}  id : ${EXECUTION ID}
@@ -87,7 +86,7 @@ KEYWORD:Execution logs from hubot
     ...                                |  timeout  25s  bin/hubot  cwd=/opt/stackstorm/chatops/  shell=True
     Log To Console      \n<===================> COMPLETE HUBOT STDOUT START <===================>
     Process Log To Console      ${result}
-    Log To Console      \n=================== COMPLETE HUBOT STDOUT END ===================\n
+    Log To Console      \n===================== COMPLETE HUBOT STDOUT END =======================\n
     Should Contain      ${result.stdout}  details available at
     Should Contain      ${result.stdout}  in channel: chatopsci, from: bot
 
@@ -130,11 +129,12 @@ KEYWORD:ID Execution List Action
     Log To Console   \n\nACTION: ${action_name}, ID: @{instance id}[3]\n
     [return]         @{instance id}[3]
 
-KEYWORD:Get post_message execution id
+KEYWORD:Get post_message execution id for slackcat
     ${id}=           Run Keyword    KEYWORD:ID Execution List Action    chatops.post_message
     Set Suite Variable  ${EXECUTION ID}        ${id}
-    ${result}=       Run Process    {  echo  '!st2  get  execution  {id}';}  |  slackcat  --channel\=chatopsci
+    ${result}=       Run Process    {  echo  '!st2  get  execution  {id}';  sleep  10;}  |  slackcat  --channel\=chatopsci
     ...              --plain  --stream  shell=True
+    Process Log To Console      ${result}
     [return]         ${result}
 
 
