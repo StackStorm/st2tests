@@ -132,7 +132,7 @@ KEYWORD:ID Execution List Action
 KEYWORD:Get post_message execution id for slackcat
     ${id}=           Run Keyword    KEYWORD:ID Execution List Action    chatops.post_message
     Set Suite Variable  ${EXECUTION ID}        ${id}
-    ${result}=       Run Process    {  echo  '!st2  get  execution  {id}'; sleep 10}  |  slackcat  --channel\=chatopsci
+    ${result}=       Run Process    {  echo  '!st2  get  execution  {id}';  sleep  10;}  |  slackcat  --channel\=chatopsci
     ...              --plain  --stream  shell=True
     Process Log To Console      ${result}
     [return]         ${result}
