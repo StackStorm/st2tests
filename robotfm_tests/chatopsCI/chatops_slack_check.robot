@@ -119,7 +119,7 @@ KEYWORD:Generate Token
 
 KEYWORD:Install Slackcat
     ${result}=      Run Process  wget  https://github.com/vektorlab/slackcat/releases/download/v1.0/slackcat-1.0-linux-amd64  -O  slackcat  >  /dev/null
-    Process Log To Console      ${result}
+    # Process Log To Console      ${result}
     Should Contain  ${result.stderr}  saved
     File Should Exist  slackcat
 
