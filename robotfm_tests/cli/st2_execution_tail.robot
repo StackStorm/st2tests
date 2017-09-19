@@ -31,8 +31,26 @@ TEST:Verify st2 execution tail command works correctly simple ations
     Should Contain       ${tail_output}  ${EXECUTION STDERR LINE 7}
     Should Contain       ${tail_output}  ${EXECUTION STDERR LINE 9}
 
-TEST:Verify st2 execution tail command works correctly for workflows
+TEST:Verify st2 execution tail command works correctly for action chain workflows
     ${result}=           Run  ${EXECUTION RUN} examples.action_chain_streaming_demo -a
+    @{Execution ID}      Split String  ${result}
+    Set Suite Variable   @{Execution ID}
+    Log To Console       \nRUN EXECUTION:\n
+    Log To Console       \nRESULT:\n: ${result}
+    Log To Console       EXECUTION ID: @{Execution ID}[-1]\n
+
+    ${tail_output}=       Run  ${EXECUTION TAIL} @{Execution ID}[-1]
+    Log To Console       \nRUN EXECUTION TAIL (might take a while):\n
+    Log To Console       \nRESULT:\n
+    Log To Console       \n${tail_output}
+    Should Match Regexp  ${tail_output}  ${CHILD EXECUTION 3 STARTED}
+    Should Match Regexp  ${tail_output}  ${CHILD EXECUTION 3 FINISHED}
+    Should Match Regexp  ${tail_output}  ${CHILD EXECUTION 10 STARTED}
+    Should Match Regexp  ${tail_output}  ${CHILD EXECUTION 10 FINISHED}
+    Should Match Regexp  ${tail_output}  ${PARENT EXECUTION FINISHED}
+
+TEST:Verify st2 execution tail command works correctly for Mistral workflows
+    ${result}=           Run  ${EXECUTION RUN} examples.mistral-streaming-demo -a
     @{Execution ID}      Split String  ${result}
     Set Suite Variable   @{Execution ID}
     Log To Console       \nRUN EXECUTION:\n
