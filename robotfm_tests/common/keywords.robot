@@ -1,3 +1,6 @@
+*** Variables ***
+${SUCCESS STATUS}    "status": "succeeded
+
 *** Keyword ***
 Process Log To Console
     [Arguments]    ${result}
