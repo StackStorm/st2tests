@@ -31,5 +31,5 @@ Library         Process
 Library         String
 Library         OperatingSystem
 Resource        ../common/keywords.robot
-#Suite Setup     SETUP:Copy and Load Examples Pack
-#Suite Teardown  TEARDOWN:Uninstall Examples Pack
+Suite Setup     SETUP:Copy and Load Examples Pack
+Suite Teardown  TEARDOWN:Uninstall Examples Pack
