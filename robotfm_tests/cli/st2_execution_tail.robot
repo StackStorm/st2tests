@@ -32,7 +32,7 @@ TEST:Verify st2 execution tail command works correctly simple ations
     Should Contain       ${tail_output}  ${EXECUTION STDERR LINE 9}
 
 TEST:Verify st2 execution tail command works correctly for action chain workflows
-    ${result}=           Run  ${EXECUTION RUN} examples.action_chain_streaming_demo -a
+    ${result}=           Run  ${EXECUTION RUN} examples.action_chain_streaming_demo count=5 sleep_delay=0.1 -a
     @{Execution ID}      Split String  ${result}
     Set Suite Variable   @{Execution ID}
     Log To Console       \nRUN EXECUTION:\n
@@ -50,7 +50,7 @@ TEST:Verify st2 execution tail command works correctly for action chain workflow
     Should Match Regexp  ${tail_output}  ${PARENT EXECUTION FINISHED}
 
 TEST:Verify st2 execution tail command works correctly for Mistral workflows
-    ${result}=           Run  ${EXECUTION RUN} examples.mistral-streaming-demo -a
+    ${result}=           Run  ${EXECUTION RUN} examples.mistral-streaming-demo count=5 sleep_delay=0.1 -a
     @{Execution ID}      Split String  ${result}
     Set Suite Variable   @{Execution ID}
     Log To Console       \nRUN EXECUTION:\n
