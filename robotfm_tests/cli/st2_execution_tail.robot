@@ -15,7 +15,7 @@ ${PARENT EXECUTION FINISHED}    (?ims).*Execution .*? has completed \\(status=su
 
 *** Test Cases ***
 TEST:Verify st2 execution tail command works correctly simple ations
-    ${result}=           Run  ${EXECUTION RUN} examples.python_runner_print_to_stdout_and_stderr count=10 sleep_delay=0.2 -a
+    ${result}=           Run  ${EXECUTION RUN} examples.python_runner_print_to_stdout_and_stderr count=10 sleep_delay=0.1 -a
     @{Execution ID}      Split String  ${result}
     Set Suite Variable   @{Execution ID}
     Log To Console       \nRUN EXECUTION:\n
