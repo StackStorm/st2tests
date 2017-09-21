@@ -26,7 +26,7 @@ SETUP:Copy and Load Examples Pack and Enable Streaming
     Log To Console   _________________________________________________________________
     ${result}=    Run Process     sudo  crudini  \-\-set  /etc/st2/st2.conf  actionrunner  stream_output  True
     ${result}=    Run Process     sudo  st2ctl  restart
-    ${id}=        Run Keyword    KEYWORD:Copy and Load Examples Pack
+    ${id}=        Run Keyword    KEYWORD:SETUP:Copy and Load Examples Pack
 
 TEARDOWN:Uninstall Examples Pack
     Log To Console   ___________________________SUITE TEARDOWN_________________________
