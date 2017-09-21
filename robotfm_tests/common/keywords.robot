@@ -24,7 +24,7 @@ SETUP:Copy and Load Examples Pack
 SETUP:Copy and Load Examples Pack and Enable Streaming
     Log To Console   ___________________________SUITE SETUP___________________________
     Log To Console   _________________________________________________________________
-    ${result}=    Run Process     sudo  crudini  \-\-set  /etc/st2/st2.conf  actionrunner  stream_output  'True'
+    ${result}=    Run Process     sudo  crudini  \-\-set  /etc/st2/st2.conf  actionrunner  stream_output  True
     ${result}=    Run Process     sudo  st2ctl  restart
     ${result}=    Run Process     sudo  cp  \-r  /usr/share/doc/st2/examples/  /opt/stackstorm/packs/
     Should Be Equal As Integers   ${result.rc}  0
