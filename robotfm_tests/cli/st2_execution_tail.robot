@@ -72,5 +72,5 @@ Library         Process
 Library         String
 Library         OperatingSystem
 Resource        ../common/keywords.robot
-Suite Setup     SETUP:Copy and Load Examples Pack
+Suite Setup     SETUP:Copy and Load Examples Pack and Enable Streaming
 Suite Teardown  TEARDOWN:Uninstall Examples Pack
