@@ -13,7 +13,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: ". virtualenv/bin/activate && st2 run examples.chain-test-inquiry"
+    cmd: "st2 run examples.chain-test-inquiry"
   on-success: "get_inquiry_trigger"
 
 - name: "get_inquiry_trigger"
@@ -24,7 +24,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: ". virtualenv/bin/activate && st2 trigger-instance list -j --trigger=core.st2.generic.inquiry"
+    cmd: "st2 trigger-instance list -j --trigger=core.st2.generic.inquiry"
   on-success: "get_inquiry_id"
 
 - name: "get_inquiry_id"
@@ -35,7 +35,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: '. virtualenv/bin/activate && echo $(st2 inquiry list | grep -o "[0-9a-f]\{24\}" | tail -1)'
+    cmd: 'echo $(st2 inquiry list | grep -o "[0-9a-f]\{24\}" | tail -1)'
   on-success: "get_workflow_id"
 
 - name: "get_workflow_id"
@@ -46,7 +46,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: '. virtualenv/bin/activate && echo $(st2 execution list -a id --action=examples.chain-test-inquiry | grep -o "[0-9a-f]\{24\}" | tail -1)'
+    cmd: 'echo $(st2 execution list -a id --action=examples.chain-test-inquiry | grep -o "[0-9a-f]\{24\}" | tail -1)'
   on-success: "get_workflow_details_1"
 
 - name: "get_workflow_details_1"
@@ -57,7 +57,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: '. virtualenv/bin/activate && st2 execution get -j {{ get_workflow_id.stdout }}'
+    cmd: 'st2 execution get -j {{ get_workflow_id.stdout }}'
   on-success: "invalid_response_expect_failure"
 
 - name: "invalid_response_expect_failure"
@@ -68,7 +68,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: ". virtualenv/bin/activate && st2 inquiry respond -r '{\"continue\": 123}' {{ get_inquiry_id.stdout }}"
+    cmd: "st2 inquiry respond -r '{\"continue\": 123}' {{ get_inquiry_id.stdout }}"
   on-failure: "get_workflow_details_2"
   on-success: "fail"
 
@@ -80,7 +80,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: '. virtualenv/bin/activate && st2 execution get -j {{ get_workflow_id.stdout }}'
+    cmd: 'st2 execution get -j {{ get_workflow_id.stdout }}'
   on-success: "valid_response"
 
 - name: "valid_response"
@@ -91,7 +91,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: ". virtualenv/bin/activate && st2 inquiry respond -r '{\"continue\": true}' {{ get_inquiry_id.stdout }}"
+    cmd: "st2 inquiry respond -r '{\"continue\": true}' {{ get_inquiry_id.stdout }}"
   on-success: "get_workflow_details_3"
 
 - name: "get_workflow_details_3"
@@ -102,7 +102,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: '. virtualenv/bin/activate && st2 execution get -j {{ get_workflow_id.stdout }}'
+    cmd: 'st2 execution get -j {{ get_workflow_id.stdout }}'
   on-success: "duplicate_response_expect_failure"
 
 - name: "duplicate_response_expect_failure"
@@ -113,7 +113,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: ". virtualenv/bin/activate && st2 inquiry respond -r '{\"continue\": true}' {{ get_inquiry_id.stdout }}"
+    cmd: "st2 inquiry respond -r '{\"continue\": true}' {{ get_inquiry_id.stdout }}"
   on-success: "fail"
   on-failure: assert_triggers
 
