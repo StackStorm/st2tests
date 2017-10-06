@@ -69,8 +69,14 @@ chain:
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
     cmd: "st2 inquiry respond -r '{\"secondfactor\": 123}' {{ get_inquiry_id.stdout }}"
-  on-failure: "get_workflow_details_2"
+  on-failure: "pause_after_invalid_response"
   on-success: "fail"
+
+- name: "pause_after_invalid_response"
+  ref: "core.pause"
+  params:
+    max_pause: 5
+  on-success: "get_workflow_details_2"
 
 - name: "get_workflow_details_2"
   ref: "core.local"
@@ -92,6 +98,12 @@ chain:
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
     cmd: "st2 inquiry respond -r '{\"secondfactor\": \"bar\"}' {{ get_inquiry_id.stdout }}"
+  on-success: "pause_after_valid_response"
+
+- name: "pause_after_valid_response"
+  ref: "core.pause"
+  params:
+    max_pause: 5
   on-success: "get_workflow_details_3"
 
 - name: "get_workflow_details_3"
