@@ -13,8 +13,8 @@ TEST:NEW-Verify multiple packs can be installed from repo
     Process Log To Console     ${result}
     Should Not Contain  ${result.stdout}   ${FAIL STATUS}
     Should Not Contain  ${result.stdout}   ${TIMEOUT STATUS}
-    Should Contain      ${result.stdout}   For \"${PACK TO INSTALL 1}, ${PACK TO INSTALL 2}\" packs following content will be registered:
-    Should Contain      ${result.stdout}   Installation may take a while based on number of items.
+    Should Contain      ${result.stdout}   For the \"${PACK TO INSTALL 1}, ${PACK TO INSTALL 2}\" packs, the following content will be registered:
+    Should Contain      ${result.stdout}   Installation may take a while for packs with many items.
     Should Contain      ${result.stdout}   rules     \|
     Should Contain      ${result.stdout}   sensors   \|
     Should Contain      ${result.stdout}   aliases   \|
