@@ -71,7 +71,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             # Note: We sleep to wait for the actual trigger instance to be written
             # in the db so the next task retrieves a correct trigger instance
-            cmd: "st2 key set a b ; sleep 2"
+            cmd: "sleep 2 ; st2 key set a b ; sleep 2"
         on-success: check_key_create_trigger_instance
     -
         name: check_key_create_trigger_instance
@@ -120,7 +120,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             # Note: We sleep to wait for the actual trigger instance to be written
             # in the db so the next task retrieves a correct trigger instance
-            cmd: "st2 key set a c ; sleep 2"
+            cmd: "sleep 2 ; st2 key set a c ; sleep 2"
         on-success: check_key_change_trigger_instance
     -
         name: check_key_change_trigger_instance
