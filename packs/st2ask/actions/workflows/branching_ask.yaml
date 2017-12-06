@@ -1,0 +1,77 @@
+---
+version: '2.0'
+
+st2ask.branching_ask:
+    description: Workflow illustrating branching logic within a workflow using decisions from st2.ask responses
+    type: direct
+
+    task-defaults:
+        on-error:
+            - rejected
+
+    tasks:
+
+        initial_task:
+            action: core.local
+            input:
+                cmd: echo "Beginning approval example workflow"
+            on-complete:
+                - basic_approval
+
+        # This task asks the user if the promote_packages task should be run
+        ask_for_promote:
+            action: st2.ask
+            input:
+                schema:
+                    title: response_data
+                    type: object
+                    properties:
+                        next_task:
+                           type: boolean
+                           description: Should we run promote_packages task?
+                    required: ["promote_packages"]
+                tag: developers
+            publish:
+                promote_packages: <% task(ask_for_promote).result.promote_packages %>
+            on-success:
+                - push_to_packagecloud: <% $.promote_packages %>
+                - ask_for_teardown: <% not $.promote_packages %>
+
+        # This is just an example of a task that we can run optionally, depending on the response
+        # to the previous task.
+        push_to_packagecloud:
+            action: st2ci.promote_package
+
+        # This task asks the user if the VM used for testing should be torn down afterwards
+        ask_for_teardown:
+            action: st2.ask
+            input:
+                schema:
+                    title: response_data
+                    type: object
+                    properties:
+                        teardown:
+                           type: boolean
+                           description: Should we tear down VM after testing has finished?
+                    required: ["teardown"]
+                tag: developers
+            publish:
+                teardown: <% task(ask_for_promote).result.teardown %>
+            on-success:
+                - tear_down_vm: <% $.teardown %>
+                - end: <% not $.teardown %>
+
+        # This is just an example of a task that we can run optionally, depending on the response
+        # to the previous task.
+        tear_down_vm:
+            action: st2ci.tear_down_vm
+
+        end:
+            action: core.local
+            input:
+                cmd: echo "Workflow complete!"
+
+        rejected:
+            action: core.local
+            input:
+                cmd: echo "Workflow approval was rejected, or some other failure occurred."

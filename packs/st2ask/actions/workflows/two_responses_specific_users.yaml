@@ -1,0 +1,81 @@
+---
+version: '2.0'
+
+st2ask.two_responses_specific_users:
+    description: An st2.ask workflow that demonstrates two responses from specific users
+    type: direct
+
+    task-defaults:
+        on-error:
+            - rejected
+
+    tasks:
+
+        init:
+            action: core.noop
+            on-complete:
+                - bob_response
+                - fred_response
+
+        # This st2.ask example illustrates how multiple responders can be used to satisfy a workflow.
+        # In this case, we create two separate st2.ask tasks, one for each approver.
+        bob_response:
+            action: st2.ask
+            input:
+                schema:
+                    title: response_data
+                    type: object
+                    properties:
+                        bob_token:
+                           type: string
+                           description: Please enter bob's token
+                           secret: true
+                    required: ["bob_token"]
+                tag: bob
+
+                # The "users" param is similar to "roles" in that it restricts who can respond to this instance of st2.ask.
+                # This is a less flexible option, because you must explicitly mention specific usernames, but it doesn't require
+                # the RBAC functionality, and as a result, this is allowed in the community edition of StackStorm
+                users:
+                    - bob
+            publish:
+                bob_token: <% task(bob_response).result.bob_token %>
+            on-success:
+                - do_risky_thing_that_needs_two_approvers
+
+        fred_response:
+            action: st2.ask
+            input:
+                schema:
+                    title: response_data
+                    type: object
+                    properties:
+                        fred_token:
+                           type: string
+                           description: Please enter fred's token
+                           secret: true
+                    required: ["fred_token"]
+                tag: fred
+
+                # The "users" param is similar to "roles" in that it restricts who can respond to this instance of st2.ask.
+                # This is a less flexible option, because you must explicitly mention specific usernames, but it doesn't require
+                # the RBAC functionality, and as a result, this is allowed in the community edition of StackStorm
+                users:
+                    - fred
+            publish:
+                fred_token: <% task(fred_response).result.fred_token %>
+            on-success:
+                - do_risky_thing_that_needs_two_approvers
+
+        # Again, we're using the variables published by the previous action to drive this one.
+        do_risky_thing_that_needs_two_approvers:
+            join: all
+            action: testpack.do_risky_thing_that_needs_two_approvers
+            input:
+                bob_token: <% $.bob_token %>
+                fred_token: <% $.fred_token %>
+
+        rejected:
+            action: core.local
+            input:
+                cmd: echo "Workflow approval was rejected, or some other failure occurred."

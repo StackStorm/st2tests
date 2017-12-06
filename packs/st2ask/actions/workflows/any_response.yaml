@@ -1,0 +1,56 @@
+---
+version: '2.0'
+
+st2ask.any_response:
+    description: Workflow requiring a confirmation response from any authenticated user.
+    type: direct
+
+    task-defaults:
+        on-error:
+            - rejected
+
+    tasks:
+
+        initial_task:
+            action: core.local
+            input:
+                cmd: echo "Beginning approval example workflow"
+            on-complete:
+                - basic_approval
+
+
+        # We hit our first approval task. The first time this action runs, the execution context will be empty, so
+        # naturally, this data will fail to validate, so the action will return an `pending` status, and this workflow
+        # will be paused. It will remain in this state until someone passes additional data into the executions API.
+        # When this happens, the action will re-run, and re-attempt to validate the data in the context. If this data
+        # validates, the action will return a success status and will continue with the workflow.
+        #
+        # If it does not validate, it will return to `pending` status.
+        #
+        # If someone provides valid data, such as via an `st2 approve` command,
+        # it will continue to task "complete"
+        confirm:
+            action: st2.ask
+            input:
+                schema:
+                    title: response_data
+                    type: object
+                    properties:
+                        continue:
+                           type: boolean
+                           description: Would you like to continue the workflow?
+                    required: ["continue"]
+                tag: operations
+                # Note that the "users" and "roles" parameters are omitted here, so anyone can respond to this task
+            on-success:
+                - complete
+
+        complete:
+            action: core.local
+            input:
+                cmd: echo "Workflow complete!"
+
+        rejected:
+            action: core.local
+            input:
+                cmd: echo "Workflow approval was rejected, or some other failure occurred."

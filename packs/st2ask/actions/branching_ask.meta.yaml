@@ -1,0 +1,7 @@
+---
+  name: "branching_ask"
+  description: "Workflow illustrating branching logic within a workflow using decisions from st2.ask responses"
+  runner_type: "mistral-v2"
+  pack: st2ask
+  enabled: true
+  entry_point: "workflows/branching_ask.yaml"
