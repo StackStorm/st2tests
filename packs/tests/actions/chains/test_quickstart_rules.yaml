@@ -140,7 +140,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 rule delete {{ tested_rule }} | grep 'Resource with id \"{{ tested_rule }}\" has been successfully deleted.'"
+            cmd: "st2 rule delete {{ tested_rule }} | grep 'Resource with id \"{{ tested_rule }}\" has been successfully deleted.' ; sleep 2"
         on-success: test_rule_deleted
     -
         name: test_rule_deleted
