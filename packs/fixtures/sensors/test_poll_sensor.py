@@ -8,7 +8,7 @@ from common_lib import get_environ
 
 # This is to test imports from action's lib folder to check
 # if we messed up PYTHONPATH for actions.
-from lib.base import get_uuid_4
+from lib.base import get_uuid_4  # NOQA
 
 from st2reactor.sensor.base import PollingSensor
 
