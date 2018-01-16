@@ -7,7 +7,7 @@ from base import DummyClass
 
 # This is to test imports from pack's lib folder to check
 # if we messed up PYTHONPATH for actions.
-from common_lib import get_environ
+from common_lib import get_environ  # pylint: disable=import-error
 
 
 # This is to test imports from action's lib folder to check
