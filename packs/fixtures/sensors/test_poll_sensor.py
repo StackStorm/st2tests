@@ -4,7 +4,7 @@
 
 # This is to test imports from pack's lib folder to check
 # if we messed up PYTHONPATH for sensors.
-from common_lib import get_environ
+from common_lib import get_environ  # pylint: disable=import-error
 
 # This is to test imports from action's lib folder to check
 # if we messed up PYTHONPATH for actions.
