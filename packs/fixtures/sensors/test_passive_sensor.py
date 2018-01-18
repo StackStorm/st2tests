@@ -6,14 +6,6 @@ import json
 
 from flask import Flask
 
-# This is to test imports from pack's lib folder to check
-# if we messed up PYTHONPATH for sensors.
-from common_lib import get_environ  # pylint: disable=import-error
-
-# This is to test imports from action's lib folder to check
-# if we messed up PYTHONPATH for actions.
-from lib.base import get_uuid_4  # NOQA
-
 from st2reactor.sensor.base import Sensor
 
 SAMPLE_PAYLOAD = {
@@ -37,11 +29,8 @@ class TestPassiveSensor(Sensor):
         self.host = self._config['host']
         self.port = self._config['port']
         self.app = Flask(__name__)
-        self.logger = self.sensor_service.get_logger(name=self.__class__.__name__)
 
     def setup(self):
-        self.logger.info('PYTHONPATH: %s', get_environ('PYTHONPATH'))
-
         @self.app.route('/webhooks/<path:endpoint>', methods=['POST', 'GET'])
         def handle_ep(endpoint):
             if endpoint == 'passivesensor/test':
