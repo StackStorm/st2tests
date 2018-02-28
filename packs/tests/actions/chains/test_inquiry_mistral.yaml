@@ -185,7 +185,7 @@ chain:
   params:
     object: "{{ assert_workflow_succeeded_prep.stdout }}"
     expected:
-      status: succeeded
+      succeeded: True
   on-success: "assert_workflow_expected_output_prep"
 
 
