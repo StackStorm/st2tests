@@ -23,7 +23,7 @@ TEST:Verify "packs.setup_virtualenv" with python3 flag works
 
 
 TEST:Verify Python 3 virtual environment works
-    ${result}=          Run Process  st2  run examples.python_runner_print_python_version  -j
+    ${result}=          Run Process  st2  run  examples.python_runner_print_python_version  -j
     Process Log To Console     ${result}
     Should Contain      ${result.stdout}  Using Python executable: /opt/stackstorm/virtualenvs/examples/bin/python
     Should Contain      ${result.stdout}  Using Python version: 3.
