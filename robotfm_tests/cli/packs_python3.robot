@@ -3,7 +3,7 @@
 *** Test Cases ***
 
 TEST:Verify "packs.setup_virtualenv" with no python3 flag works and defaults to Python 3
-    ${result}=          Run Process  st2  run  packs.setup_virtualenv packs\=examples  -j
+    ${result}=          Run Process  st2  run  packs.setup_virtualenv  packs\=examples  -j
     Should Contain      ${result.stdout}  "result": "Successfuly set up virtualenv for the following packs: examples"
     Should Contain      ${result.stdout}  ${SUCCESS STATUS}
     ${result}=          Run Process  /opt/stackstorm/virtualenvs/examples/bin/python  --version
@@ -11,7 +11,7 @@ TEST:Verify "packs.setup_virtualenv" with no python3 flag works and defaults to 
 
 
 TEST:Verify "packs.setup_virtualenv" with python3 flag works
-    ${result}=          Run Process  st2  run  packs.setup_virtualenv packs\=examples  python3\=true   -j
+    ${result}=          Run Process  st2  run  packs.setup_virtualenv  packs\=examples  python3\=true   -j
     Should Contain      ${result.stdout}  "result": "Successfuly set up virtualenv for the following packs: examples"
     Should Contain      ${result.stdout}  ${SUCCESS STATUS}
     ${result}=          Run Process  /opt/stackstorm/virtualenvs/examples/bin/python  --version
