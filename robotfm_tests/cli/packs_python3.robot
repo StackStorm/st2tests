@@ -9,7 +9,7 @@ TEST:Verify "packs.setup_virtualenv" with no python3 flag works and defaults to 
     Should Contain      ${result.stdout}  ${SUCCESS STATUS}
     ${result}=          Run Process  /opt/stackstorm/virtualenvs/examples/bin/python  --version
     Process Log To Console     ${result}
-    Should Contain      ${result.stdout}  "Python 2.7."
+    Should Contain      ${result.stdout}  Python 2.7.
 
 
 TEST:Verify "packs.setup_virtualenv" with python3 flag works
@@ -19,7 +19,7 @@ TEST:Verify "packs.setup_virtualenv" with python3 flag works
     Should Contain      ${result.stdout}  ${SUCCESS STATUS}
     ${result}=          Run Process  /opt/stackstorm/virtualenvs/examples/bin/python  --version
     Process Log To Console     ${result}
-    Should Contain      ${result.stdout}  "Python 3."
+    Should Contain      ${result.stdout}  Python 3.
 
 
 TEST:Verify Python 3 virtual environment works
