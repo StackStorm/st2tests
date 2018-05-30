@@ -77,9 +77,9 @@ TEST:OLD-Verify pack reinstall with no Config
     Should Contain      ${result.stdout}  "${PACK TO INSTALL NO CONFIG}": "Success."
     # Should Contain      ${result.stdout}  DEBUG${SPACE*3}Removing existing pack bitcoin in /opt/stackstorm/packs/${PACK TO INSTALL NO CONFIG} to replace.${\n}
 
-TEST:Verify "packs.setup_virtualenv" with python3 flag works
-    ${result}=          Run Process  st2  run  packs.setup_virtualenv  packs\=examples   python3\=true   -j
-    Should Contain      ${result.stdout}  "result": "Successfuly set up virtualenv for the following packs: examples"
+TEST:Verify "pack install" with python3 flag works
+    ${result}=          Run Process  st2  pack  install  examples  --python3
+    Should Contain      ${result.stdout}  "examples": "Success."
     Should Contain      ${result.stdout}  ${SUCCESS STATUS}
     ${result}=          Run Process  /opt/stackstorm/virtualenvs/examples/bin/python  --version
     Should Contain      ${result.stdout}  "Python 3."
