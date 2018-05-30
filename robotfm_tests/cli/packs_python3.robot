@@ -2,7 +2,7 @@
 
 *** Test Cases ***
 
-TEST:Verify "packs.setup_virtualenv" with no python3 flag works and defaults to Python 3
+TEST:Verify "packs.setup_virtualenv" with no python3 flag works and defaults to Python 2
     ${result}=          Run Process  st2  run  packs.setup_virtualenv  packs\=examples  -j
     Should Contain      ${result.stdout}  "result": "Successfuly set up virtualenv for the following packs: examples"
     Should Contain      ${result.stdout}  ${SUCCESS STATUS}
@@ -20,8 +20,8 @@ TEST:Verify "packs.setup_virtualenv" with python3 flag works
 
 TEST:Verify Python 3 virtual environment works
     ${result}=          Run Process  st2  run  examples.python_runner_print_python_version
-    Should Contain      ${result.stdout}  "Using Python executable: /opt/stackstorm/virtualenvs/examples/bin/python"
-    Should Contain      ${result.stdout}  "Using Python version: 3."
+    Should Contain      ${result.stdout}  Using Python executable: /opt/stackstorm/virtualenvs/examples/bin/python
+    Should Contain      ${result.stdout}  Using Python version: 3.
     Should Contain      ${result.stdout}  ${SUCCESS STATUS}
 
 *** Settings ***
