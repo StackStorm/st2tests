@@ -7,12 +7,17 @@ ${PACK LINUX}       "pack": "linux"
 ${PACK CORE}        "pack": "core"
 
 *** Test Cases ***
-TEST:Verify st2 version and help
+TEST:Verify st2 version and usage / help
     ${result}=       Run Process       st2  --version
-    Process Log To Console             ${result}
+    Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
     Should Contain   ${result.stderr}  st2
+    ${result}=       Run Process       st2
+    Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
+    Should Contain   ${result.stderr}  usage
+    Should Contain   ${result.stderr}  CLI for StackStorm event-driven automation platform.
+    Should Contain   ${result.stderr}  Enable debug mode
     ${result}=       Run Process       st2  -h
-    Process Log To Console             ${result}
+    Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
     Should Contain   ${result.stdout}  usage
     Should Contain   ${result.stdout}  CLI for StackStorm event-driven automation platform.
     Should Contain   ${result.stdout}  Enable debug mode
