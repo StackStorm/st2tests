@@ -72,6 +72,7 @@ TEST:OLD-Verify pack install with no config
     Should Contain      ${result.stdout}  "${PACK TO INSTALL NO CONFIG}": "Success."
     # Should Contain      ${result.stdout}  DEBUG${SPACE*3}Moving pack from /root/st2contrib/packs/${PACK TO INSTALL NO CONFIG} to /opt/stackstorm/packs/.${\n}
 
+
 TEST:OLD-Verify pack reinstall with no Config
     ${result}=          Run Process  st2  run  packs.download  packs\=${PACK TO INSTALL NO CONFIG}  -j
     Should Contain      ${result.stdout}  "${PACK TO INSTALL NO CONFIG}": "Success."
