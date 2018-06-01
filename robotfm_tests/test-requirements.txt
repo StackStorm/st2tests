@@ -1,4 +1,4 @@
 robotframework
-robotframework-pabot
+robotframework-pabot==0.38
 docutils
 PyYAML

@@ -1,0 +1,20 @@
+---
+# Action definition metadata
+name: "test_inquiry_chain"
+description: "Workflow tests Inquiries"
+runner_type: "action-chain"
+enabled: true
+entry_point: "chains/test_inquiry_chain.yaml"
+parameters:
+  token:
+    type: "string"
+    description: "st2 auth token"
+    default: ""
+  protocol:
+    type: "string"
+    description: "http/https"
+    default: "http"
+  hostname:
+    type: "string"
+    description: "St2 host to run tests against"
+    default: "127.0.0.1"
