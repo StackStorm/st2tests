@@ -1,0 +1,54 @@
+---
+# Action definition metadata
+name: "test_winrm_runners"
+description: "Workflow tests WinRM runners"
+runner_type: "action-chain"
+enabled: true
+entry_point: "chains/test_winrm_runners.yaml"
+parameters:
+  token:
+    type: "string"
+    description: "st2 auth token"
+    default: ""
+  winrm_host:
+    type: "string"
+    description: "Windows host name. If not specified, test will only check prerequisites"
+    default: ""
+  winrm_username:
+    type: "string"
+    description: "Windows username. Default is Administrator"
+    default: "Administrator"
+  winrm_password:
+    type: "string"
+    description: "Windows password"
+    default: ""
+    secret: true
+  winrm_transport:
+    type: "string"
+    description: >
+      The type of transport that WinRM will use to communicate.
+      See https://github.com/diyan/pywinrm#valid-transport-options
+    default: "ntlm"
+    enum:
+      - "basic"
+      - "certificate"
+      - "credssp"
+      - "kerberos"
+      - "ntlm"
+      - "plaintext"
+      - "ssl"
+  winrm_verify_ssl_cert:
+    type: "boolean"
+    description: "Validate SSL certs of the WinRM host."
+    default: false
+  protocol:
+    type: "string"
+    description: "Protocol for communicating with the StackStorm API (http/https)"
+    default: "http"
+    enum:
+      - "http"
+      - "https"
+  hostname:
+    type: "string"
+    description: "St2 host to run tests against"
+    default: "127.0.0.1"
