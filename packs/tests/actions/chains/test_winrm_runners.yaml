@@ -1,0 +1,133 @@
+---
+chain:
+    -
+        name: "is_winrm_host_provided"
+        ref: "core.local"
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "test -n '{{winrm_host}}'"
+        on-success: "run_winrm_cmd_action"
+        on-failure: "skip_actual_tests"
+    -
+        name: "skip_actual_tests"
+        ref: "core.local"
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo 'Winrm host was not provided - skipping actual tests'; exit 0"
+    -
+        name: "run_winrm_cmd_action"
+        ref: "core.winrm_cmd"
+        params:
+            host: "{{winrm_host}}"
+            username: "{{winrm_username}}"
+            password: "{{winrm_password}}"
+            transport: "{{winrm_transport}}"
+            verify_ssl_cert: "{{winrm_verify_ssl_cert}}"
+            cmd: "cmd /c ver"
+        on-success: "check_winrm_cmd_action"
+    -
+        name: "check_winrm_cmd_action"
+        ref: "core.local"
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo '{{run_winrm_cmd_action.stdout}}' | grep 'Microsoft Windows'"
+        on-success: "run_core_winrm_ps_cmd_action"
+    -
+        name: "run_core_winrm_ps_cmd_action"
+        ref: "core.winrm_ps_cmd"
+        params:
+            host: "{{winrm_host}}"
+            username: "{{winrm_username}}"
+            password: "{{winrm_password}}"
+            transport: "{{winrm_transport}}"
+            verify_ssl_cert: "{{winrm_verify_ssl_cert}}"
+            cmd: "Get-Location | ConvertTo-Json -Depth 1 -Compress"
+            cwd: "C:\\\\Program Files"
+        on-success: "check_core_winrm_ps_cmd_action"
+    -
+        name: "check_core_winrm_ps_cmd_action"
+        ref: "core.local"
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo '{{run_core_winrm_ps_cmd_action.stdout.Path}}' | grep 'C:\\\\Program Files'"
+        on-success: "run_winrm_example_cmd"
+    -
+        name: "run_winrm_example_cmd"
+        ref: "examples.winrm_get_ipconfig"
+        params:
+            host: "{{winrm_host}}"
+            username: "{{winrm_username}}"
+            password: "{{winrm_password}}"
+            transport: "{{winrm_transport}}"
+            verify_ssl_cert: "{{winrm_verify_ssl_cert}}"
+        on-success: "check_winrm_example_cmd"
+    -
+        name: "check_winrm_example_cmd"
+        ref: "core.local"
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo '{{run_winrm_example_cmd.stdout}}' | grep 'Windows IP Configuration'"
+        on-success: "run_winrm_example_powershell_cmd"
+    -
+        name: "run_winrm_example_powershell_cmd"
+        ref: "examples.winrm_powershell_env"
+        params:
+            host: "{{winrm_host}}"
+            username: "{{winrm_username}}"
+            password: "{{winrm_password}}"
+            transport: "{{winrm_transport}}"
+            verify_ssl_cert: "{{winrm_verify_ssl_cert}}"
+            env:
+              ST2_WINRM_ENV_TEST: "This is a test env variable"
+        on-success: "check_winrm_example_powershell_cmd"
+    -
+        name: "check_winrm_example_powershell_cmd"
+        ref: "core.local"
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo '{{run_winrm_example_powershell_cmd.stdout.Value}}' | grep 'This is a test env variable'"
+        on-success: "run_winrm_example_powershell_script"
+    -
+        name: "run_winrm_example_powershell_script"
+        ref: "examples.winrm_get_uptime"
+        params:
+            host: "{{winrm_host}}"
+            username: "{{winrm_username}}"
+            password: "{{winrm_password}}"
+            transport: "{{winrm_transport}}"
+            verify_ssl_cert: "{{winrm_verify_ssl_cert}}"
+        on-success: "check_winrm_example_powershell_script"
+    -
+        name: "check_winrm_example_powershell_script"
+        ref: "core.local"
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo '{{run_winrm_example_powershell_script.stdout}}' | grep 'Uptime: .* days, .* hours, .* minutes'"
