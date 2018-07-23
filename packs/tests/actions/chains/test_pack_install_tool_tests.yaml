@@ -9,14 +9,14 @@ vars:
 chain:
     -
         name: install_pack_1
-        ref: core.local
+        ref: core.local_sudo
         params:
             env:
               ST2_BASE_URL: "{{protocol}}://{{hostname}}"
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "sudo /opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_1 }} --debug"
+            cmd: "/opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_1 }} --debug"
             timeout: "{{test_timeout}}"
         on-success: verify_pack_1_has_been_installed
         on-failure: error_handler
@@ -36,27 +36,15 @@ chain:
     # NOTE: Installation of pack 2 should fail
     -
         name: install_pack_2
-        ref: core.local
+        ref: core.local_sudo
         params:
             env:
               ST2_BASE_URL: "{{protocol}}://{{hostname}}"
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "sudo /opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_2 }} --debug > /tmp/pack2_install.log 2>&1"
+            cmd: '/opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_2 }} --debug 2>&1 | grep "Failed to install pack" | grep "No record of the"'
             timeout: "{{test_timeout}}"
-        on-success: error_handler
-        on-failure: verify_pack2_install_failed
-    -
-        name: verify_pack2_install_failed
-        ref: core.local
-        params:
-            env:
-              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
-              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
-              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
-              ST2_AUTH_TOKEN: "{{token}}"
-            cmd: 'cat /tmp/pack2_install.log | grep "Failed to install pack \"{{ pack_to_install_2 }}\"" | grep "No record of the \"{{ pack_to_install_2 }}\" pack in the index"'
         on-success: success_handler
         on-failure: error_handler
     -
