@@ -43,7 +43,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "sudo /opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_2 }} --debug > /tmp/pack2_install.log"
+            cmd: "sudo /opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_2 }} --debug > /tmp/pack2_install.log 2>&1"
             timeout: "{{test_timeout}}"
         on-success: error_handler
         on-failure: verify_pack2_install_failed
@@ -56,7 +56,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: 'cat /tmp/pack2_install.log | grep "Failed to install pack "{{ pack_to_install_2 }}" | grep "No record of the "{{ pack_to_install_2 }}" pack in the index'
+            cmd: 'cat /tmp/pack2_install.log | grep "Failed to install pack \"{{ pack_to_install_2 }}\"" | grep "No record of the \"{{ pack_to_install_2 }}\" pack in the index"'
         on-success: success_handler
         on-failure: error_handler
     -
