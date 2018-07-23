@@ -8,6 +8,28 @@ vars:
 
 chain:
     -
+        name: check_st2_pack_instal_tool_is_available
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: 'test -f /opt/stackstorm/st2/bin/st2-pack-install'
+        on-success: install_pack_1
+        on-failure: skip_tests_tool_not_available
+    -
+        name: skip_tests_tool_not_available
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: 'echo "st2-pack-install CLI tool not available, skipping tests..."'
+    -
         name: cleanup
         ref: core.local_sudo
         params:
