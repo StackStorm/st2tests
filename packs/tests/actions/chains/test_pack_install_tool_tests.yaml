@@ -1,0 +1,82 @@
+---
+vars:
+    base_repo_url: "https://github.com/StackStorm"
+    # Note: Pack 1 should have no external dependencies beyond Python stdlib ones.
+    pack_to_install_1: "csv"
+    pack_to_install_2: "some-pack-doesnt-exist"
+    test_timeout: 100
+
+chain:
+    -
+        name: install_pack_1
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2-pack-install {{ pack_to_install_1 }} --debug"
+            timeout: "{{test_timeout}}"
+        on-success: verify_pack_1_has_been_installed
+        on-failure: error_handler
+    -
+        name: verify_pack_1_has_been_installed
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "test -d /opt/stackstorm/packs/{{ pack_to_install_1 }} && test -d /opt/stackstorm/virtualenvs/{{ pack_to_install_1 }}"
+            timeout: "{{test_timeout}}"
+        on-success: install_pack_2
+        on-failure: error_handler
+    # NOTE: Installation of pack 2 should fail
+    -
+        name: install_pack_2
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2-pack-install {{ pack_to_install_2 }} --debug > /tmp/pack2_install.log"
+            timeout: "{{test_timeout}}"
+        on-success: error_handler
+        on-failure: verify_pack2_install_failed
+    -
+        name: verify_pack2_install_failed
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: 'cat /tmp/pack2_install.log | grep "Failed to install pack "{{ pack_to_install_2 }}" | grep "No record of the "{{ pack_to_install_2 }}" pack in the index'
+        on-success: success_handler
+        on-failure: error_handler
+    -
+        name: success_handler
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo st2-pack-install tests succeeded; exit 0"
+    -
+        name: error_handler
+        description: Error handler
+        ref: "core.local"
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo st2-pack-install tests failed; exit 1"
