@@ -16,7 +16,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2-pack-install {{ pack_to_install_1 }} --debug"
+            cmd: "sudo /opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_1 }} --debug"
             timeout: "{{test_timeout}}"
         on-success: verify_pack_1_has_been_installed
         on-failure: error_handler
@@ -43,7 +43,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2-pack-install {{ pack_to_install_2 }} --debug > /tmp/pack2_install.log"
+            cmd: "sudo /opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_2 }} --debug > /tmp/pack2_install.log"
             timeout: "{{test_timeout}}"
         on-success: error_handler
         on-failure: verify_pack2_install_failed
