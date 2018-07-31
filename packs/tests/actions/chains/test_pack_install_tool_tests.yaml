@@ -3,6 +3,7 @@ vars:
     base_repo_url: "https://github.com/StackStorm"
     # Note: Pack 1 should have no external dependencies beyond Python stdlib ones.
     pack_to_install_1: "csv"
+    pack_to_install_1_with_version: "csv=0.1.0"
     pack_to_install_2: "some-pack-doesnt-exist"
     test_timeout: 60
 
@@ -50,7 +51,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "/opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_1 }} --debug"
+            cmd: "/opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_1_with_version }} --debug"
             timeout: "{{test_timeout}}"
         on-success: verify_pack_1_has_been_installed
         on-failure: error_handler
