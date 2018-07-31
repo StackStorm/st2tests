@@ -1,9 +1,9 @@
 ---
-name: "test_pack_install_tool_tests"
+name: "test_pack_install_tool"
 description: "Test which verifies that st2-pack-install CLI tool works correctly out of the box."
 runner_type: "action-chain"
 enabled: true
-entry_point: "chains/test_pack_install_tool_tests.yaml"
+entry_point: "chains/test_pack_install_tool.yaml"
 parameters:
   token:
     type: "string"
