@@ -49,7 +49,7 @@ TEST:OLD-Verify packs can be downloaded using packs.download
 
 TEST:OLD-Verify "packs.setup_virtualenv" for a pack downloaded in previous step
     ${result}=          Run Process  st2  run  packs.setup_virtualenv  packs\=${PACK TO INSTALL 1}   -j
-    Should Contain      ${result.stdout}  "result": "Successfuly set up virtualenv for the following packs: ${PACK TO INSTALL 1}"
+    Should Contain      ${result.stdout}  "result": "Successfully set up virtualenv for the following packs: ${PACK TO INSTALL 1}"
     Should Contain      ${result.stdout}  ${SUCCESS STATUS}
 
 

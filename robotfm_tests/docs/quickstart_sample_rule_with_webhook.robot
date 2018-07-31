@@ -57,7 +57,7 @@ TEST:Verify examples pack installation and setup
     ${result}=       Run Process    sudo  cp  -r  /usr/share/doc/st2/examples/  /opt/stackstorm/packs/
     Directory Should Exist  /opt/stackstorm/packs/examples
     ${result}=       Run Process    st2  run  packs.setup_virtualenv  packs\=examples  -j
-    Should Contain   ${result.stdout}  "result": "Successfuly set up virtualenv for the following packs: examples"
+    Should Contain   ${result.stdout}  "result": "Successfully set up virtualenv for the following packs: examples"
     Should Contain   ${result.stdout}  "status": "succeeded"
     ${result}=       Run Process    st2  action  list  -p  examples
     Should Contain   ${result.stdout}  No matching items found
