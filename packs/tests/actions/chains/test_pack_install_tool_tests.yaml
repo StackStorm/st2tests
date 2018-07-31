@@ -1,0 +1,105 @@
+---
+vars:
+    base_repo_url: "https://github.com/StackStorm"
+    # Note: Pack 1 should have no external dependencies beyond Python stdlib ones.
+    pack_to_install_1: "csv"
+    pack_to_install_1_with_version: "csv=0.1.0"
+    pack_to_install_2: "some-pack-doesnt-exist"
+    test_timeout: 60
+
+chain:
+    -
+        name: check_st2_pack_instal_tool_is_available
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: 'test -f /opt/stackstorm/st2/bin/st2-pack-install'
+        on-success: install_pack_1
+        on-failure: skip_tests_tool_not_available
+    -
+        name: skip_tests_tool_not_available
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: 'echo "st2-pack-install CLI tool not available, skipping tests..."'
+    -
+        name: cleanup
+        ref: core.local_sudo
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: 'rm -rf "/opt/stackstorm/packs/{{ pack_to_install_1 }}" ; rm -rf "/opt/stackstorm/virtualenvs/{{ pack_to_install_1 }}"'
+        on-success: install_pack_1
+        on-failure: error_handler
+    -
+        name: install_pack_1
+        ref: core.local_sudo
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "/opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_1_with_version }} --debug"
+            timeout: "{{test_timeout}}"
+        on-success: verify_pack_1_has_been_installed
+        on-failure: error_handler
+    -
+        name: verify_pack_1_has_been_installed
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "test -d /opt/stackstorm/packs/{{ pack_to_install_1 }} && test -d /opt/stackstorm/virtualenvs/{{ pack_to_install_1 }}"
+            timeout: "{{test_timeout}}"
+        on-success: install_pack_2
+        on-failure: error_handler
+    # NOTE: Installation of pack 2 should fail
+    -
+        name: install_pack_2
+        ref: core.local_sudo
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: '/opt/stackstorm/st2/bin/st2-pack-install {{ pack_to_install_2 }} --debug 2>&1 | grep "Failed to install pack" | grep "No record of the"'
+            timeout: "{{test_timeout}}"
+        on-success: success_handler
+        on-failure: error_handler
+    -
+        name: success_handler
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo st2-pack-install tests succeeded; exit 0"
+    -
+        name: error_handler
+        description: Error handler
+        ref: "core.local"
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo st2-pack-install tests failed; exit 1"
