@@ -264,7 +264,7 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 trigger-instance list --trigger=examples.sample_trigger -a trigger payload | grep 'test core.inject_trigger'"
         on-success: verify_trigger_was_injected_2
-     -
+    -
         name: verify_trigger_was_injected_2
         ref: core.local
         params:
