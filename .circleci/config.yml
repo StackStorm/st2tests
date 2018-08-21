@@ -1,0 +1,14 @@
+version: 2
+
+jobs:
+  build:
+    working_directory: ~/st2tests
+    parallelism: 1
+    shell: /bin/bash --login
+    docker:
+      - image: circleci/python:2.7
+    steps:
+      - checkout
+      - run: git clone -b master git@github.com:StackStorm/st2.git /tmp/st2
+      - run: make requirements
+      - run: make lint
