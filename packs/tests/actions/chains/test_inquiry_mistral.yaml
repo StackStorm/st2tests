@@ -145,7 +145,7 @@ chain:
 - name: "assert_workflow_paused_prep"
   ref: "core.local"
   params:
-    cmd: echo " { $(echo '{{ get_workflow_details_1.stdout }}' | grep paused | sed 's/,//g' | sed 's/)//g')) } "
+    cmd: echo " { $(echo '{{ get_workflow_details_1.stdout }}' | grep paused | sed 's/,//g') } "
   on-success: "assert_workflow_paused"
 
 - name: "assert_workflow_paused"
@@ -161,7 +161,7 @@ chain:
 - name: "assert_workflow_still_paused_prep"
   ref: "core.local"
   params:
-    cmd: echo " { $(echo '{{ get_workflow_details_2.stdout }}' | grep paused | sed 's/,//g' | sed 's/)//g')) } "
+    cmd: echo " { $(echo '{{ get_workflow_details_2.stdout }}' | grep paused | sed 's/,//g') } "
   on-success: "assert_workflow_still_paused"
 
 - name: "assert_workflow_still_paused"
@@ -177,7 +177,7 @@ chain:
 - name: "assert_workflow_succeeded_prep"
   ref: "core.local"
   params:
-    cmd: echo " { $(echo '{{ get_workflow_details_3.stdout }}' | grep succeeded | sed 's/,//g' | sed 's/)//g') | head -1) } "
+    cmd: echo " { $(echo '{{ get_workflow_details_3.stdout }}' | grep succeeded | sed 's/,//g') | head -1) } "
   on-success: "assert_workflow_succeeded"
 
 - name: "assert_workflow_succeeded"
