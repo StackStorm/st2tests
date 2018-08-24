@@ -177,7 +177,7 @@ chain:
 - name: "assert_workflow_succeeded_prep"
   ref: "core.local"
   params:
-    cmd: echo " { $(echo '{{ get_workflow_details_3.stdout }}' | grep succeeded | sed 's/,//g' | head -1) } "
+    cmd: echo " { $(echo '{{ get_workflow_details_3.stdout }}' | grep succeeded | grep -v status | sed 's/,//g' | head -1) } "
   on-success: "assert_workflow_succeeded"
 
 - name: "assert_workflow_succeeded"
@@ -201,7 +201,7 @@ chain:
   params:
     object: "{{ assert_workflow_expected_output_prep.stdout }}"
     key: stdout
-    value: We can now authenticate to foo service with bar
+    value: We can now authenticate to 'foo' service with bar
 
 - name: "fail"
   ref: core.local
