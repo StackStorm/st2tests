@@ -47,9 +47,9 @@ chain:
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
     cmd: 'echo $(st2 execution list -a id --action=examples.mistral-ask-basic | grep -o "[0-9a-f]\{24\}" | tail -1)'
-  on-success: "get_workflow_details_1"
+  on-success: "assert_workflow_paused_prep"
 
-- name: "get_workflow_details_1"
+- name: "assert_workflow_paused_prep"
   ref: "core.local"
   params:
     env:
@@ -57,7 +57,16 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: 'st2 execution get -j {{ get_workflow_id.stdout }}'
+    cmd: "st2 execution get -dj {{ get_workflow_id.stdout }} | python -c \"import sys, json; output=json.load(sys.stdin); print(output.get('status', None))\""
+  on-success: "assert_workflow_paused"
+
+- name: "assert_workflow_paused"
+  ref: "asserts.object_equals"
+  params:
+    object:
+      status: "{{ assert_workflow_paused_prep.stdout }}"
+    expected:
+      status: "paused"
   on-success: "invalid_response_expect_failure"
 
 - name: "invalid_response_expect_failure"
@@ -76,9 +85,9 @@ chain:
   ref: "core.pause"
   params:
     max_pause: 5
-  on-success: "get_workflow_details_2"
+  on-success: "assert_workflow_still_paused_prep"
 
-- name: "get_workflow_details_2"
+- name: "assert_workflow_still_paused_prep"
   ref: "core.local"
   params:
     env:
@@ -86,7 +95,16 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: 'st2 execution get -j {{ get_workflow_id.stdout }}'
+    cmd: "st2 execution get -dj {{ get_workflow_id.stdout }} | python -c \"import sys, json; output=json.load(sys.stdin); print(output.get('status', None))\""
+  on-success: "assert_workflow_still_paused"
+
+- name: "assert_workflow_still_paused"
+  ref: "asserts.object_equals"
+  params:
+    object:
+      status: "{{ assert_workflow_still_paused_prep.stdout }}"
+    expected:
+      status: "paused"
   on-success: "valid_response"
 
 - name: "valid_response"
@@ -104,9 +122,9 @@ chain:
   ref: "core.pause"
   params:
     max_pause: 5
-  on-success: "get_workflow_details_3"
+  on-success: "assert_workflow_succeeded_prep"
 
-- name: "get_workflow_details_3"
+- name: "assert_workflow_succeeded_prep"
   ref: "core.local"
   params:
     env:
@@ -114,7 +132,31 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: 'st2 execution get -j {{ get_workflow_id.stdout }}'
+    cmd: "st2 execution get -dj {{ get_workflow_id.stdout }} | python -c \"import sys, json; output=json.load(sys.stdin); print(output.get('status', None))\""
+  on-success: "assert_workflow_succeeded"
+
+- name: "assert_workflow_succeeded"
+  ref: "asserts.object_equals"
+  params:
+    object:
+      status: "{{ assert_workflow_succeeded_prep.stdout }}"
+    expected:
+      status: "succeeded"
+  on-success: "assert_workflow_expected_output_prep"
+
+- name: "assert_workflow_expected_output_prep"
+  ref: "core.local"
+  params:
+    cmd: "st2 execution get -dj {{ get_workflow_id.stdout }} | python -c \"import sys, json; output=json.load(sys.stdin); tasks = list(filter(lambda x: x.get('name', None) == 'task2', output['result']['tasks'])); print(tasks[0].get('result', {}).get('stdout', None))\""
+  on-success: "assert_workflow_expected_output"
+
+- name: "assert_workflow_expected_output"
+  ref: "asserts.object_equals"
+  params:
+    object:
+      stdout: "{{ assert_workflow_expected_output_prep.stdout }}"
+    expected:
+      stdout: "We can now authenticate to 'foo' service with bar"
   on-success: "duplicate_response_expect_failure"
 
 - name: "duplicate_response_expect_failure"
@@ -129,79 +171,12 @@ chain:
   on-success: "fail"
   on-failure: assert_triggers
 
-###########
-# ASSERTS #
-###########
-
 - name: "assert_triggers"
   ref: "asserts.object_key_string_equals"
   params:
     object: "{{ get_inquiry_trigger.stdout[0] }}"
     key: status
     value: processed
-  on-success: "assert_workflow_paused_prep"
-
-# Temporary hack because st2 execution get prints invalid json for workflows
-- name: "assert_workflow_paused_prep"
-  ref: "core.local"
-  params:
-    cmd: echo " { $(echo '{{ get_workflow_details_1.stdout }}' | grep paused | sed 's/,//g') } "
-  on-success: "assert_workflow_paused"
-
-- name: "assert_workflow_paused"
-  ref: "asserts.object_equals"
-  params:
-    object: "{{ assert_workflow_paused_prep.stdout }}"
-    expected:
-      status: paused
-  on-success: "assert_workflow_still_paused_prep"
-
-
-# Temporary hack because st2 execution get prints invalid json for workflows
-- name: "assert_workflow_still_paused_prep"
-  ref: "core.local"
-  params:
-    cmd: echo " { $(echo '{{ get_workflow_details_2.stdout }}' | grep paused | sed 's/,//g') } "
-  on-success: "assert_workflow_still_paused"
-
-- name: "assert_workflow_still_paused"
-  ref: "asserts.object_equals"
-  params:
-    object: "{{ assert_workflow_still_paused_prep.stdout }}"
-    expected:
-      status: paused
-  on-success: "assert_workflow_succeeded_prep"
-
-
-# Temporary hack because st2 execution get prints invalid json for workflows
-- name: "assert_workflow_succeeded_prep"
-  ref: "core.local"
-  params:
-    cmd: echo " { $(echo '{{ get_workflow_details_3.stdout }}' | grep succeeded | grep -v status | sed 's/,//g' | head -1) } "
-  on-success: "assert_workflow_succeeded"
-
-- name: "assert_workflow_succeeded"
-  ref: "asserts.object_equals"
-  params:
-    object: "{{ assert_workflow_succeeded_prep.stdout }}"
-    expected:
-      succeeded: True
-  on-success: "assert_workflow_expected_output_prep"
-
-
-# Temporary hack because st2 execution get prints invalid json for workflows
-- name: "assert_workflow_expected_output_prep"
-  ref: "core.local"
-  params:
-    cmd: echo " { $(echo '{{ get_workflow_details_3.stdout }}' | grep authenticate | sed 's/,//g') } "
-  on-success: "assert_workflow_expected_output"
-
-- name: "assert_workflow_expected_output"
-  ref: "asserts.object_key_string_equals"
-  params:
-    object: "{{ assert_workflow_expected_output_prep.stdout }}"
-    key: stdout
-    value: We can now authenticate to 'foo' service with bar
 
 - name: "fail"
   ref: core.local
