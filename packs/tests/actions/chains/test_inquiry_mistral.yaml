@@ -147,6 +147,11 @@ chain:
 - name: "assert_workflow_expected_output_prep"
   ref: "core.local"
   params:
+    env:
+      ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+      ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+      ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+      ST2_AUTH_TOKEN: "{{token}}"
     cmd: "st2 execution get -dj {{ get_workflow_id.stdout }} | python -c \"import sys, json; output=json.load(sys.stdin); tasks = list(filter(lambda x: x.get('name', None) == 'task2', output['result']['tasks'])); print(tasks[0].get('result', {}).get('stdout', None))\""
   on-success: "assert_workflow_expected_output"
 
