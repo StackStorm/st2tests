@@ -105,9 +105,9 @@ chain:
       status: "{{ assert_workflow_still_paused_prep.stdout }}"
     expected:
       status: "paused"
-  on-success: "valid_response"
+  on-success: "post_valid_response"
 
-- name: "valid_response"
+- name: "post_valid_response"
   ref: "core.local"
   params:
     env:
@@ -133,7 +133,29 @@ chain:
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
     cmd: "st2 execution get -dj {{ get_workflow_id.stdout }} | python -c \"import sys, json; output=json.load(sys.stdin); print(output.get('status', None))\""
+  on-success: "assert_inquiry_task_succeeded_prep"
+
+- name: "assert_inquiry_task_succeeded_prep"
+  ref: "core.local"
+  params:
+    env:
+      ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+      ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+      ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+      ST2_AUTH_TOKEN: "{{token}}"
+    cmd: "st2 execution get -dj {{ get_workflow_id.stdout }} | python -c \"import sys, json; output=json.load(sys.stdin); tasks = list(filter(lambda x: x.get('name', None) == 'task1', output['result']['tasks'])); print(tasks[0].get('state', None))\""
+  on-success: "assert_inquiry_task_succeeded"
+  on-failure: "resume_workflow_manually"
+
+- name: "assert_inquiry_task_succeeded"
+  ref: "asserts.object_equals"
+  params:
+    object:
+      status: "{{ assert_inquiry_task_succeeded_prep.stdout }}"
+    expected:
+      status: "SUCCESS"
   on-success: "assert_workflow_succeeded"
+  on-failure: "assert_inquiry_task_running"
 
 - name: "assert_workflow_succeeded"
   ref: "asserts.object_equals"
@@ -143,6 +165,7 @@ chain:
     expected:
       status: "succeeded"
   on-success: "assert_workflow_expected_output_prep"
+  on-failure: "assert_workflow_stuck_in_paused"
 
 - name: "assert_workflow_expected_output_prep"
   ref: "core.local"
@@ -182,6 +205,35 @@ chain:
     object: "{{ get_inquiry_trigger.stdout[0] }}"
     key: status
     value: processed
+
+- name: "assert_inquiry_task_running"
+  ref: "asserts.object_equals"
+  params:
+    object:
+      status: "{{ assert_inquiry_task_succeeded_prep.stdout }}"
+    expected:
+      status: "RUNNING"
+  on-success: "assert_workflow_stuck_in_paused"
+
+- name: "assert_workflow_stuck_in_paused"
+  ref: "asserts.object_equals"
+  params:
+    object:
+      status: "{{ assert_workflow_succeeded_prep.stdout }}"
+    expected:
+      status: "paused"
+  on-success: "resume_workflow_manually"
+
+- name: "resume_workflow_manually"
+  ref: "core.local"
+  params:
+    env:
+      ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+      ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+      ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+      ST2_AUTH_TOKEN: "{{token}}"
+    cmd: "st2 execution resume {{ get_workflow_id.stdout }}"
+  on-success: "pause_after_valid_response"
 
 - name: "fail"
   ref: core.local
