@@ -3,7 +3,7 @@ vars:
     base_repo_url: "https://github.com/StackStorm"
     # Note: Pack 1 should have no external dependencies beyond Python stdlib ones.
     pack_to_install_1: "csv"
-    pack_to_install_1_with_version: "csv=0.1.0"
+    pack_to_install_1_with_version: "csv=0.4.2"
     pack_to_install_2: "some-pack-doesnt-exist"
     test_timeout: 60
 
