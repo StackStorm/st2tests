@@ -14,9 +14,9 @@ TEST:Verify include attributes works as expected for st2 execution list
     Should Not Contain   ${result}  end_timestamp
     Should Not Contain   ${result}  action.ref
 
-    ${result}=        Run  ${EXECUTION LIST} --attr doesntexist
-    Log To Console   \nRESULT:\n${result}
-    Should Contain   ${result}  Invalid or unsupported include attribute specified
+    ${result}=           Run  ${EXECUTION LIST} --attr doesntexist
+    Log To Console       \nRESULT:\n${result}
+    Should Contain       ${result}  Invalid or unsupported include attribute specified
 
 TEST:Verify include attributes works as expected for st2 action list
     ${result}=           Run  ${ACTION LIST} --attr name
@@ -25,9 +25,9 @@ TEST:Verify include attributes works as expected for st2 action list
     Should Not Contain   ${result}  pack
     Should Not Contain   ${result}  description
 
-    ${result}=        Run  ${ACTION LIST} --attr doesntexist
-    Log To Console   \nRESULT:\n${result}
-    Should Contain   ${result}  Invalid or unsupported include attribute specified
+    ${result}=           Run  ${ACTION LIST} --attr doesntexist
+    Log To Console       \nRESULT:\n${result}
+    Should Contain       ${result}  Invalid or unsupported include attribute specified
 
 
 *** Settings ***
