@@ -16,7 +16,7 @@ ${FAILED STATUS}        "status": "failed"
 
 *** Test Cases ***
 TEST:Verify Key Value Triggers
-    ${result}=       Run Process  st2  trigger  list  -p  core  -a ref  -j
+    ${result}=       Run Process  st2  trigger  list  -p  core  -a  ref  -j
     Log To Console   \nTRIGGER LIST:\n
     Process Log To Console   ${result}
     Should Contain   ${result.stdout}   ${TRIGGER KEY CREATE}
