@@ -50,7 +50,7 @@ TEST:Check post_message execution and receive status
 TEST:Post message on the channel and verify
     [Documentation]    ID FOR POST MESSAGE
     ${result}=          Wait Until Keyword Succeeds  3x  5s  KEYWORD:Get post_message execution id for slackcat
-    Should Contain     ${result.stdout}  slackcat posted 1 message lines to chatopsci
+    Should Contain     ${result.stdout}  slackcat posted 1 message lines to chatops_ci
 
 TEST:Execution from hubot with slackcat token in st2chatops_env
     [Documentation]     Hubot execution result for post message
@@ -65,7 +65,7 @@ TEST:Execution from hubot with slackcat token in st2chatops_env
 KEYWORD:Verify Correct Substring
     [Arguments]     ${ELEMENT}
     Log To Console   \nMATCHED SUBSTRING:\n===================>:\n${ELEMENT}\n:<===================\n
-    Should Contain   ${ELEMENT}  in channel: chatopsci, from: bot
+    Should Contain   ${ELEMENT}  in channel: chatops_ci, from: bot
     Should Contain   ${ELEMENT}  ref : chatops.post_message
     Should Contain   ${ELEMENT}  id : ${EXECUTION ID}
     Set Suite Variable   ${status}  Valid chatops.post_message ID
@@ -82,15 +82,15 @@ KEYWORD:Execution logs from hubot
     [Documentation]     EXECUTION ID is from Keyword: Get post_message execution id
 
     ${result}=          Run Process    {  sleep  5;  echo  '!st2  get  execution  ${EXECUTION ID}'
-    ...                                |  slackcat  --channel\=chatopsci  --stream  --plain;}
+    ...                                |  slackcat  --channel\=chatops_ci  --stream  --plain;}
     ...                                |  timeout  25s  bin/hubot  cwd=/opt/stackstorm/chatops/  shell=True
     Log To Console      \n<===================> COMPLETE HUBOT STDOUT START <===================>
     Process Log To Console      ${result}
     Log To Console      \n===================== COMPLETE HUBOT STDOUT END =======================\n
     Should Contain      ${result.stdout}  details available at
-    Should Contain      ${result.stdout}  in channel: chatopsci, from: bot
+    Should Contain      ${result.stdout}  in channel: chatops_ci, from: bot
 
-    ${regex_value}      Set Variable   (?ms)result :\n--------\nresult :(.*?)in channel: chatopsci, from: bot
+    ${regex_value}      Set Variable   (?ms)result :\n--------\nresult :(.*?)in channel: chatops_ci, from: bot
     @{output}  Get Regexp Matches   ${result.stdout}  ${regex_value}
 
     Set Suite Variable  ${status}  Invalid chatops.post_message ID
@@ -105,7 +105,7 @@ KEYWORD:Execution logs from hubot
 
 KEYWORD:Hubot Post
     [Arguments]    ${random}
-    ${result}=     Run Process    {  echo  -n;  sleep  5;  st2  action  execute  chatops.post_message  channel\=#chatopsci
+    ${result}=     Run Process    {  echo  -n;  sleep  5;  st2  action  execute  chatops.post_message  channel\=#chatops_ci
     ...                           message\='Debug. Please ignore. ${random}'
     ...                           >\/dev\/null;  echo;  sleep  10;}  |  bin\/hubot  \-\-test
     ...                           cwd=/opt/stackstorm/chatops/    shell=True
@@ -132,7 +132,7 @@ KEYWORD:ID Execution List Action
 KEYWORD:Get post_message execution id for slackcat
     ${id}=           Run Keyword    KEYWORD:ID Execution List Action    chatops.post_message
     Set Suite Variable  ${EXECUTION ID}        ${id}
-    ${result}=       Run Process    {  echo  '!st2  get  execution  {id}';  sleep  10;}  |  slackcat  --channel\=chatopsci
+    ${result}=       Run Process    {  echo  '!st2  get  execution  {id}';  sleep  10;}  |  slackcat  --channel\=chatops_ci
     ...              --plain  --stream  shell=True
     Process Log To Console      ${result}
     [return]         ${result}
