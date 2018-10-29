@@ -21,8 +21,10 @@ TEST:Verify include attributes works as expected for st2 execution list
 TEST:Verify include attributes works as expected for st2 action list
     ${result}=           Run  ${ACTION LIST} --attr name
     Log To Console       \nRESULT:\n${result}
+    Should Contain       ${result}  | name
     Should Contain       ${result}  name
-    Should Not Contain   ${result}  pack
+    Should Not Contain   ${result}  | pack
+    Should Not Contain   ${result}  | description
     Should Not Contain   ${result}  description
 
     ${result}=           Run  ${ACTION LIST} --attr doesntexist
