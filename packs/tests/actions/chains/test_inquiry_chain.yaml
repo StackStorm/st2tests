@@ -68,7 +68,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: "st2 inquiry respond -r '{\"secondfactor\": 123}' {{ get_inquiry_id.stdout }}"
+    cmd: "sleep 3 ; st2 inquiry respond -r '{\"secondfactor\": 123}' {{ get_inquiry_id.stdout }}"
   on-failure: "pause_after_invalid_response"
   on-success: "fail"
 
@@ -97,7 +97,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: "st2 inquiry respond -r '{\"secondfactor\": \"bar\"}' {{ get_inquiry_id.stdout }}"
+    cmd: "sleep 3 ; st2 inquiry respond -r '{\"secondfactor\": \"bar\"}' {{ get_inquiry_id.stdout }}"
   on-success: "pause_after_valid_response"
 
 - name: "pause_after_valid_response"
@@ -125,7 +125,7 @@ chain:
       ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
       ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
       ST2_AUTH_TOKEN: "{{token}}"
-    cmd: "st2 inquiry respond -r '{\"secondfactor\": \"bar\"}' {{ get_inquiry_id.stdout }}"
+    cmd: "sleep 3 ; st2 inquiry respond -r '{\"secondfactor\": \"bar\"}' {{ get_inquiry_id.stdout }}"
   on-success: "fail"
   on-failure: assert_triggers
 
