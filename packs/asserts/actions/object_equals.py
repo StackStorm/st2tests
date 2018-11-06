@@ -20,7 +20,7 @@ class AssertObjectEquals(Action):
     def run(self, object, expected):
         ret = cmp(object, expected)
 
-        if ret == 0:
+        if ret:
             sys.stdout.write('EQUAL.')
         else:
             pprint.pprint('Input: \n%s' % object, stream=sys.stderr)
