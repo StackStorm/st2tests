@@ -8,6 +8,10 @@ __all__ = [
 ]
 
 
+def cmp(x, y):
+    return (x > y) - (x < y)
+
+
 class AssertObjectEquals(Action):
     def run(self, object, expected):
         ret = cmp(object, expected)
