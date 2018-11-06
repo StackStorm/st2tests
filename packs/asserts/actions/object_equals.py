@@ -1,5 +1,6 @@
 import pprint
 import sys
+import json
 
 from st2actions.runners.pythonrunner import Action
 
@@ -9,7 +10,10 @@ __all__ = [
 
 
 def cmp(x, y):
-    return (x > y) - (x < y)
+    x = json.dumps(x, sort_keys=True)
+    y = json.dumps(y, sort_keys=True)
+
+    return (x == y)
 
 
 class AssertObjectEquals(Action):
