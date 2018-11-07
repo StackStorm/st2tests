@@ -251,6 +251,7 @@ chain:
             trigger: examples.sample_trigger
             payload:
               value: "test core.inject_trigger"
+            # TODO: Generate and append random suffix?
             trace_tag: tag-core-inject-trigger
         on-success: verify_trigger_was_injected_1
     -
@@ -273,5 +274,5 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2 trace list --trace-tag tag-core-inject-trigger | grep trigger-instance"
+            cmd: "st2 trace list --trace-tag tag-core-inject-trigger | grep tag-core-inject-trigger"
 default: cleanup_environment
