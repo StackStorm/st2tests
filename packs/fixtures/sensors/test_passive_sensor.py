@@ -40,7 +40,7 @@ class TestPassiveSensor(Sensor):
 
     def run(self):
         # Stopped
-        self.app.run(host=self.host, port=self.port)
+        self.app.run(host=self.host, port=self.port, threaded=False)
 
     def cleanup(self):
         pass
