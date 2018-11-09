@@ -6,7 +6,7 @@ TEST:Stackstorm client's connection
     # Run Keyword If   ${result.rc} != 0   Fatal Error    ST2 NOT RUNNING
 
 TEST:Hubot npm
-    ${result}=       Run Process    npm   list    \|  grep  hubot-stackstorm  cwd=/opt/stackstorm/chatops
+    ${result}=       Run Process    npm   list    \|  grep  hubot-stackstorm  shell=True  cwd=/opt/stackstorm/chatops
     Process Log To Console    ${result}
     Should Contain   ${result.stdout}  hubot-stackstorm@
     # Run Keyword If   ${result.rc} != 0   Fatal Error  HUBOT-STACKSTORM IS NOT INSTALLED
