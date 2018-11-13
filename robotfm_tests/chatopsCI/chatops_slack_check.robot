@@ -87,21 +87,7 @@ KEYWORD:Execution logs from hubot
     Log To Console      \n<===================> COMPLETE HUBOT STDOUT START <===================>
     Process Log To Console      ${result}
     Log To Console      \n===================== COMPLETE HUBOT STDOUT END =======================\n
-    Should Contain      ${result.stdout}  details available at
-    Should Contain      ${result.stdout}  in channel: chatops_ci, from: bot
-
-    ${regex_value}      Set Variable   (?ms)result :\n--------\nresult :(.*?)in channel: chatops_ci, from: bot
-    @{output}  Get Regexp Matches   ${result.stdout}  ${regex_value}
-
-    Set Suite Variable  ${status}  Invalid chatops.post_message ID
-    :FOR    ${ELEMENT}    IN    @{output}
-    \    Log To Console  \n<========== MATCH ==========>\n
-    \    ${regex}=      Get Lines Containing String  ${ELEMENT}  matched regex
-    \    ${length}=  Get Length  ${regex}
-    \    Run Keyword if    ${length} == 0 and "id : ${EXECUTION ID}" in '''${ELEMENT}'''  KEYWORD:Verify Correct Substring  ${ELEMENT}
-    \    Log To console  STATUS: ${status}\n
-
-    Should Be Equal  ${status}  Valid chatops.post_message ID
+	Should Contain      ${result.stdout}  Action st2.executions.get completed
 
 KEYWORD:Hubot Post
     [Arguments]    ${random}
