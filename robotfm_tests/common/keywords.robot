@@ -15,7 +15,7 @@ SETUP:Copy and Load Examples Pack
     Directory Should Exist        /opt/stackstorm/packs/examples/
     ${result}=    Run Process     st2  run  packs.setup_virtualenv  packs\=examples  -j
     Should Contain                ${result.stdout}  ${SUCCESS STATUS}
-    ${result}=    Run Process     st2ctl  reload  \-\-register\-all
+    ${result}=    Run Process     st2ctl  reload  \-\-register\-all  \-\-register\-no\-fail\-on\-failure
     Log To Console    \nSETUP:\n
     Process Log To Console  ${result}
     Log To Console   ___________________SUITE SETUP (copy examples)___________________
