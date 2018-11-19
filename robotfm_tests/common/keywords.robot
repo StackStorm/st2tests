@@ -9,13 +9,13 @@ Process Log To Console
 SETUP:Copy and Load Examples Pack
     Log To Console   ___________________SUITE SETUP (copy examples)___________________
     Log To Console   _________________________________________________________________
-    ${result}=    Run Process     sudo  cp  -r  /usr/share/doc/st2/examples/  /opt/stackstorm/packs/  shell=True
+    ${result}=    Run Process     sudo  cp  \-r  /usr/share/doc/st2/examples/  /opt/stackstorm/packs/
     Should Be Equal As Integers   ${result.rc}  0
     # Copy Directory   /usr/share/doc/st2/examples/   /opt/stackstorm/packs/
     Directory Should Exist        /opt/stackstorm/packs/examples/
-    ${result}=    Run Process     st2  run  packs.setup_virtualenv  packs=examples  -j  shell=True
+    ${result}=    Run Process     st2  run  packs.setup_virtualenv  packs\=examples  -j
     Should Contain                ${result.stdout}  ${SUCCESS STATUS}
-    ${result}=    Run Process     st2ctl  reload  --register-all  --register-no-fail-on-failure  shell=True
+    ${result}=    Run Process     st2ctl  reload  \-\-register\-all  \-\-register\-no\-fail\-on\-failure
     Log To Console    \nSETUP:\n
     Process Log To Console  ${result}
     Log To Console   ___________________SUITE SETUP (copy examples)___________________
@@ -24,7 +24,7 @@ SETUP:Copy and Load Examples Pack
 SETUP:Copy and Load Examples Pack and Enable Streaming
     Log To Console   ___________________SUITE SETUP (enable streaming)________________
     Log To Console   _________________________________________________________________
-    ${result}=    Run Process     sudo  crudini  --set  /etc/st2/st2.conf  actionrunner  stream_output  True  shell=True
+    ${result}=    Run Process     sudo  crudini  \-\-set  /etc/st2/st2.conf  actionrunner  stream_output  True
     ${result}=    Run Process     sudo  st2ctl  restart
     ${id}=        Run Keyword     SETUP:Copy and Load Examples Pack
     Log To Console   ___________________SUITE SETUP (enable streaming)________________
@@ -33,7 +33,7 @@ SETUP:Copy and Load Examples Pack and Enable Streaming
 TEARDOWN:Uninstall Examples Pack
     Log To Console   ________________SUITE TEARDOWN (remove examples pack)_____________
     Log To Console   __________________________________________________________________
-    ${result}=                   Run Process  st2  run  packs.uninstall  packs=examples  -j  shell=True
+    ${result}=                   Run Process  st2  run  packs.uninstall  packs\=examples  -j
     Should Contain X Times       ${result.stdout}  ${SUCCESS STATUS}  3
     Directory Should Not Exist  /opt/stackstorm/packs/examples/
     Log To Console   ________________SUITE TEARDOWN (remove examples pack)_____________
