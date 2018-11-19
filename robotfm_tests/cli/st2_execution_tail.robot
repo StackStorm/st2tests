@@ -50,8 +50,8 @@ TEST:Verify st2 execution tail command works correctly for action chain workflow
     Should Match Regexp  ${tail_output}  ${PARENT EXECUTION FINISHED}
 
 TEST:Verify st2 execution tail command works correctly for Mistral workflows
-    ${result}=          Run process  /opt/stackstorm/st2/bin/pip list  |  grep  mistral  shell=True
-    Pass Execution If   ${result.rc} == 1  Mistral not available, skipping tests
+    ${result}=          Run process  ls  /opt/stackstorm/mistral/  shell=True
+    Pass Execution If   ${result.rc} != 0  Mistral not available, skipping tests
 
     ${result}=           Run  ${EXECUTION RUN} examples.mistral-streaming-demo count=5 sleep_delay=0.1 -a
     @{Execution ID}      Split String  ${result}
