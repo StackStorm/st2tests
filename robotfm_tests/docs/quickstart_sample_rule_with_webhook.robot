@@ -109,8 +109,8 @@ KEYWORD:Delete st2.webhook_sample.out
     Log To Console   FILE DELETED\n
 
 KEYWORD:Check Tail
-    ${result}=  Run Process  sudo  tail  -n  1  /home/stanley/st2.webhook_sample.out  shell=True
-    Should Contain   ${result.stdout}     {u'foo': u'bar', u'name': u'st2'}
+    ${result}=  Run Process  sudo  tail  -n  1  /home/stanley/st2.webhook_sample.out   |  tr  -d  u  shell=True
+    Should Contain   ${result.stdout}     {'foo': 'bar', 'name': 'st2'}
     [return]    ${result}
 
 TEARDOWN:Clean Files
