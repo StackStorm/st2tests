@@ -11,6 +11,7 @@ TEST:Verify st2 version and usage / help
     ${result}=       Run Process       st2  --version 2>&1   shell=True
     Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
     Should Contain   ${result.stdout}  st2
+    Should Contain   ${result.stdout}  on Python
     ${result}=       Run Process       st2  2>&1   shell=True
     Log To Console   \nSTDOUT: ${result.stdout} \nSTDERR: ${result.stderr} \nRC ${result.rc}
     Should Contain   ${result.stdout}  usage
