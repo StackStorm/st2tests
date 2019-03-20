@@ -1,0 +1,6 @@
+---
+name: "test_winrm_large_script"
+description: "Action that ensures WinRM can upload scripts larger than the max allow command size."
+enabled: true
+entry_point: "windows/large_script.ps1"
+runner_type: "winrm-ps-script"

@@ -131,3 +131,24 @@ chain:
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "echo '{{run_winrm_example_powershell_script.stdout}}' | grep 'Uptime: .* days, .* hours, .* minutes'"
+        on-success: "run_winrm_large_powershell_script"
+    -
+        name: "run_winrm_large_powershell_script"
+        ref: "test.test_winrm_large_script"
+        params:
+            host: "{{winrm_host}}"
+            username: "{{winrm_username}}"
+            password: "{{winrm_password}}"
+            transport: "{{winrm_transport}}"
+            verify_ssl_cert: "{{winrm_verify_ssl_cert}}"
+        on-success: "check_winrm_large_powershell_script"
+    -
+        name: "check_winrm_large_powershell_script"
+        ref: "core.local"
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "echo '{{run_winrm_large_powershell_script.stdout}}' | grep 'This was a huge script'"
