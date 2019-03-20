@@ -134,7 +134,7 @@ chain:
         on-success: "run_winrm_large_powershell_script"
     -
         name: "run_winrm_large_powershell_script"
-        ref: "test.test_winrm_large_script"
+        ref: "tests.test_winrm_large_script"
         params:
             host: "{{winrm_host}}"
             username: "{{winrm_username}}"
