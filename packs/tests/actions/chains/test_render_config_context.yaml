@@ -7,7 +7,6 @@ chain:
 # Executing inquiry workflow via CLI instead of directly via ref so this workflow doesn't get paused
 - name: "run_render_config_context_action"
   ref: "fixtures.render_config_context"
-  params:
   on-success: "assert_action_output"
   on-failure: "fail"
 
@@ -24,4 +23,5 @@ chain:
 
 - name: "fail"
   ref: core.local
-  cmd: exit 1
+  params:
+    cmd: exit 1
