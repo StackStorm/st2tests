@@ -15,11 +15,12 @@ chain:
 ###########
 
 - name: "assert_action_output"
-  ref: "asserts.object_key_string_equals"
+  ref: "asserts.object_equals"
   params:
     object: "{{ run_render_config_context_action.result }}"
-    key: context_value
-    value: Testing
+    expected:
+      context_value: Testing
+  on-failure: "fail"
 
 - name: "fail"
   ref: core.local
