@@ -1,0 +1,27 @@
+---
+
+# Workflow for testing config context rendering
+
+chain:
+
+# Executing inquiry workflow via CLI instead of directly via ref so this workflow doesn't get paused
+- name: "run_render_config_context_action"
+  ref: "fixtures.render_config_context"
+  params:
+  on-success: "assert_action_output"
+  on-failure: "fail"
+
+###########
+# ASSERTS #
+###########
+
+- name: "assert_action_output"
+  ref: "asserts.object_key_string_equals"
+  params:
+    object: "{{ run_render_config_context_action.result[0] }}"
+    key: context_value
+    value: Testing
+
+- name: "fail"
+  ref: core.local
+  cmd: exit 1
