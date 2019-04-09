@@ -20,5 +20,5 @@ class AssertObjectKeyIntEquals(Action):
         else:
             sys.stdout.write('NOT EQUAL.')
             sys.stderr.write(' Expected: %s, Original: %s' % (value, object[key]))
-            raise ValueError('Expected "%s", got "%s". ' (value, object[key]))
+            raise ValueError('Value not equal. Expected "%s", got "%s". ' (value, object[key]))
         return result
