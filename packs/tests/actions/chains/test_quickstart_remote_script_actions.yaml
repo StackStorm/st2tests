@@ -17,7 +17,7 @@ chain:
     params:
         object: "{{test_stdout_remote_script_action.localhost}}"
         key: "stdout"
-        value: "STREAM IS STDOUT. STR: foo bar\nbaz INT: 1 OBJ: {u'foo': u'bar baz'}"
+        value: "STREAM IS STDOUT. STR: foo bar\nbaz INT: 1 OBJ: {'foo': 'bar baz'}"
     on-success: "assert_return_code_zero_stdout_test"
   -
     name: "assert_return_code_zero_stdout_test"
@@ -83,4 +83,4 @@ chain:
     params:
         object: "{{test_stdout_remote_script_action_sudo.localhost}}"
         key: "stdout"
-        value: "STREAM IS STDOUT. STR: foo bar\nbaz INT: 1 OBJ: {u'foo': u'bar baz'}"
+        value: "STREAM IS STDOUT. STR: foo bar\nbaz INT: 1 OBJ: {'foo': 'bar baz'}"
