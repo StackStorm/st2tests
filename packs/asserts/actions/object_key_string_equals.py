@@ -19,7 +19,5 @@ class AssertObjectKeyStringEquals(Action):
             sys.stdout.write('EQUAL')
         else:
             sys.stdout.write('NOT EQUAL')
-            raise ValueError('Key "%s" in object %s doesn\'t equal expected value of "%s". '
-                             'Expected "%s", got "%s".' %
-                             (key, object, value, value, object[key]))
+            raise ValueError('Expected "%s", got "%s". ' (value, object[key]))
         return result
