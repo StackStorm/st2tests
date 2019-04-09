@@ -7,3 +7,8 @@
     type: "integer"
     default: 19009
     required: false
+  config_item_one:
+    description: "Item use to test config context."
+    type: "string"
+    required: true
+    default: "Testing"
