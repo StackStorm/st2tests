@@ -14,7 +14,7 @@ class AssertObjectKeyIntEquals(Action):
         if key not in object:
             sys.stderr.write('KEY %s DOESN\'T EXIST.' % key)
             raise ValueError('Key %s doesn\'t exist in object %s' % (key, object))
-        result = (object[key] == value)
+        result = (int(object[key]) == int(value))
         if result:
             sys.stdout.write('EQUAL.')
         else:
