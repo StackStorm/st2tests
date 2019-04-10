@@ -6,6 +6,7 @@ chain:
     params:
         stream: "stdout"
         hosts: "localhost"
+        # NOTE: We intentionally include "\n" to verify it's not converted to \r\n
         str_arg: "foo bar\nbaz"
         int_arg: 1
         obj_arg:

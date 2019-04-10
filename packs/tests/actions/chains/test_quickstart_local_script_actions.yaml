@@ -5,6 +5,7 @@ chain:
     ref: "fixtures.streamwriter-script-local"
     params:
         stream: "stdout"
+        # NOTE: We intentionally include "\n" to verify it's not converted to \r\n
         str_arg: "foo bar\nbaz"
         int_arg: 1
         obj_arg:
