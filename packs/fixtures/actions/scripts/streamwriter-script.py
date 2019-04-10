@@ -3,6 +3,7 @@
 import argparse
 import sys
 import ast
+import re
 
 from lib.exceptions import CustomException
 
@@ -25,15 +26,21 @@ def main(args):
     stream = args.stream
     writer = StreamWriter()
     stream = writer.run(stream)
+
     str_arg = args.str_arg
     int_arg = args.int_arg
     obj_arg = args.obj_arg
+
     if str_arg:
         sys.stdout.write(' STR: %s' % str_arg)
     if int_arg:
         sys.stdout.write(' INT: %d' % int_arg)
+
     if obj_arg:
-        sys.stdout.write(' OBJ: %s' % obj_arg)
+        # Remove any u'' so it works consistently under Python 2 and 3.x
+        obj_arg_str = str(obj_arg)
+        value = re.sub("u'(.*?)'", r"'\1'", obj_arg_str)
+        sys.stdout.write(' OBJ: %s' % value)
 
 
 if __name__ == '__main__':

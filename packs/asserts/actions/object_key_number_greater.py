@@ -16,7 +16,8 @@ class AssertObjectKeyNumberGreater(Action):
             raise ValueError('Key %s doesn\'t exist in object %s' % (key, object))
         result = (object[key] > value)
         if result:
-            sys.stdout.write('GREATER')
+            sys.stdout.write('GREATER (%s > %s)' % (object[key], value))
         else:
-            sys.stdout.write('LESSER')
+            sys.stdout.write('LESSER (%s < %s)' % (object[key], value))
+            raise ValueError('"%s" is not greater than "%s"' % (object[key], value))
         return result

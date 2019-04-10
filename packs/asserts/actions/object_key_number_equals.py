@@ -14,10 +14,11 @@ class AssertObjectKeyIntEquals(Action):
         if key not in object:
             sys.stderr.write('KEY %s DOESN\'T EXIST.' % key)
             raise ValueError('Key %s doesn\'t exist in object %s' % (key, object))
-        result = (object[key] == value)
+        result = (int(object[key]) == int(value))
         if result:
             sys.stdout.write('EQUAL.')
         else:
             sys.stdout.write('NOT EQUAL.')
             sys.stderr.write(' Expected: %s, Original: %s' % (value, object[key]))
+            raise ValueError('Value not equal. Expected "%s", got "%s". ' % (value, object[key]))
         return result
