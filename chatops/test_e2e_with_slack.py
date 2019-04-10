@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import os
 import re
 import time
-import unittest
+import unittest2
 import sys
 
 from slackclient import SlackClient
@@ -34,8 +34,7 @@ def ignore_username(username):
     return filter_messages
 
 
-@unittest.skipUnless(sys.version_info >= (3,), "skipping on Python 2")
-class SlackEndToEndTestCase(unittest.TestCase):
+class SlackEndToEndTestCase(unittest2.TestCase):
     @classmethod
     def setUpClass(cls):
         # This token is for the bot that impersonates a user
@@ -45,6 +44,8 @@ class SlackEndToEndTestCase(unittest.TestCase):
         cls.filter = staticmethod(ignore_username(cls.username))
 
         cls.maxDiff = 10000
+
+
 
     def test_non_response(self):
         # Connect as the bot
@@ -89,6 +90,8 @@ class SlackEndToEndTestCase(unittest.TestCase):
             icon_emoji=':gem:',
             username=self.username)
 
+        time.sleep(10)
+
         messages = []
         for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
@@ -111,6 +114,8 @@ class SlackEndToEndTestCase(unittest.TestCase):
         self.assertRegex(messages[1]['attachments'][0]['text'], ATTACHMENT_REGEX_2)
         self.assertRegex(messages[1]['attachments'][0]['text'], ATTACHMENT_REGEX_3)
 
+        time.sleep(10)
+
         # Drain the event buffer
         self.client.rtm_read()
 
@@ -120,11 +125,11 @@ try:
 
     class SlackEndToEndTestCase(Action):
         def run(self):
-            return unittest.main(exit=False)
+            return unittest2.main(exit=False)
 
 except ImportError:
     pass
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest2.main()
