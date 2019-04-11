@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
 import os
+import platform
 import re
 import time
 import unittest2
-import sys
 
 from slackclient import SlackClient
 
@@ -44,8 +44,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         cls.filter = staticmethod(ignore_username(cls.username))
 
         cls.maxDiff = 10000
-
-
 
     def test_non_response(self):
         # Connect as the bot
