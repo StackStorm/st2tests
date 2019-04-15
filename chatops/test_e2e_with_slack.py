@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import os
-import platform
 import re
 import time
 import unittest2
@@ -38,7 +37,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
     @classmethod
     def setUpClass(cls):
         # This token is for the bot that impersonates a user
-        cls.client = SlackClient(os.environ['SLACK_USER_API_TOKEN'])
+        cls.client = SlackClient(connect=True, token=os.environ['SLACK_USER_API_TOKEN'])
         cls.username = os.environ['SLACK_USER_USERNAME']
 
         cls.filter = staticmethod(ignore_username(cls.username))
