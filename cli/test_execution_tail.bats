@@ -61,7 +61,7 @@ teardown() {
 @test "st2 execution tail command works correctly for Mistral workflows" {
 	run ls /opt/stackstorm/mistral/
 	if [[ "$status" -ne 0 ]]; then
-		skip "Mistral no available, skipping tests"
+		skip "Mistral not available, skipping tests"
 	fi
 
 	run eval "st2 run examples.mistral-streaming-demo count=5 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
