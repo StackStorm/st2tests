@@ -59,7 +59,7 @@ teardown() {
 }
 
 @test "st2 execution tail command works correctly for Mistral workflows" {
-	run ls /opt/stackstorm/mistral/
+	run st2 runner get mistral-v2 > /dev/null/
 	if [[ "$status" -ne 0 ]]; then
 		skip "Mistral not available, skipping tests"
 	fi
@@ -80,7 +80,7 @@ teardown() {
 }
 
 @test "st2 execution tail command works correctly for Orquesta workflows" {
-    run st2 runner get orquesta > /dev/null/
+	run st2 runner get orquesta > /dev/null/
 	if [[ "$status" -ne 0 ]]; then
 		skip "Orquesta not available, skipping tests"
 	fi
