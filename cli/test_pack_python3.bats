@@ -1,6 +1,8 @@
 
-load 'test_helpers/bats-support/load'
-load 'test_helpers/bats-assert/load'
+load '../test_helpers/bats-support/load'
+load '../test_helpers/bats-assert/load'
+
+
 
 STATUS_SUCCESS='"status": "succeeded'
 
@@ -14,7 +16,7 @@ setup() {
 	fi
 
 	run /opt/stackstorm/st2/bin/python3 --version
-	if [[ "$?" -eq 0 ]]; then
+	if [[ "$status" -eq 0 ]]; then
 		skip "StackStorm components are already running under Python 3, skipping tests"
 	fi
 
@@ -36,29 +38,50 @@ teardown() {
 	[[ ! -d /opt/stackstorm/packs/examples ]]
 }
 
+
+
 @test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
-	run st2 run packs.setup_virtualenv packs=examples -j
+	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples -j)
+	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
 	assert_success
-	assert_output --partial '"result": "Successfully set up virtualenv for the following packs: examples"'
-	assert_output --partial "$STATUS_SUCCESS"
+
+	assert_output "Successfully set up virtualenv for the following packs: examples"
+
+	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.status'"
+	assert_success
+
+	assert_output "succeeded"
 
 	run /opt/stackstorm/virtualenvs/examples/bin/python --version
 	assert_output --partial "Python 2.7"
 }
 
 @test "packs.setup_virtualenv with python3 flag works" {
-	run st2 run packs.setup_virtualenv packs=examples python3=true -j
+	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples python3=true -j)
+	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
 	assert_success
-	assert_output --partial '"result": "Successfully set up virtualenv for the following packs: examples"'
-	assert_output --partial "$STATUS_SUCCESS"
+
+	assert_output "Successfully set up virtualenv for the following packs: examples"
+
+	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.status'"
+	assert_success
+
+	assert_output "succeeded"
 
 	run /opt/stackstorm/virtualenvs/examples/bin/python --version
 	assert_success
+
 	assert_output --partial "Python 3."
 
-	run st2 run examples.python_runner_print_python_version -j
+	RESULT=$(st2 run examples.python_runner_print_python_version -j)
 	assert_success
+
+	run eval "echo '$RESULT' | jq -r '.result.stdout'"
+	assert_success
+
 	assert_output --partial "Using Python executable: /opt/stackstorm/virtualenvs/examples/bin/python"
 	assert_output --partial "Using Python version: 3."
-	assert_output --partial "$STATUS_SUCCESS"
+
+	run eval "echo '$RESULT' | jq -r '.status'"
+	assert_output "succeeded"
 }

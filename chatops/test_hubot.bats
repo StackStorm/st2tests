@@ -1,11 +1,13 @@
 
-load 'test_helpers/bats-support/load'
-load 'test_helpers/bats-assert/load'
+load '../test_helpers/bats-support/load'
+load '../test_helpers/bats-assert/load'
+
 
 
 @test "StackStorm's client connection" {
 	run st2 action execute core.local cmd=echo
 	assert_success
+
 	assert_line --index 0          "To get the results, execute:"
 	assert_line --index 1 --regexp "^ st2 execution get [0-9a-f]*$"
 	assert_line --index 2          "To view output in real-time, execute:"
@@ -15,25 +17,44 @@ load 'test_helpers/bats-assert/load'
 @test "npm directory exists" {
 	run eval "(cd /opt/stackstorm/chatops; npm list | grep hubot-stackstorm)"
 	assert_success
+
 	assert_output --partial "hubot-stackstorm@"
 }
 
 @test "some StackStorm aliases are enabled" {
-	run st2 action-alias list -a enabled -j
+	run eval "st2 action-alias list -a enabled -j | jq -r '.[].enabled=true | length'"
 	assert_success
-	assert_output --partial '"enabled": true'
+
+	assert_output --regexp '^[[:digit:]]{1,}$'
 }
 
 @test "chatops.notify rule exists" {
-	run st2 rule list -p chatops -j
+	RESULTS=$(st2 rule list -p chatops -j)
+	run eval "echo '$RESULTS' | jq -r '.[].ref'"
 	assert_success
-	assert_output --partial '"ref": "chatops.notify"'
-	assert_output --partial '"enabled": true'
+
+	assert_output "chatops.notify"
+
+	run eval "echo '$RESULTS' | jq -r '.[].enabled'"
+	assert_success
+
+	assert_output "true"
 }
 
 @test "hubot help command works" {
-	run eval "{ echo -n; sleep 5; echo 'hubot help'; echo; sleep 5; } | bin/hubot --test"
+	run eval "("\
+	         " cd /opt/stackstorm/chatops;"\
+	         " { "\
+	         "   echo -n;"\
+	         "   sleep 5;"\
+	         "   echo 'hubot help';"\
+	         "   echo;"\
+	         "   sleep 5;"\
+	         "} "\
+	         "| bin/hubot --test"\
+	         ")"
 	assert_success
+
 	assert_output --partial '!help - Displays all of the help commands'
 	assert_output --regexp '[[:digit:]]{1,} commands are loaded'
 }
@@ -54,6 +75,7 @@ load 'test_helpers/bats-assert/load'
 	         " | bin/hubot --test"\
 	         ")"
 	assert_success
+
 	assert_output --partial "Chatops message received"
 	assert_output --partial "$RANDOM_CHANNEL_NAME"
 }
@@ -71,6 +93,7 @@ load 'test_helpers/bats-assert/load'
 	         " | bin/hubot --test"\
 	         ")"
 	assert_success
+
 	assert_output --partial "Give me just a moment to find the actions for you"
 	assert_output --partial "st2.actions.list - Retrieve a list of available StackStorm actions."
 }

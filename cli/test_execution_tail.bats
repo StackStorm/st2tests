@@ -1,6 +1,8 @@
 
-load 'test_helpers/bats-support/load'
-load 'test_helpers/bats-assert/load'
+load '../test_helpers/bats-support/load'
+load '../test_helpers/bats-assert/load'
+
+
 
 setup() {
 	sudo crudini --set /etc/st2/st2.conf actionrunner stream_output True
@@ -27,6 +29,8 @@ teardown() {
 	[[ ! -d /opt/stackstorm/packs/examples ]]
 }
 
+
+
 @test "st2 execution tail works correctly for simple actions" {
 	run eval "st2 run examples.python_runner_print_to_stdout_and_stderr count=10 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
 	assert_success
@@ -42,7 +46,7 @@ teardown() {
 	assert_output --partial "stderr -> Line: 9"
 }
 
-@test "st2 execution tail command works correctly for action chain workflows" {
+@test "st2 execution tail works correctly for action chain workflows" {
 	run eval "st2 run examples.action_chain_streaming_demo count=5 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
 	assert_success
 	EXECUTION_ID="$output"
@@ -58,7 +62,7 @@ teardown() {
 	assert_output --regexp "Execution [0-9a-f]{24} has completed \\(status=succeeded\\)."
 }
 
-@test "st2 execution tail command works correctly for Mistral workflows" {
+@test "st2 execution tail works correctly for Mistral workflows" {
 	run ls /opt/stackstorm/mistral/
 	if [[ "$status" -ne 0 ]]; then
 		skip "Mistral no available, skipping tests"

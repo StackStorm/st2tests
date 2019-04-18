@@ -1,6 +1,8 @@
 
-load 'test_helpers/bats-support/load'
-load 'test_helpers/bats-assert/load'
+load '../test_helpers/bats-support/load'
+load '../test_helpers/bats-assert/load'
+
+
 
 setup() {
 	if [[ -e /tmp/apikeys.json ]]; then
@@ -13,6 +15,8 @@ teardown() {
 		rm /tmp/apikeys.json
 	fi
 }
+
+
 
 @test "load command works and is idempotent" {
 	run st2 apikey create

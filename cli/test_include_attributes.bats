@@ -1,6 +1,8 @@
 
-load 'test_helpers/bats-support/load'
-load 'test_helpers/bats-assert/load'
+load '../test_helpers/bats-support/load'
+load '../test_helpers/bats-assert/load'
+
+
 
 @test "st2 execution list include attributes works" {
 	run st2 execution list --attr id
