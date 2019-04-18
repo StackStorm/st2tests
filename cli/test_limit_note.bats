@@ -1,8 +1,12 @@
 
-load 'test_helpers/bats-support/load'
-load 'test_helpers/bats-assert/load'
+load '../test_helpers/bats-support/load'
+load '../test_helpers/bats-assert/load'
+
+
 
 ST2_USER=st2admin
+
+
 
 @test "default note in execution list" {
 	# Use eval so we don't need to export variables to subshells
