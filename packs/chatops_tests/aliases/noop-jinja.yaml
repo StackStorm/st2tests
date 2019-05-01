@@ -1,0 +1,14 @@
+---
+name: noop_jinja
+description: NOOP action - result with Slack attachment parameters with Jinja.
+pack: chatops_tests
+action_ref: core.noop
+formats:
+  - "say {{phrase}} in {{color}}"
+result:
+  extra:
+    slack:
+      title: "Noop"
+      pretext: "Interpolated with Jinja"
+      text: "{{ execution.parameters.phrase }}"
+      color: "{{ execution.parameters.color }}"

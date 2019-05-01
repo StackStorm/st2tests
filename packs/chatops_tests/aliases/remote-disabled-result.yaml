@@ -1,0 +1,18 @@
+---
+name: remote_disabled_result
+description: Execute a command on a remote host via SSH - disabled custom result format.
+pack: chatops_tests
+action_ref: core.remote
+formats:
+  - "disabled-result run {{cmd}} on {{hosts}}"
+result:
+  enabled: false
+  format: |
+    Ran command \`{{ execution.parameters.cmd }}\` on \`{{ execution.parameters.hosts|length }}\` host{% if execution.parameters.hosts|length > 1 %}s{% endif %}.
+
+    Details are as follows:
+    {% for host in execution.result -%}
+        Host: \`{{ host }}\`
+        ---> stdout: {{ execution.result[host].stdout }}
+        ---> stderr: {{ execution.result[host].stderr }}
+    {%+ endfor %}
