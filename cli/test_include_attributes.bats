@@ -8,6 +8,8 @@ load '../test_helpers/bats-assert/load'
 	run st2 execution list --attr id
 	assert_success
 	assert_output --partial "id"
+	# These attributes were selected because they are required for features
+	# like secret masking
 	refute_output --partial "status"
 	refute_output --partial "context"
 	refute_output --partial "start_timestamp"
