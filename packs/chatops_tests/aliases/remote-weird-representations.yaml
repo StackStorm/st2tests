@@ -1,0 +1,12 @@
+---
+name: remote_weird_representations
+description: Execute a command on a remote host via SSH - multiple formats, weird representations.
+pack: chatops_tests
+action_ref: core.remote
+formats:
+  - display: "weird run remote command {{cmd}} on {{hosts}}"
+    representation:
+      - "weird run remote command {{cmd}} on {{hosts}}"
+      - "weird (run|execute-weird) {{cmd}}( on {{hosts=localhost}})?[!.]?"
+  - "weird ssh to hosts {{hosts}} and run command {{cmd}}"
+  - "weird OMG st2 just run this command {{cmd}} on ma boxes {{hosts}} already"

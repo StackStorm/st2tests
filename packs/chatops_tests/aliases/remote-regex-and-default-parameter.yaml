@@ -1,0 +1,7 @@
+---
+name: remote_regex_and_default_parameter
+description: Execute a command on a remote host via SSH - regex and default parameter value.
+pack: chatops_tests
+action_ref: core.remote
+formats:
+  - "regex (run|execute) {{cmd}}( on {{hosts=localhost}})?[!.]?"
