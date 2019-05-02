@@ -100,14 +100,14 @@ load '../test_helpers/bats-assert/load'
 	run eval "st2 sensor list -j | jq -r '.[].pack'"
 	assert_success
 
-	assert_output "linux"
+	assert_output --partial "linux"
 }
 
 @test "trigger list works" {
 	run eval "st2 trigger list -j -a=all | jq -r '.[].pack = \"core\" | length'"
 	assert_success
 
-	assert_output "15"
+	[[ "$output" -gt 15 ]]
 }
 
 @test "trigger get works" {
