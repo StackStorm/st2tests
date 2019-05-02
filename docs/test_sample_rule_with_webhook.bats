@@ -17,6 +17,10 @@ setup() {
 
 
 @test "rule creation works and is idempotent (with an error message)" {
+	run ls -l /usr/share/doc/st2/examples/rules/
+	assert_success
+	assert_output ""
+
 	WEBHOOK_RESULTS=$(st2 rule create /usr/share/doc/st2/examples/rules/sample_rule_with_webhook.yaml -j)
 	assert_success
 
@@ -58,7 +62,12 @@ setup() {
 	run eval "echo '$WEBHOOK_LIST' | jq -r '.[].ref'"
 	assert_success
 
-	assert_output "examples.sample_rule_with_webhook"
+	assert_output --partial "examples.notify_inquiry"
+	assert_output --partial "examples.notify_slack"
+	assert_output --partial "examples.sample_rule_file_watch"
+	assert_output --partial "examples.sample_rule_with_actiontrigger"
+	assert_output --partial "examples.sample_rule_with_timer"
+	assert_output --partial "examples.sample_rule_with_webhook"
 
 	run eval "echo '$WEBHOOK_LIST' | jq -r '.[].pack'"
 	assert_success
@@ -121,7 +130,7 @@ setup() {
 	run st2 rule list --pack examples -j
 	assert_success
 
-	assert_output --partial "No matching items found"
+	refute_output --partial "examples.sample_rule_with_webhook"
 
 	run st2 rule delete examples.sample_rule_with_webhook -j
 	assert_failure 2
@@ -147,11 +156,6 @@ setup() {
 	# assert_success
 
 	assert_output --partial '"status": "succeeded'
-
-	run st2 action list -p examples
-	assert_success
-
-	assert_output 'No matching items found'
 
 	run st2ctl reload --register-all
 	assert_success
