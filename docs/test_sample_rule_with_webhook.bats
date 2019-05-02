@@ -17,6 +17,10 @@ setup() {
 
 
 @test "rule creation works and is idempotent (with an error message)" {
+	if [[ ! $(st2 rule get examples.sample_rule_with_webhook) ]]; then
+		st2 rule delete examples.sample_rule_with_webhook
+	fi
+
 	WEBHOOK_RESULTS=$(st2 rule create /usr/share/doc/st2/examples/rules/sample_rule_with_webhook.yaml -j)
 	assert_success
 
@@ -63,7 +67,7 @@ setup() {
 	run eval "echo '$WEBHOOK_LIST' | jq -r '.[].pack'"
 	assert_success
 
-	assert_output "examples"
+	assert_output --partial "examples"
 
 	run eval "echo '$WEBHOOK_LIST' | jq -r '.[].enabled'"
 	assert_success
