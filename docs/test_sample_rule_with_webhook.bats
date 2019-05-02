@@ -67,7 +67,7 @@ setup() {
 	run eval "echo '$WEBHOOK_LIST' | jq -r '.[].pack'"
 	assert_success
 
-	assert_output "examples"
+	assert_output --partial "examples"
 
 	run eval "echo '$WEBHOOK_LIST' | jq -r '.[].enabled'"
 	assert_success
