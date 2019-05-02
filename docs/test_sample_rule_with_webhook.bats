@@ -17,7 +17,7 @@ setup() {
 
 
 @test "rule creation works and is idempotent (with an error message)" {
-	if [[ ! $(st2 rule get examples.sample_rule_with_webhook) ]]; then
+	if [[ $(st2 rule get examples.sample_rule_with_webhook) ]]; then
 		st2 rule delete examples.sample_rule_with_webhook
 	fi
 
