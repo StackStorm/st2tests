@@ -72,7 +72,7 @@ setup() {
 	run eval "echo '$WEBHOOK_LIST' | jq -r '.[].enabled'"
 	assert_success
 
-	assert_output "true"
+	assert_output --partial "true"
 }
 
 @test "rule disable/enable works" {
@@ -87,7 +87,7 @@ setup() {
 	run eval "echo '$DISABLE_RULE_RESULT' | jq -r '.enabled'"
 	assert_success
 
-	assert_output "false"
+	assert_output --partial "false"
 
 	ENABLE_RULE_RESULT=$(st2 rule enable examples.sample_rule_with_webhook -j)
 	run eval "echo '$ENABLE_RULE_RESULT' | jq -r '.uid'"
@@ -98,7 +98,7 @@ setup() {
 	run eval "echo '$ENABLE_RULE_RESULT' | jq -r '.enabled'"
 	assert_success
 
-	assert_output "true"
+	assert_output --partial "true"
 }
 
 @test "rule status works" {
