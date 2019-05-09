@@ -1,7 +1,7 @@
 ---
 name: remote_disabled_result
 description: Execute a command on a remote host via SSH - disabled custom result format.
-pack: chatops_tests
+pack: tests
 action_ref: core.remote
 formats:
   - "disabled-result run {{cmd}} on {{hosts}}"

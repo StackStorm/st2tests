@@ -1,7 +1,7 @@
 ---
 name: kitten
 description: NOOP action - result with Slack attachment parameters.
-pack: chatops_tests
+pack: tests
 action_ref: core.noop
 formats:
   - "kitten pic"

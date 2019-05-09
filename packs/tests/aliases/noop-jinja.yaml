@@ -1,7 +1,7 @@
 ---
 name: noop_jinja
 description: NOOP action - result with Slack attachment parameters with Jinja.
-pack: chatops_tests
+pack: tests
 action_ref: core.noop
 formats:
   - "say {{phrase}} in {{color}}"

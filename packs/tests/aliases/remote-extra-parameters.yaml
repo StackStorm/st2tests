@@ -1,7 +1,7 @@
 ---
 name: remote_extra_parameters
 description: Execute a command on a remote host via SSH - extra parameters.
-pack: chatops_tests
+pack: tests
 action_ref: core.remote
 formats:
   - "extra run {{cmd}} on {{hosts}}"

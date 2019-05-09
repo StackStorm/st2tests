@@ -1,7 +1,7 @@
 ---
 name: remote_default_parameter_value
 description: Execute a command on a remote host via SSH - default parameter value.
-pack: chatops_tests
+pack: tests
 action_ref: core.remote
 formats:
   - "default run {{cmd}} {{hosts=localhost}}"
