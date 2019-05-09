@@ -84,4 +84,11 @@ teardown() {
 
 	run eval "echo '$RESULT' | jq -r '.status'"
 	assert_output "succeeded"
+
+    # Verify PYTHONPATH is correct
+
+	RESULT=$(st2 run examples.python_runner_print_python_environment -j)
+	assert_success
+
+	assert_output --partial "PYTHONPATH: /opt/stackstorm/packs/examples/lib:/usr/lib/python3.6:/opt/stackstorm/virtualenvs/examples/lib/python3.6"
 }
