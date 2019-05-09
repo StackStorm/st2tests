@@ -216,7 +216,10 @@ setup() {
 
 	assert_output --partial '"status": "succeeded'
 
-	run st2ctl reload --register-all
+	run sudo st2ctl restart
+	assert_success
+
+	run sudo st2ctl reload --register-all
 	assert_success
 
 	run eval "st2 action list -p examples -j | jq -r '[.[].pack] | unique[0]'"
