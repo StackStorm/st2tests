@@ -1,0 +1,11 @@
+---
+name: remote_disabled_custom_ack
+description: Execute a command on a remote host via SSH - disabled custom ack.
+pack: tests
+action_ref: core.remote
+formats:
+  - "disabled-custom-ack run {{cmd}} on {{hosts}}"
+ack:
+  enabled: false
+  append_url: false
+  format: "Running the command(s) for you"

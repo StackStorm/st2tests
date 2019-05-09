@@ -1,0 +1,11 @@
+---
+name: remote_custom_ack
+description: Execute a command on a remote host via SSH - custom ack.
+pack: tests
+action_ref: core.remote
+formats:
+  - "custom-ack run {{cmd}} on {{hosts}}"
+ack:
+  enabled: true
+  append_url: false
+  format: "Running the command(s) for you"

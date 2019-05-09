@@ -1,0 +1,7 @@
+---
+name: remote_chatops_cmd
+description: Execute a command on a remote host via SSH.
+pack: tests
+action_ref: core.remote
+formats:
+  - "run {{cmd}} on {{hosts}}"
