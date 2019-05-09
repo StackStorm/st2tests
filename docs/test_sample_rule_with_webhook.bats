@@ -133,34 +133,6 @@ setup() {
 	assert_output --partial 'Rule "examples.sample_rule_with_webhook" is not found.'
 }
 
-@test "examples pack installation and setup works" {
-	run sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
-	assert_success
-
-	[[ -d /opt/stackstorm/packs/examples ]]
-
-	run st2 run packs.setup_virtualenv packs=examples -j
-	assert_success
-
-	# run eval "echo '$SETUP_VENV_RESULT' | jq -r '.result.result'"
-	# assert_success
-
-	assert_output --partial 'Successfully set up virtualenv for the following packs: examples'
-
-	# run eval "echo '$SETUP_VENV_RESULT' | jq -r '.status'"
-	# assert_success
-
-	assert_output --partial '"status": "succeeded'
-
-	run st2ctl reload --register-all
-	assert_success
-
-	run eval "st2 action list -p examples -j | jq -r '[.[].pack] | unique[0]'"
-	assert_success
-
-	assert_output "examples"
-}
-
 @test "examples pack successfully uninstalls" {
 	# UNINSTALL_RESULT=$(st2 run packs.uninstall packs=examples -j)
 	# assert_success
@@ -223,4 +195,32 @@ setup() {
 	assert_success
 
 	assert_output --partial "No matching items found"
+}
+
+@test "examples pack installation and setup works" {
+	run sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
+	assert_success
+
+	[[ -d /opt/stackstorm/packs/examples ]]
+
+	run st2 run packs.setup_virtualenv packs=examples -j
+	assert_success
+
+	# run eval "echo '$SETUP_VENV_RESULT' | jq -r '.result.result'"
+	# assert_success
+
+	assert_output --partial 'Successfully set up virtualenv for the following packs: examples'
+
+	# run eval "echo '$SETUP_VENV_RESULT' | jq -r '.status'"
+	# assert_success
+
+	assert_output --partial '"status": "succeeded'
+
+	run st2ctl reload --register-all
+	assert_success
+
+	run eval "st2 action list -p examples -j | jq -r '[.[].pack] | unique[0]'"
+	assert_success
+
+	assert_output "examples"
 }
