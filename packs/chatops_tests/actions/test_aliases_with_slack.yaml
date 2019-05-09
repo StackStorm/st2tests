@@ -1,0 +1,11 @@
+---
+name: test_aliases_with_slack
+description: Run the ChatOps end-to-end tests with the Slack hubot adapter
+enabled: true
+runner_type: python-script
+entry_point: test_aliases_with_slack.py
+parameters:
+  sudo:
+    type: boolean
+    immutable: true
+    default: false
