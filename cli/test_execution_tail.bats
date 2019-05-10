@@ -4,13 +4,32 @@ load '../test_helpers/bats-assert/load'
 
 
 
-@test "[TESTCASE SETUP] set stream_output to True" {
+setup() {
 	sudo crudini --set /etc/st2/st2.conf actionrunner stream_output True
-	assert_success
+	[[ "$?" -eq 0 ]]
 
 	sudo st2ctl restart
-	assert_success
+	[[ "$?" -eq 0 ]]
+
+	sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
+	[[ "$?" -eq 0 ]]
+	[[ -d /opt/stackstorm/packs/examples ]]
+
+	st2 run packs.setup_virtualenv packs=examples -j | grep -q "$STATUS_SUCCESS"
+	[[ "$?" -eq 0 ]]
+
+	st2-register-content --register-pack /opt/stackstorm/packs/examples/ --register-all
+	[[ "$?" -eq 0 ]]
 }
+
+teardown() {
+	if [[ -d /opt/stackstorm/packs/examples ]]; then
+		st2 run packs.uninstall packs=examples
+	fi
+	[[ ! -d /opt/stackstorm/packs/examples ]]
+}
+
+
 
 @test "st2 execution tail works correctly for simple actions" {
 	run eval "st2 run examples.python_runner_print_to_stdout_and_stderr count=10 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
