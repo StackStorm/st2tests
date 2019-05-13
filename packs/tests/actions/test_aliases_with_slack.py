@@ -1058,7 +1058,9 @@ try:
     from st2common.runners.base_action import Action
 
     class SlackEndToEndTestAction(Action):
-        def run(self):
+        def run(self, *args, **kwargs):
+            print("args: {args}".format(args=args))
+            print("kwargs: {kwargs}".format(kwargs=kwargs))
             return unittest2.main(exit=False)
 
 except ImportError:
