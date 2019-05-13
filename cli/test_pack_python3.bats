@@ -90,7 +90,7 @@ teardown() {
 
 	run eval "echo '$RESULT' | jq -r '.result.stdout'"
 	assert_success
-	assert_output --partial "PYTHONPATH: /usr/lib/python3"
+	assert_output --regexp ".*PYTHONPATH: /usr/(local/)?lib/python3.*"
 }
 
 @test "python3 imports work correctly" {
