@@ -1,8 +1,5 @@
-
 load '../test_helpers/bats-support/load'
 load '../test_helpers/bats-assert/load'
-
-
 
 STATUS_SUCCESS='"status": "succeeded'
 
@@ -36,9 +33,12 @@ teardown() {
 		st2 run packs.uninstall packs=examples
 	fi
 	[[ ! -d /opt/stackstorm/packs/examples ]]
+
+	if [[ -d /opt/stackstorm/packs/python3_test ]]; then
+		st2 run packs.uninstall packs=python3_test
+	fi
+	[[ ! -d /opt/stackstorm/packs/python3_test ]]
 }
-
-
 
 @test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
 	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples -j)
@@ -65,7 +65,6 @@ teardown() {
 
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.status'"
 	assert_success
-
 	assert_output "succeeded"
 
 	run /opt/stackstorm/virtualenvs/examples/bin/python --version
@@ -86,17 +85,17 @@ teardown() {
 	assert_output "succeeded"
 
     # Verify PYTHONPATH is correct
-
 	RESULT=$(st2 run examples.python_runner_print_python_environment -j)
 	assert_success
 
-	assert_output --partial "PYTHONPATH: /opt/stackstorm/packs/examples/lib:/usr/lib/python3.6:/opt/stackstorm/virtualenvs/examples/lib/python3.6"
+	run eval "echo '$RESULT' | jq -r '.result.stdout'"
+	assert_success
+	assert_output --partial "PYTHONPATH: /usr/lib/python3"
 }
 
 @test "python3 imports work correctly" {
-	PACK_INSTALL_RESULT=$(st2 pack install python3_test --python3 -j)
+	run st2 pack install python3_test --python3 -j
 	assert_success
-
 
 	RESULT=$(st2 run python3_test.test_stdlib_import -j)
 	assert_success
