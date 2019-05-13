@@ -7,8 +7,6 @@ import unittest2
 
 from slackclient import SlackClient
 
-from st2common.runners.base_action import Action
-
 
 # REQUIRED environment variables:
 # * WEBSOCKET_CLIENT_CA_BUNDLE
@@ -1056,13 +1054,16 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(messages[1]['attachments'][0]['color'], '88CCEE')
 
 
-class SlackEndToEndTestAction(Action):
-    def run(self, *args, **kwargs):
-        print("env: {env}".format(env=os.environ))
-        print("args: {args}".format(args=args))
-        print("kwargs: {kwargs}".format(kwargs=kwargs))
-        return unittest2.main(exit=False)
+try:
+    from st2common.runners.base_action import Action
 
+    class SlackEndToEndTestAction(Action):
+        def run(self, *args, **kwargs):
+            suite = unittest2.TestLoader().loadTestFromTestCase(SlackEndToEndTestCase)
+            return unittest2.run(suite, exit=False)
+
+except ImportError:
+    pass
 
 if __name__ == '__main__':
     unittest2.main()
