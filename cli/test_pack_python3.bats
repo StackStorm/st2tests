@@ -94,16 +94,18 @@ teardown() {
 }
 
 @test "python3 imports work correctly" {
-	PACK_INSTALL_RESULT=$(st2 run pack install python3_test python3=true -j)
+	PACK_INSTALL_RESULT=$(st2 pack install python3_test --python3 -j)
 	assert_success
 
 
 	RESULT=$(st2 run python3_test.test_stdlib_import -j)
 	assert_success
 
+	run eval "echo '$RESULT' | jq -r '.result.result'"
+	assert_success
+	assert_output --partial "imports work correctly"
+
 	run eval "echo '$RESULT' | jq -r '.result.stdout'"
 	assert_success
-
-	assert_output "succeeded"
-	assert_output --partial "imports work correctly"
+	assert_output --partial "Using Python version: 3."
 }
