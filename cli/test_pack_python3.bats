@@ -17,27 +17,11 @@ setup() {
 		skip "StackStorm components are already running under Python 3, skipping tests"
 	fi
 
-	sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
-	[[ "$?" -eq 0 ]]
-	[[ -d /opt/stackstorm/packs/examples ]]
-
-	st2 run packs.setup_virtualenv packs=examples -j | grep -q "$STATUS_SUCCESS"
-	[[ "$?" -eq 0 ]]
-
-	st2-register-content --register-pack /opt/stackstorm/packs/examples/ --register-all
-	[[ "$?" -eq 0 ]]
-}
-
-teardown() {
-	if [[ -d /opt/stackstorm/packs/examples ]]; then
-		st2 run packs.uninstall packs=examples
+	if [[ ! -d /opt/stackstorm/packs/examples ]]; then
+		sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
+		[[ "$?" -eq 0 ]]
+		[[ -d /opt/stackstorm/packs/examples ]]
 	fi
-	[[ ! -d /opt/stackstorm/packs/examples ]]
-
-	if [[ -d /opt/stackstorm/packs/python3_test ]]; then
-		st2 run packs.uninstall packs=python3_test
-	fi
-	[[ ! -d /opt/stackstorm/packs/python3_test ]]
 }
 
 @test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
@@ -52,8 +36,14 @@ teardown() {
 
 	assert_output "succeeded"
 
+	run st2-register-content --register-pack /opt/stackstorm/packs/examples/ --register-all
+	assert_success
+
 	run /opt/stackstorm/virtualenvs/examples/bin/python --version
 	assert_output --partial "Python 2.7"
+
+	run st2 run packs.uninstall packs=examples
+	assert_success
 }
 
 @test "packs.setup_virtualenv with python3 flag works" {
@@ -107,4 +97,7 @@ teardown() {
 	run eval "echo '$RESULT' | jq -r '.result.stdout'"
 	assert_success
 	assert_output --partial "Using Python version: 3."
+
+	run st2 run packs.uninstall packs=python3_test
+	assert_success
 }

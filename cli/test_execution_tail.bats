@@ -4,13 +4,11 @@ load '../test_helpers/bats-assert/load'
 
 
 
-setup() {
-	sudo crudini --set /etc/st2/st2.conf actionrunner stream_output True
-	[[ "$?" -eq 0 ]]
-
-	sudo st2ctl restart
-	[[ "$?" -eq 0 ]]
-
+# Hack: BATS executes tests sequentially in the order they are defined in the
+#       .bats file. We really only need to do this once (before the first
+#       actual test), so instead of doing all of this in the setup() function,
+#       we just throw it into a SETUP test.
+@test "SETUP: reinstall the examples pack and set actionrunner.stream_output to True" {
 	sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
 	[[ "$?" -eq 0 ]]
 	[[ -d /opt/stackstorm/packs/examples ]]
@@ -20,16 +18,13 @@ setup() {
 
 	st2-register-content --register-pack /opt/stackstorm/packs/examples/ --register-all
 	[[ "$?" -eq 0 ]]
+
+	sudo crudini --set /etc/st2/st2.conf actionrunner stream_output True
+	[[ "$?" -eq 0 ]]
+
+	sudo st2ctl restart
+	[[ "$?" -eq 0 ]]
 }
-
-teardown() {
-	if [[ -d /opt/stackstorm/packs/examples ]]; then
-		st2 run packs.uninstall packs=examples
-	fi
-	[[ ! -d /opt/stackstorm/packs/examples ]]
-}
-
-
 
 @test "st2 execution tail works correctly for simple actions" {
 	run eval "st2 run examples.python_runner_print_to_stdout_and_stderr count=10 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"

@@ -4,18 +4,6 @@ load '../test_helpers/bats-assert/load'
 
 
 
-ST2_HOST=${ST2_HOST:-localhost}
-ST2_USERNAME=${ST2_USERNAME:-st2admin}
-ST2_PASSWORD=${ST2_PASSWORD:-Ch@ngeMe}
-
-setup() {
-	export TOKEN=$(st2 auth $ST2_USERNAME -p $ST2_PASSWORD -t)
-	[[ "$?" -eq 0 ]]
-	[[ -n "$TOKEN" ]]
-}
-
-
-
 @test "rule creation works and is idempotent (with an error message)" {
 	if [[ $(st2 rule get examples.sample_rule_with_webhook) ]]; then
 		st2 rule delete examples.sample_rule_with_webhook
