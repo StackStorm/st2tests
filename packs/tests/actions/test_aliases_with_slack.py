@@ -74,8 +74,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         cls.userid = cls.get_user_id(cls.username)
         cls.filter = staticmethod(ignore_username(cls.userid))
 
-        cls.read_expected = False
-
         cls.client.api_call(
             "chat.postMessage",
             channel=cls.channel,
@@ -99,14 +97,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             if user.get('real_name') == username:
                 return user.get('id')
 
-    def setUp(self):
-        if not self.read_expected:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
-            self.read_expected = False
-
-        # Drain the event buffer
-        self.client.rtm_read()
-
     def test_non_response(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -129,8 +119,11 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertListEqual(messages, [])
 
-        if len(messages) == 0:
-            self.read_expected = True
+        if len(messages) != 0:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_help_shortcut(self):
         post_message_response = self.client.api_call(
@@ -153,11 +146,14 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
-        if len(messages) == 1:
-            self.read_expected = True
+        if len(messages) != 1:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Help commands don't get acked
         self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_help_longcut(self):
         post_message_response = self.client.api_call(
@@ -181,11 +177,14 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
-        if len(messages) == 1:
-            self.read_expected = True
+        if len(messages) != 1:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Help commands don't get acked
         self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_run_command_on_localhost(self):
         post_message_response = self.client.api_call(
@@ -208,8 +207,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -234,6 +233,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_run_exact_command_on_localhost(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -255,8 +257,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -282,6 +284,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_run_exact_command_on_multiple_hosts(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -303,8 +308,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -328,6 +333,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_run_command_on_default_hosts(self):
         post_message_response = self.client.api_call(
@@ -350,8 +358,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -375,6 +383,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_run_command_with_regex_and_default_parameter(self):
         post_message_response = self.client.api_call(
@@ -397,8 +408,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -422,6 +433,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_execute_command_with_regex_and_default_parameter(self):
         post_message_response = self.client.api_call(
@@ -444,8 +458,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -469,6 +483,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_run_command_with_extra_parameter(self):
         post_message_response = self.client.api_call(
@@ -491,8 +508,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -516,6 +533,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_weird_run_remote_command_with_parameter(self):
         post_message_response = self.client.api_call(
@@ -538,8 +558,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -563,6 +583,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_weird_run_remote_command_with_ssh(self):
         post_message_response = self.client.api_call(
@@ -585,8 +608,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -610,6 +633,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_weird_omg_just_run_command(self):
         post_message_response = self.client.api_call(
@@ -632,8 +658,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -658,6 +684,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_custom_ack(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -667,7 +696,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         messages = []
         for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
-            if len(messages) >= 1:
+            if len(messages) >= 2:
                 break
             time.sleep(1)
 
@@ -678,11 +707,16 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             if filtered_messages:
                 messages.extend(filtered_messages)
 
-        self.assertEqual(1, len(messages))
+        self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for response
         self.assertIsNotNone(messages[0].get('bot_id'))
         self.assertEqual(messages[0].get('text'), 'Running the command(s) for you')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_disabled_ack(self):
         post_message_response = self.client.api_call(
@@ -705,8 +739,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
-        if len(messages) == 1:
-            self.read_expected = True
+        if len(messages) != 1:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for response
         self.assertIsNotNone(messages[0].get('bot_id'))
@@ -727,6 +761,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_disabled_ack_with_bad_command(self):
         post_message_response = self.client.api_call(
@@ -749,8 +786,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
-        if len(messages) == 1:
-            self.read_expected = True
+        if len(messages) != 1:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for response
         self.assertIsNotNone(messages[0].get('bot_id'))
@@ -774,6 +811,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertRegex(msg_text, r'stderr\s*:.*sh:.*echof:.*not found')
         self.assertRegex(msg_text, r'return_code\s*:\s*\d+')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_alias_with_custom_result_format(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -795,8 +835,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -824,6 +864,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                          '    ---&gt; stderr: \n')
         self.assertEqual(msg_text, expected_text)
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_alias_with_custom_result_format_and_multiple_hosts(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -845,8 +888,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -879,6 +922,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertIn(expected_127_0_0_1, msg_text)
         self.assertIn(expected_localhost, msg_text)
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_alias_with_disabled_result(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -902,11 +948,14 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         time.sleep(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT/2)
 
         self.assertEqual(1, len(messages))
-        if len(messages) == 1:
-            self.read_expected = True
+        if len(messages) != 1:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_attachment_and_plaintext_backup(self):
         post_message_response = self.client.api_call(
@@ -929,8 +978,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -947,6 +996,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # Test attachment
         self.assertEqual(messages[1]['attachments'][0]['fallback'],
                          messages[1]['attachments'][0]['text'])
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_fields_parameter(self):
         post_message_response = self.client.api_call(
@@ -969,8 +1021,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -1006,6 +1058,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(messages[1]['attachments'][0]['image_url'], 'http://i.imgur.com/Gb9kAYK.jpg')
         self.assertEqual(messages[1]['attachments'][0]['color'], '00AA00')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_jinja_input_parameters(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -1027,8 +1082,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
-        if len(messages) == 2:
-            self.read_expected = True
+        if len(messages) != 2:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -1058,6 +1113,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
 
         self.assertEqual(messages[1]['attachments'][0]['color'], '88CCEE')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
 
 try:
