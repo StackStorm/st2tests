@@ -55,9 +55,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.WAIT_FOR_MESSAGES_TIMEOUT = os.environ.get('SLACK_WAIT_FOR_MESSAGES_TIMEOUT', 120)
+        cls.WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_FOR_MESSAGES_TIMEOUT', 120))
 
-        cls.DONT_WAIT_FOR_MESSAGES_TIMEOUT = os.environ.get('SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT', 8)
+        cls.DONT_WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT', 8))
 
         cls.SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
         cls.SLACK_BOT_USERNAME = os.environ['SLACK_BOT_USERNAME']
