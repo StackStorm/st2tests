@@ -771,7 +771,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
-        self.assertRegex(msg_text, r'stderr\s*:\s*sh:.*echof:.*not found')
+        self.assertRegex(msg_text, r'stderr\s*:.*sh:.*echof:.*not found')
         self.assertRegex(msg_text, r'return_code\s*:\s*\d+')
 
     def test_alias_with_custom_result_format(self):
@@ -866,16 +866,18 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        expected_text = ('Ran command `echo ChatOps run command with custom result format on multiple hosts` on `2` hosts.\n'
-                         '\n'
-                         'Details are as follows:\n'
-                         'Host: `127.0.0.1`\n'
-                         '    ---&gt; stdout: ChatOps run command with custom result format on multiple hosts\n'
-                         '    ---&gt; stderr: \n'
-                         'Host: `localhost`\n'
-                         '    ---&gt; stdout: ChatOps run command with custom result format on multiple hosts\n'
-                         '    ---&gt; stderr: \n')
-        self.assertEqual(msg_text, expected_text)
+        expected_report = 'Ran command `echo ChatOps run command with custom result format on multiple hosts` on `2` hosts.\n'
+        expected_details = 'Details are as follows:\n'
+        expected_127_0_0_1 = ('Host: `127.0.0.1`\n'
+                              '    ---&gt; stdout: ChatOps run command with custom result format on multiple hosts\n'
+                              '    ---&gt; stderr: \n')
+        expected_localhost = ('Host: `localhost`\n'
+                              '    ---&gt; stdout: ChatOps run command with custom result format on multiple hosts\n'
+                              '    ---&gt; stderr: \n')
+        self.assertIn(expected_report, msg_text)
+        self.assertIn(expected_details, msg_text)
+        self.assertIn(expected_127_0_0_1, msg_text)
+        self.assertIn(expected_localhost, msg_text)
 
     def test_alias_with_disabled_result(self):
         post_message_response = self.client.api_call(
@@ -1068,6 +1070,7 @@ try:
 
 except ImportError:
     pass
+
 
 if __name__ == '__main__':
     unittest2.main()
