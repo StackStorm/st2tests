@@ -46,12 +46,10 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 	SETUP_VENV_RESULTS=$(run_command_and_log_output st2 run packs.setup_virtualenv packs=examples -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
 	assert_success
-
 	assert_output "Successfully set up virtualenv for the following packs: examples"
 
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.status'"
 	assert_success
-
 	assert_output "succeeded"
 
 	run /opt/stackstorm/virtualenvs/examples/bin/python --version
