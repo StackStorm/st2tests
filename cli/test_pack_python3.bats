@@ -4,9 +4,14 @@ load '../test_helpers/bats-assert/load'
 STATUS_SUCCESS='"status": "succeeded'
 
 setup() {
-	# TODO: Not sure if we can call skip from within a setup function...
-	#       If this doesn't work, copy the two skips to the top of each test
-	#       case and call it good.
+	if [[ ! -d /opt/stackstorm/packs/examples ]]; then
+		sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
+		[[ "$?" -eq 0 ]]
+		[[ -d /opt/stackstorm/packs/examples ]]
+	fi
+}
+
+@test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
 	run python3 --version
 	if [[ "$status" -ne 0 ]]; then
 		skip "Python 3 binary not found, skipping tests"
@@ -17,14 +22,6 @@ setup() {
 		skip "StackStorm components are already running under Python 3, skipping tests"
 	fi
 
-	if [[ ! -d /opt/stackstorm/packs/examples ]]; then
-		sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
-		[[ "$?" -eq 0 ]]
-		[[ -d /opt/stackstorm/packs/examples ]]
-	fi
-}
-
-@test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
 	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
 	assert_success
@@ -47,6 +44,16 @@ setup() {
 }
 
 @test "packs.setup_virtualenv with python3 flag works" {
+	run python3 --version
+	if [[ "$status" -ne 0 ]]; then
+		skip "Python 3 binary not found, skipping tests"
+	fi
+
+	run /opt/stackstorm/st2/bin/python3 --version
+	if [[ "$status" -eq 0 ]]; then
+		skip "StackStorm components are already running under Python 3, skipping tests"
+	fi
+
 	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples python3=true -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
 	assert_success
@@ -84,6 +91,16 @@ setup() {
 }
 
 @test "python3 imports work correctly" {
+	run python3 --version
+	if [[ "$status" -ne 0 ]]; then
+		skip "Python 3 binary not found, skipping tests"
+	fi
+
+	run /opt/stackstorm/st2/bin/python3 --version
+	if [[ "$status" -eq 0 ]]; then
+		skip "StackStorm components are already running under Python 3, skipping tests"
+	fi
+
 	run st2 pack install python3_test --python3 -j
 	assert_success
 
