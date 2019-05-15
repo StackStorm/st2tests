@@ -54,6 +54,7 @@ def ignore_username(userid):
 
 class SlackEndToEndTestCase(unittest2.TestCase):
     maxDiff = None
+    read_expected = False
 
     @classmethod
     def setUpClass(cls):
@@ -80,8 +81,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             text="`===== BEGINNING ChatOps End-to-End Tests =====`",
             as_user=True)
 
-        time.sleep(cls.WAIT_BETWEEN_MESSAGES_TIMEOUT/2)
-
     @classmethod
     def tearDownClass(cls):
         cls.client.api_call(
@@ -97,16 +96,12 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 return user.get('id')
 
     def setUp(self):
-        time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT/2)
+        if not self.read_expected:
+            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            self.read_expected = False
 
         # Connect as the bot
         self.client.rtm_connect()
-
-        # Drain the event buffer
-        self.client.rtm_read()
-
-    def tearDown(self):
-        time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT/2)
 
         # Drain the event buffer
         self.client.rtm_read()
@@ -133,6 +128,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertListEqual(messages, [])
 
+        if len(messages) == 0:
+            self.read_expected = True
+
     def test_help_shortcut(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -154,6 +152,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
+        if len(messages) == 1:
+            self.read_expected = True
+
         # Help commands don't get acked
         self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
 
@@ -179,6 +180,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
+        if len(messages) == 1:
+            self.read_expected = True
+
         # Help commands don't get acked
         self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
 
@@ -203,6 +207,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -248,6 +254,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -294,6 +302,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -339,6 +349,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -384,6 +396,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -429,6 +443,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -474,6 +490,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -519,6 +537,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -564,6 +584,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -609,6 +631,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -680,6 +704,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
+        if len(messages) == 1:
+            self.read_expected = True
 
         # Test for response
         self.assertIsNotNone(messages[0].get('bot_id'))
@@ -722,6 +748,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
+        if len(messages) == 1:
+            self.read_expected = True
 
         # Test for response
         self.assertIsNotNone(messages[0].get('bot_id'))
@@ -766,6 +794,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -814,6 +844,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -867,6 +899,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         time.sleep(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT/2)
 
         self.assertEqual(1, len(messages))
+        if len(messages) == 1:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -892,6 +926,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -930,6 +966,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -986,6 +1024,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) == 2:
+            self.read_expected = True
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
