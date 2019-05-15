@@ -41,9 +41,7 @@ def ignore_username(userid):
     # caused by a human typing in the channel. Otherwise, the number of
     # messages can be erroneously inflated.
     def filter_messages(message):
-        if message['type'] == 'user_typing':
-            return False
-        elif message['type'] == 'hello':
+        if message['type'] != 'message':
             return False
         elif message.get('user') == userid:
             return False
@@ -155,7 +153,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(1, len(messages))
         # Help commands don't get acked
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
 
     def test_help_longcut(self):
@@ -181,7 +178,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(1, len(messages))
         # Help commands don't get acked
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
 
     def test_run_command_on_localhost(self):
@@ -207,11 +203,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -254,11 +248,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -302,11 +294,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -349,11 +339,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -396,11 +384,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -443,11 +429,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -490,11 +474,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -537,11 +519,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -584,11 +564,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -631,11 +609,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -678,7 +654,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(1, len(messages))
 
         # Test for response
-        self.assertEqual('message', messages[0]['type'])
         self.assertIsNotNone(messages[0].get('bot_id'))
         self.assertEqual(messages[0].get('text'), 'Running the command(s) for you')
 
@@ -705,7 +680,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(1, len(messages))
 
         # Test for response
-        self.assertEqual('message', messages[0]['type'])
         self.assertIsNotNone(messages[0].get('bot_id'))
         self.assertIsNotNone(messages[0].get('attachments'))
         self.assertGreater(len(messages[0]['attachments']), 0)
@@ -748,7 +722,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(1, len(messages))
 
         # Test for response
-        self.assertEqual('message', messages[0]['type'])
         self.assertIsNotNone(messages[0].get('bot_id'))
         self.assertIsNotNone(messages[0].get('attachments'))
         self.assertGreater(len(messages[0]['attachments']), 0)
@@ -793,11 +766,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -843,11 +814,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -898,7 +867,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(1, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
     def test_attachment_and_plaintext_backup(self):
@@ -924,11 +892,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -964,11 +930,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(2, len(messages))
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -1023,10 +987,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
-        self.assertEqual('message', messages[0]['type'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
