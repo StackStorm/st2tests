@@ -90,7 +90,7 @@ load '../test_helpers/bats-assert/load'
 }
 
 @test "rule status works" {
-	RULE_STATUS=$(curl --silent -k https://localhost/api/v1/webhooks/sample -d '{"foo": "bar", "name": "st2"}' -H 'Content-Type: application/json' -H "X-Auth-Token: ${TOKEN}")
+	RULE_STATUS=$(curl --silent -k https://localhost/api/v1/webhooks/sample -d '{"foo": "bar", "name": "st2"}' -H 'Content-Type: application/json' -H "X-Auth-Token: ${ST2_AUTH_TOKEN}")
 	assert_success
 
 	run eval "echo '$RULE_STATUS' | jq -r '.foo'"
