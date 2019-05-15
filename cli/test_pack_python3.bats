@@ -99,7 +99,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 
 	run eval "echo '$RESULT' | jq -r '.result.stdout'"
 	assert_success
-	assert_output --regexp ".*PYTHONPATH: /usr/(local/)?lib/python3.*"
+	assert_output --regexp ".*PYTHONPATH: .*/usr/(local/)?lib/python3.*"
 }
 
 @test "python3 imports work correctly" {
