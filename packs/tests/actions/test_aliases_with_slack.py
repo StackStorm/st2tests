@@ -161,7 +161,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="@{bot_user}help".format(bot_user=self.bot_username),
+            text="@{bot_user} help".format(bot_user=self.bot_username),
             as_user=True,
             link_names=True)
 
