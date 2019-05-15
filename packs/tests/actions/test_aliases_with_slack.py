@@ -740,7 +740,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
-        self.assertRegex(msg_text, r'stderr\s*:\s*bash: echof: command not found')
+        self.assertRegex(msg_text, r'stderr\s*:\s*sh:.*echof:.*not found')
         self.assertRegex(msg_text, r'return_code\s*:\s*\d+')
 
     def test_alias_with_custom_result_format(self):
