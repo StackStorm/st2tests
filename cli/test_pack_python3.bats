@@ -26,7 +26,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 }
 
 @test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
-    skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
 	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
@@ -50,7 +50,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 }
 
 @test "packs.setup_virtualenv with python3 flag works" {
-    skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
 	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples python3=true -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
@@ -89,7 +89,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 }
 
 @test "python3 imports work correctly" {
-    skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
 	run st2 pack install python3_test --python3 -j
 	assert_success
