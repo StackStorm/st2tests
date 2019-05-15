@@ -29,7 +29,7 @@ from slackclient import SlackClient
 # * SLACK_WAIT_BETWEEN_MESSAGES_TIMEOUT
 #   - Should be set to the number of seconds to wait for messages to clear
 #     between tests
-#   - Default: 2
+#   - Default: 36
 # * SLACK_WAIT_FOR_MESSAGES_TIMEOUT
 #   - Should be set to the number of seconds to wait for no messages
 #   - Default: 120
@@ -59,7 +59,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
     def setUpClass(cls):
         cls.WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_FOR_MESSAGES_TIMEOUT', 120))
         cls.DONT_WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT', 24))
-        cls.WAIT_BETWEEN_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_BETWEEN_MESSAGES_TIMEOUT', 2))
+        cls.WAIT_BETWEEN_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_BETWEEN_MESSAGES_TIMEOUT', 36))
 
         cls.SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
         cls.SLACK_BOT_USERNAME = os.environ['SLACK_BOT_USERNAME']
