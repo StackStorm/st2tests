@@ -1,5 +1,6 @@
 load '../test_helpers/bats-support/load'
 load '../test_helpers/bats-assert/load'
+load '../test_helpers/common'
 
 setup() {
 	if [[ ! -d /opt/stackstorm/packs/examples ]]; then
@@ -42,7 +43,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 @test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
 	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
-	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples -j)
+	SETUP_VENV_RESULTS=$(run_command_and_log_output st2 run packs.setup_virtualenv packs=examples -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
 	assert_success
 
@@ -52,9 +53,6 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 	assert_success
 
 	assert_output "succeeded"
-
-	run st2-register-content --register-pack /opt/stackstorm/packs/examples/ --register-all
-	assert_success
 
 	run /opt/stackstorm/virtualenvs/examples/bin/python --version
 	assert_output --partial "Python 2.7"
@@ -66,7 +64,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 @test "packs.setup_virtualenv with python3 flag works" {
 	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
-	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples python3=true -j)
+	SETUP_VENV_RESULTS=$(run_command_and_log_output st2 run packs.setup_virtualenv packs=examples python3=true -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
 	assert_success
 
@@ -81,7 +79,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 
 	assert_output --partial "Python 3."
 
-	RESULT=$(st2 run examples.python_runner_print_python_version -j)
+	RESULT=$(run_command_and_log_output st2 run examples.python_runner_print_python_version -j)
 	assert_success
 
 	run eval "echo '$RESULT' | jq -r '.result.stdout'"
@@ -108,7 +106,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 	run st2 pack install python3_test --python3 -j
 	assert_success
 
-	RESULT=$(st2 run python3_test.test_stdlib_import -j)
+	RESULT=$(run_command_and_log_output st2 run python3_test.test_stdlib_import -j)
 	assert_success
 
 	run eval "echo '$RESULT' | jq -r '.result.result'"
