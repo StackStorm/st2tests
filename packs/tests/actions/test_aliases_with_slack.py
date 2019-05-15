@@ -367,7 +367,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!regex run \"echo ChatOps run command on default hosts\".",
+            text="!regex run \"echo ChatOps run command with regex\".",
             as_user=True)
 
         messages = []
@@ -412,7 +412,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!regex execute \"echo ChatOps run command on default hosts\"!",
+            text="!regex execute \"echo ChatOps execute command on default hosts\"!",
             as_user=True)
 
         messages = []
@@ -457,7 +457,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!extra run \"echo ChatOps run command on default hosts\" on localhost timeout=120",
+            text="!extra run \"echo ChatOps run command with extra parameter\" on localhost timeout=120",
             as_user=True)
 
         messages = []
@@ -502,7 +502,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!weird run remote command \"echo ChatOps run command on default hosts\" on localhost",
+            text="!weird run remote command \"echo ChatOps run weird command\" on localhost",
             as_user=True)
 
         messages = []
@@ -547,7 +547,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!weird ssh to hosts localhost and run command \"echo ChatOps run command on default hosts\"",
+            text="!weird ssh to hosts localhost and run command \"echo ChatOps run weird command with SSH\"",
             as_user=True)
 
         messages = []
@@ -592,7 +592,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!weird OMG st2 just run this command \"echo ChatOps run command on default hosts\" on ma boxes localhost already",
+            text="!weird OMG st2 just run this command \"echo ChatOps run weird OMG command\" on ma boxes localhost already",
             as_user=True)
 
         messages = []
@@ -637,7 +637,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!custom-ack run \"echo ChatOps run command on default hosts\" on localhost",
+            text="!custom-ack run \"echo ChatOps run command with custom ack\" on localhost",
             as_user=True)
 
         messages = []
@@ -663,7 +663,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!disabled-custom-ack run \"echo ChatOps run command on default hosts\" on localhost",
+            text="!disabled-custom-ack run \"echo ChatOps run command with disabled ack\" on localhost",
             as_user=True)
 
         messages = []
@@ -705,7 +705,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!disabled-custom-ack run \"echof ChatOps run command on default hosts\" on localhost",
+            text="!disabled-custom-ack run \"echof ChatOps run bad command\" on localhost",
             as_user=True)
 
         messages = []
@@ -749,7 +749,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!custom-format run \"echo ChatOps run command on single host\" on localhost",
+            text="!custom-format run \"echo ChatOps run command with custom result format\" on localhost",
             as_user=True)
 
         messages = []
@@ -785,11 +785,11 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        expected_text = ('Ran command `echo ChatOps run command on single host` on `1` host.\n'
+        expected_text = ('Ran command `echo ChatOps run command with custom result format` on `1` host.\n'
                          '\n'
                          'Details are as follows:\n'
                          'Host: `localhost`\n'
-                         '    ---&gt; stdout: ChatOps run command on single host\n'
+                         '    ---&gt; stdout: ChatOps run command with custom result format\n'
                          '    ---&gt; stderr: \n')
         self.assertEqual(msg_text, expected_text)
 
@@ -797,7 +797,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!custom-format run \"echo ChatOps run command on multiple hosts\" on localhost,127.0.0.1",
+            text="!custom-format run \"echo ChatOps run command with custom result format on multiple hosts\" on localhost,127.0.0.1",
             as_user=True)
 
         messages = []
@@ -833,14 +833,14 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        expected_text = ('Ran command `echo ChatOps run command on multiple hosts` on `2` hosts.\n'
+        expected_text = ('Ran command `echo ChatOps run command with custom result format on multiple hosts` on `2` hosts.\n'
                          '\n'
                          'Details are as follows:\n'
                          'Host: `127.0.0.1`\n'
-                         '    ---&gt; stdout: ChatOps run command on multiple hosts\n'
+                         '    ---&gt; stdout: ChatOps run command with custom result format on multiple hosts\n'
                          '    ---&gt; stderr: \n'
                          'Host: `localhost`\n'
-                         '    ---&gt; stdout: ChatOps run command on multiple hosts\n'
+                         '    ---&gt; stdout: ChatOps run command with custom result format on multiple hosts\n'
                          '    ---&gt; stderr: \n')
         self.assertEqual(msg_text, expected_text)
 
@@ -848,7 +848,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!disabled-result run \"echo ChatOps run command on default hosts\" on localhost",
+            text="!disabled-result run \"echo ChatOps run command with disabled result\" on localhost",
             as_user=True)
 
         messages = []
