@@ -26,14 +26,16 @@ from slackclient import SlackClient
 
 # OPTIONAL environment variables:
 #
+# * SLACK_WAIT_BETWEEN_MESSAGES_TIMEOUT
+#   - Should be set to the number of seconds to wait for messages to clear
+#     between tests
+#   - Default: 2
 # * SLACK_WAIT_FOR_MESSAGES_TIMEOUT
 #   - Should be set to the number of seconds to wait for no messages
-#   - Default: 120 (seconds)
+#   - Default: 120
 # * SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT
 #   - Should be set to the number of seconds to wait for a message
-#   - Would be useful to be evenly divisible by 4, since that is the timeout
-#     between tests
-#   - Default: 8
+#   - Default: 24
 
 
 def ignore_username(userid):
@@ -56,8 +58,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_FOR_MESSAGES_TIMEOUT', 120))
-
         cls.DONT_WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT', 24))
+        cls.WAIT_BETWEEN_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_BETWEEN_MESSAGES_TIMEOUT', 2))
 
         cls.SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
         cls.SLACK_BOT_USERNAME = os.environ['SLACK_BOT_USERNAME']
@@ -78,7 +80,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             text="`===== BEGINNING ChatOps End-to-End Tests =====`",
             as_user=True)
 
-        time.sleep(cls.DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
+        time.sleep(cls.WAIT_BETWEEN_MESSAGES_TIMEOUT/2)
 
     @classmethod
     def tearDownClass(cls):
@@ -95,7 +97,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 return user.get('id')
 
     def setUp(self):
-        time.sleep(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
+        time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT/2)
 
         # Connect as the bot
         self.client.rtm_connect()
@@ -104,7 +106,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.client.rtm_read()
 
     def tearDown(self):
-        time.sleep(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
+        time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT/2)
 
         # Drain the event buffer
         self.client.rtm_read()
