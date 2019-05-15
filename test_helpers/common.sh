@@ -18,8 +18,8 @@ run_command_and_log_output() {
     # Utility function which runs a bash command and logs the command output (stdout) and exit
     # code.
     #
-    # This comes handy in scenarios where you want to save command stdout in a variable, but you
-    # also want to output the command stdout to make troubleshooting / debugging n test failures
+    # This comes in handy in scenarios where you want to save command stdout in a variable, but you
+    # also want to output the command stdout to make troubleshooting / debugging in test failures
     # easier.
     #
     # Example usage:
@@ -32,21 +32,21 @@ run_command_and_log_output() {
     # 2. Log the output to stderr
     >&2 echo "=========="
     >&2 echo "Ran command: ${@}"
-    >&2 echo "Stdout: ${stdout}"
+    >&2 echo "stdout: ${stdout}"
     >&2 echo "stderr: ${stderr}"
-    >&2 echo "Exit code: ${exit_code}"
+    >&2 echo "exit code: ${exit_code}"
     >&2 echo "=========="
 
     # 3. Return original command value
-    echo ${stdout}
+    echo "${stdout}"
 }
 
 run_command_and_log_output_get_stderr() {
     # Utility function which runs a bash command and logs the command output (stdout) and exit
     # code.
     #
-    # This comes handy in scenarios where you want to save command stdout in a variable, but you
-    # also want to output the command stdout to make troubleshooting / debugging n test failures
+    # This comes in handy in scenarios where you want to save command stdout in a variable, but you
+    # also want to output the command stdout to make troubleshooting / debugging in test failures
     # easier.
     #
     # Example usage:
@@ -59,11 +59,11 @@ run_command_and_log_output_get_stderr() {
     # 2. Log the output to stderr
     >&2 echo "=========="
     >&2 echo "Ran command: ${@}"
-    >&2 echo "Stdout: ${stdout}"
+    >&2 echo "stdout: ${stdout}"
     >&2 echo "stderr: ${stderr}"
-    >&2 echo "Exit code: ${exit_code}"
+    >&2 echo "exit code: ${exit_code}"
     >&2 echo "=========="
 
     # 3. Return original command error
-    echo ${stderr}
+    echo "${stderr}"
 }
