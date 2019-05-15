@@ -54,7 +54,6 @@ def ignore_username(userid):
 
 class SlackEndToEndTestCase(unittest2.TestCase):
     maxDiff = None
-    read_expected = False
 
     @classmethod
     def setUpClass(cls):
@@ -75,11 +74,16 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         cls.userid = cls.get_user_id(cls.username)
         cls.filter = staticmethod(ignore_username(cls.userid))
 
+        cls.read_expected = False
+
         cls.client.api_call(
             "chat.postMessage",
             channel=cls.channel,
             text="`===== BEGINNING ChatOps End-to-End Tests =====`",
             as_user=True)
+
+        # Connect as the bot
+        cls.client.rtm_connect()
 
     @classmethod
     def tearDownClass(cls):
@@ -99,9 +103,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         if not self.read_expected:
             time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
             self.read_expected = False
-
-        # Connect as the bot
-        self.client.rtm_connect()
 
         # Drain the event buffer
         self.client.rtm_read()
