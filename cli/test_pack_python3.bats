@@ -11,7 +11,9 @@ setup() {
 	fi
 }
 
-@test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
+skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
+    # Utility function which skips tests if python3 binary is not available on the system or if
+    # StackStorm components are already running under Python 3 (e.g. Ubuntu Xenial)
 	run python3 --version
 	if [[ "$status" -ne 0 ]]; then
 		skip "Python 3 binary not found, skipping tests"
@@ -21,6 +23,10 @@ setup() {
 	if [[ "$status" -eq 0 ]]; then
 		skip "StackStorm components are already running under Python 3, skipping tests"
 	fi
+}
+
+@test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
+    skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
 	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
@@ -44,15 +50,7 @@ setup() {
 }
 
 @test "packs.setup_virtualenv with python3 flag works" {
-	run python3 --version
-	if [[ "$status" -ne 0 ]]; then
-		skip "Python 3 binary not found, skipping tests"
-	fi
-
-	run /opt/stackstorm/st2/bin/python3 --version
-	if [[ "$status" -eq 0 ]]; then
-		skip "StackStorm components are already running under Python 3, skipping tests"
-	fi
+    skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
 	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples python3=true -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
@@ -91,15 +89,7 @@ setup() {
 }
 
 @test "python3 imports work correctly" {
-	run python3 --version
-	if [[ "$status" -ne 0 ]]; then
-		skip "Python 3 binary not found, skipping tests"
-	fi
-
-	run /opt/stackstorm/st2/bin/python3 --version
-	if [[ "$status" -eq 0 ]]; then
-		skip "StackStorm components are already running under Python 3, skipping tests"
-	fi
+    skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
 	run st2 pack install python3_test --python3 -j
 	assert_success
