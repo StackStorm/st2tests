@@ -27,3 +27,12 @@ bats st2tests/chatops/*.bats
 # or
 bats st2tests/cli/test_execution_tail.bats
 ```
+
+## Updatin bundled subtrees
+
+For example:
+
+```bash
+git subtree pull --prefix test_helpers/bats-assert https://github.com/ztombol/bats-assert.git master --squash
+git subtree pull --prefix test_helpers/bats-support https://github.com/ztombol/bats-support.git master --squash
+```
