@@ -1,13 +1,27 @@
 load '../test_helpers/bats-support/load'
 load '../test_helpers/bats-assert/load'
 
-STATUS_SUCCESS='"status": "succeeded'
-
 setup() {
 	if [[ ! -d /opt/stackstorm/packs/examples ]]; then
 		sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
 		[[ "$?" -eq 0 ]]
 		[[ -d /opt/stackstorm/packs/examples ]]
+	fi
+
+	st2 run packs.setup_virtualenv packs=examples -j
+	[[ "$?" -eq 0 ]]
+
+	st2-register-content --register-pack /opt/stackstorm/packs/examples/ --register-actions
+	[[ "$?" -eq 0 ]]
+}
+
+teardown() {
+	if [[ -d /opt/stackstorm/packs/examples ]]; then
+		st2 run packs.uninstall packs=examples
+	fi
+
+	if [[ -d /opt/stackstorm/packs/python3_test ]]; then
+		st2 run packs.uninstall packs=python3_test
 	fi
 }
 
@@ -89,7 +103,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 }
 
 @test "python3 imports work correctly" {
-	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+    skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
 	run st2 pack install python3_test --python3 -j
 	assert_success
