@@ -40,3 +40,30 @@ run_command_and_log_output() {
     # 3. Return original command value
     echo ${stdout}
 }
+
+run_command_and_log_output_get_stderr() {
+    # Utility function which runs a bash command and logs the command output (stdout) and exit
+    # code.
+    #
+    # This comes handy in scenarios where you want to save command stdout in a variable, but you
+    # also want to output the command stdout to make troubleshooting / debugging n test failures
+    # easier.
+    #
+    # Example usage:
+    #
+    # RESULT=$(run_command_and_log_output_get_stderr st2 run pack install packs=examples)
+    #
+    # 1. Run the command and capture the outputs
+    eval "$({ stderr=$({ stdout=$($@); exit_code=$?; } 2>&1; declare -p stdout exit_code >&2); declare -p stderr ; } 2>&1)"
+
+    # 2. Log the output to stderr
+    >&2 echo "=========="
+    >&2 echo "Ran command: ${@}"
+    >&2 echo "Stdout: ${stdout}"
+    >&2 echo "stderr: ${stderr}"
+    >&2 echo "Exit code: ${exit_code}"
+    >&2 echo "=========="
+
+    # 3. Return original command error
+    echo ${stderr}
+}
