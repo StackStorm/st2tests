@@ -36,16 +36,6 @@ from slackclient import SlackClient
 #   - Default: 8
 
 
-WAIT_FOR_MESSAGES_TIMEOUT = os.environ.get('SLACK_WAIT_FOR_MESSAGES_TIMEOUT', 120)
-
-DONT_WAIT_FOR_MESSAGES_TIMEOUT = os.environ.get('SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT', 8)
-
-SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
-SLACK_BOT_USERNAME = os.environ['SLACK_BOT_USERNAME']
-SLACK_USER_API_TOKEN = os.environ['SLACK_USER_API_TOKEN']
-SLACK_USER_USERNAME = os.environ['SLACK_USER_USERNAME']
-
-
 def ignore_username(userid):
     # Remove 'user_typing' messages, since they are almost certainly
     # caused by a human typing in the channel. Otherwise, the number of
@@ -67,11 +57,20 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.WAIT_FOR_MESSAGES_TIMEOUT = os.environ.get('SLACK_WAIT_FOR_MESSAGES_TIMEOUT', 120)
+
+        cls.DONT_WAIT_FOR_MESSAGES_TIMEOUT = os.environ.get('SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT', 8)
+
+        cls.SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
+        cls.SLACK_BOT_USERNAME = os.environ['SLACK_BOT_USERNAME']
+        cls.SLACK_USER_API_TOKEN = os.environ['SLACK_USER_API_TOKEN']
+        cls.SLACK_USER_USERNAME = os.environ['SLACK_USER_USERNAME']
+
         # This token is for the bot that impersonates a user
-        cls.client = SlackClient(connect=True, token=SLACK_USER_API_TOKEN)
-        cls.channel = SLACK_CHANNEL
-        cls.bot_username = SLACK_BOT_USERNAME
-        cls.username = SLACK_USER_USERNAME
+        cls.client = SlackClient(connect=True, token=cls.SLACK_USER_API_TOKEN)
+        cls.channel = cls.SLACK_CHANNEL
+        cls.bot_username = cls.SLACK_BOT_USERNAME
+        cls.username = cls.SLACK_USER_USERNAME
         cls.userid = cls.get_user_id(cls.username)
         cls.filter = staticmethod(ignore_username(cls.userid))
 
@@ -81,7 +80,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             text="`===== BEGINNING ChatOps End-to-End Tests =====`",
             as_user=True)
 
-        time.sleep(DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
+        time.sleep(cls.DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
 
     @classmethod
     def tearDownClass(cls):
@@ -98,7 +97,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 return user.get('id')
 
     def setUp(self):
-        time.sleep(DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
+        time.sleep(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
 
         # Connect as the bot
         self.client.rtm_connect()
@@ -107,7 +106,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.client.rtm_read()
 
     def tearDown(self):
-        time.sleep(DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
+        time.sleep(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
 
         # Drain the event buffer
         self.client.rtm_read()
@@ -120,7 +119,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -142,7 +141,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -168,7 +167,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             link_names=True)
 
         messages = []
-        for i in range(DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -193,7 +192,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -240,7 +239,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -288,7 +287,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -335,7 +334,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -382,7 +381,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -429,7 +428,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -476,7 +475,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -523,7 +522,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -570,7 +569,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -617,7 +616,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -664,7 +663,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -691,7 +690,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -734,7 +733,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -779,7 +778,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -829,7 +828,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -882,7 +881,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -894,7 +893,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             if filtered_messages:
                 messages.extend(filtered_messages)
 
-        time.sleep(DONT_WAIT_FOR_MESSAGES_TIMEOUT/2)
+        time.sleep(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT/2)
 
         self.assertEqual(1, len(messages))
 
@@ -910,7 +909,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -950,7 +949,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -1008,7 +1007,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -1060,7 +1059,7 @@ try:
     class SlackEndToEndTestAction(Action):
         def run(self, *args, **kwargs):
             suite = unittest2.TestLoader().loadTestFromTestCase(SlackEndToEndTestCase)
-            return unittest2.run(suite, exit=False)
+            return unittest2.TextTestRunner().run(suite)
 
 except ImportError:
     pass
