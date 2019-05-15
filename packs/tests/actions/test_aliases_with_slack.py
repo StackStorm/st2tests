@@ -1058,7 +1058,7 @@ try:
 
     class SlackEndToEndTestAction(Action):
         def run(self, *args, **kwargs):
-            suite = unittest2.TestLoader().loadTestFromTestCase(SlackEndToEndTestCase)
+            suite = unittest2.TestLoader().loadTestsFromTestCase(SlackEndToEndTestCase)
             return unittest2.TextTestRunner().run(suite)
 
 except ImportError:
