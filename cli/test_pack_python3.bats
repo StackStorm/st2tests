@@ -26,8 +26,8 @@ teardown() {
 }
 
 skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
-    # Utility function which skips tests if python3 binary is not available on the system or if
-    # StackStorm components are already running under Python 3 (e.g. Ubuntu Xenial)
+	# Utility function which skips tests if python3 binary is not available on the system or if
+	# StackStorm components are already running under Python 3 (e.g. Ubuntu Xenial)
 	run python3 --version
 	if [[ "$status" -ne 0 ]]; then
 		skip "Python 3 binary not found, skipping tests"
@@ -93,7 +93,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 	run eval "echo '$RESULT' | jq -r '.status'"
 	assert_output "succeeded"
 
-    # Verify PYTHONPATH is correct
+	# Verify PYTHONPATH is correct
 	RESULT=$(st2 run examples.python_runner_print_python_environment -j)
 	assert_success
 
@@ -103,7 +103,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 }
 
 @test "python3 imports work correctly" {
-    skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
 	run st2 pack install python3_test --python3 -j
 	assert_success
