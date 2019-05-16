@@ -30,16 +30,13 @@ from slackclient import SlackClient
 
 # OPTIONAL environment variables:
 #
-# * SLACK_WAIT_BETWEEN_MESSAGES_TIMEOUT
-#   - Should be set to the number of seconds to wait for messages to clear
-#     between tests
-#   - Default: 36
 # * SLACK_WAIT_FOR_MESSAGES_TIMEOUT
-#   - Should be set to the number of seconds to wait for no messages
+#   - Should be set to the number of seconds it is guaranteed to take the ST2
+#     IUT to respond
+#   - Used to timeout while waiting for responses, and used to wait long enough
+#     to assume a non-response for tests that don't expect responses
 #   - Default: 120
-# * SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT
-#   - Should be set to the number of seconds to wait for a message
-#   - Default: 24
+
 
 
 def ignore_username(userid):
@@ -62,8 +59,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_FOR_MESSAGES_TIMEOUT', 120))
-        cls.DONT_WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT', 36))
-        cls.WAIT_BETWEEN_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_BETWEEN_MESSAGES_TIMEOUT', 24))
 
         cls.SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
         cls.SLACK_BOT_USERNAME = os.environ['SLACK_BOT_USERNAME']
@@ -124,7 +119,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertListEqual(messages, [])
 
         if len(messages) != 0:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Drain the event buffer
         self.client.rtm_read()
@@ -137,7 +132,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -151,7 +146,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(1, len(messages))
         if len(messages) != 1:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Help commands don't get acked
         self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
@@ -168,7 +163,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             link_names=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -182,7 +177,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(1, len(messages))
         if len(messages) != 1:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Help commands don't get acked
         self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
@@ -198,7 +193,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -212,7 +207,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -248,7 +243,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -262,7 +257,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -299,7 +294,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -313,7 +308,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -349,7 +344,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -363,7 +358,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -399,7 +394,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -413,7 +408,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -449,7 +444,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -463,7 +458,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -499,7 +494,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -513,7 +508,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -549,7 +544,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -563,7 +558,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -599,7 +594,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -613,7 +608,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -649,7 +644,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -663,7 +658,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -699,7 +694,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -713,7 +708,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for response
         self.assertIsNotNone(messages[0].get('bot_id'))
@@ -730,7 +725,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -744,7 +739,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(1, len(messages))
         if len(messages) != 1:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for response
         self.assertIsNotNone(messages[0].get('bot_id'))
@@ -777,7 +772,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -791,7 +786,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(1, len(messages))
         if len(messages) != 1:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for response
         self.assertIsNotNone(messages[0].get('bot_id'))
@@ -826,7 +821,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -840,7 +835,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -879,7 +874,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -893,7 +888,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -937,7 +932,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        # Wait for longer here since we want to test that it does _not_
+        # emit a result
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -949,11 +946,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             if filtered_messages:
                 messages.extend(filtered_messages)
 
-        time.sleep(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT/2)
-
         self.assertEqual(1, len(messages))
         if len(messages) != 1:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -969,7 +964,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -983,7 +978,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -1012,7 +1007,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -1026,7 +1021,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
@@ -1073,7 +1068,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(self.DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -1087,7 +1082,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(2, len(messages))
         if len(messages) != 2:
-            time.sleep(self.WAIT_BETWEEN_MESSAGES_TIMEOUT)
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
