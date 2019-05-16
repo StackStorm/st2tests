@@ -14,6 +14,10 @@ from slackclient import SlackClient
 #     /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
 #     for RHEL7 systems
 #   - Unnecessary for systems with Python 2.7.9+ (eg: Ubuntu 16.04 and later)
+#   - Not directly used by this script, it is used to specify the certificate
+#     bundle for root certificates loaded by the websocket Python package
+# * SLACK_CHANNEL
+#   - the Slack channel to connect to
 # * SLACK_BOT_USERNAME
 #   - the Slack username for the StackStorm bot
 #   - this should be set to the same username as the SLACK_BOT_API_TOKEN
@@ -58,8 +62,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_FOR_MESSAGES_TIMEOUT', 120))
-        cls.DONT_WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT', 24))
-        cls.WAIT_BETWEEN_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_BETWEEN_MESSAGES_TIMEOUT', 36))
+        cls.DONT_WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT', 36))
+        cls.WAIT_BETWEEN_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_BETWEEN_MESSAGES_TIMEOUT', 24))
 
         cls.SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
         cls.SLACK_BOT_USERNAME = os.environ['SLACK_BOT_USERNAME']
