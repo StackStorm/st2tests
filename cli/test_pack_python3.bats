@@ -113,11 +113,11 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 
 	run eval "echo '$RESULT' | jq -r '.result.result'"
 	assert_success
-	assert_output --partial "imports work correctly"
+	assert_output "Successfully set up virtualenv for the following packs: examples"
 
 	run eval "echo '$RESULT' | jq -r '.result.stdout'"
 	assert_success
-	assert_output --partial "Using Python version: 3."
+	assert_output ""
 
 	run st2 run packs.uninstall packs=python3_test
 	assert_success
