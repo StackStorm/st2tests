@@ -78,21 +78,14 @@ load '../test_helpers/bats-assert/load'
 
 	run eval "st2 run -j core.local -- date -R | jq -r '.parameters.cmd'"
 	assert_success
-
 	assert_output "date -R"
 
 	run eval "st2 execution list -n 1 -j | jq -r '.[].action.ref'"
 	assert_success
-
-	sleep 2
-
 	assert_output "core.local"
 
 	run eval "st2 execution list -n 1 -j | jq -r '.[].status'"
 	assert_success
-
-	sleep 2
-
 	assert_output "succeeded"
 }
 
