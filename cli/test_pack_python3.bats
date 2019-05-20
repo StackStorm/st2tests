@@ -16,7 +16,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 }
 
 setup() {
-	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
 	if [[ ! -d /opt/stackstorm/packs/examples ]]; then
 		sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
