@@ -247,8 +247,8 @@ KEY_JSON_FILE="docs/test_key_triggers.json"
 	# Let the key expire
 	# NOTE: We set expire to 1 second, but the way MongoDB garbage collection of expired documents
 	# work, item could still be visible for a while after expire has already passed
-    # "TTL Monitor is a separate thread that runs periodically (usually every
-    # minute) and scans a collection"
+	# "TTL Monitor is a separate thread that runs periodically (usually every
+	# minute) and scans a collection"
 	sleep 65
 
 	# Get a list of all keys
