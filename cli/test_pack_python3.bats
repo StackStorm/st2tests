@@ -46,9 +46,6 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 
 	run /opt/stackstorm/virtualenvs/examples/bin/python --version
 	assert_output --partial "Python 2.7"
-
-	run st2 run packs.uninstall packs=examples
-	assert_success
 }
 
 @test "packs.setup_virtualenv with python3 flag works" {
@@ -100,9 +97,6 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 	assert_success
 
 	assert_output --partial 'imports work correctly'
-
-	run st2 run packs.uninstall packs=python3_test
-	assert_success
 }
 
 @test "TEARDOWN: Uninstall examples and python3_test pack" {
