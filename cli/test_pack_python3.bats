@@ -15,7 +15,7 @@ skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
 	fi
 }
 
-setup() {
+@test "SETUP: Install and register examples pack" {
 	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
 	if [[ ! -d /opt/stackstorm/packs/examples ]]; then
@@ -31,16 +31,6 @@ setup() {
 	[[ "$?" -eq 0 ]]
 }
 
-teardown() {
-	if [[ -d /opt/stackstorm/packs/examples ]]; then
-		st2 run packs.uninstall packs=examples
-	fi
-
-	if [[ -d /opt/stackstorm/packs/python3_test ]]; then
-		st2 run packs.uninstall packs=python3_test
-	fi
-}
-
 @test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
 	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
 
@@ -52,11 +42,7 @@ teardown() {
 
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.status'"
 	assert_success
-
 	assert_output "succeeded"
-
-	run st2-register-content --register-pack /opt/stackstorm/packs/examples/ --register-all
-	assert_success
 
 	run /opt/stackstorm/virtualenvs/examples/bin/python --version
 	assert_output --partial "Python 2.7"
@@ -117,4 +103,16 @@ teardown() {
 
 	run st2 run packs.uninstall packs=python3_test
 	assert_success
+}
+
+@test "TEARDOWN: Uninstall examples and python3_test pack" {
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+
+	if [[ -d /opt/stackstorm/packs/examples ]]; then
+		st2 run packs.uninstall packs=examples
+	fi
+
+	if [[ -d /opt/stackstorm/packs/python3_test ]]; then
+		st2 run packs.uninstall packs=python3_test
+	fi
 }
