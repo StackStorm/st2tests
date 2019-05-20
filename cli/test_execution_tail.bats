@@ -18,29 +18,20 @@ load '../test_helpers/bats-assert/load'
 }
 
 @test "st2 execution tail works correctly for simple actions" {
-	run eval "st2 run examples.python_runner_print_to_stdout_and_stderr count=10 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
-	assert_success
-	EXECUTION_ID="$output"
+	# Run the run + execution tail command - this may take awhile
+	run eval "st2 run examples.python_runner_print_to_stdout_and_stderr count=5 sleep_delay=1 --tail"
 
-	# Run the execution tail command - this may take awhile
-	run eval "st2 execution tail $EXECUTION_ID"
 	assert_success
-
-	assert_output --partial "stdout -> Line: 6"
-	assert_output --partial "stdout -> Line: 10"
-	assert_output --partial "stderr -> Line: 7"
-	assert_output --partial "stderr -> Line: 9"
+	assert_output --partial "stderr -> Line: 3"
+	assert_output --partial "stdout -> Line: 4"
+	assert_output --partial "stderr -> Line: 5"
 }
 
 @test "st2 execution tail works correctly for action chain workflows" {
-	run eval "st2 run examples.action_chain_streaming_demo count=5 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
-	assert_success
-	EXECUTION_ID="$output"
+	# Run the run + execution tail command - this may take awhile
+	run eval "st2 run examples.action_chain_streaming_demo count=5 sleep_delay=1 --tail"
 
-	# Run the execution tail command - this may take awhile
-	run eval "st2 execution tail $EXECUTION_ID"
 	assert_success
-
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has started\..*"
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has finished \\(status=succeeded\\)\."
 	assert_output --regexp "Child execution \\(task=task10\\) [0-9a-f]{24} has started\..*"
@@ -54,14 +45,10 @@ load '../test_helpers/bats-assert/load'
 		skip "Mistral not available, skipping tests"
 	fi
 
-	run eval "st2 run examples.mistral-streaming-demo count=5 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
-	assert_success
-	EXECUTION_ID="$output"
+	# Run the run + execution tail command - this may take awhile
+	run eval "st2 run examples.mistral-streaming-demo count=5 sleep_delay=1 --tail"
 
-	# Run the execution tail command - this may take awhile
-	run eval "st2 execution tail $EXECUTION_ID"
 	assert_success
-
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has started\..*"
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has finished \\(status=succeeded\\)\."
 	assert_output --regexp "Child execution \\(task=task10\\) [0-9a-f]{24} has started\..*"
@@ -75,14 +62,10 @@ load '../test_helpers/bats-assert/load'
 		skip "Orquesta not available, skipping tests"
 	fi
 
-	run eval "st2 run examples.orquesta-streaming-demo count=5 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
-	assert_success
-	EXECUTION_ID="$output"
+	# Run the run + execution tail command - this may take awhile
+	run eval "st2 run examples.orquesta-streaming-demo count=5 sleep_delay=1 --tail"
 
-	# Run the execution tail command - this may take awhile
-	run eval "st2 execution tail $EXECUTION_ID"
 	assert_success
-
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has started\..*"
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has finished \\(status=succeeded\\)\."
 	assert_output --regexp "Child execution \\(task=task10\\) [0-9a-f]{24} has started\..*"
