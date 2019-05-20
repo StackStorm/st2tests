@@ -4,7 +4,7 @@
 
 Congregation of all tests pertaining to release of st2 software.
 
-## Running BATA tests
+## Running BATS tests
 
 1. Make sure bats and other dependencies are installed
 
@@ -28,7 +28,7 @@ bats st2tests/chatops/*.bats
 bats st2tests/cli/test_execution_tail.bats
 ```
 
-## Updatin bundled subtrees
+## Updating bundled subtrees
 
 For example:
 
