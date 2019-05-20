@@ -1,7 +1,23 @@
 load '../test_helpers/bats-support/load'
 load '../test_helpers/bats-assert/load'
 
+skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
+	# Utility function which skips tests if python3 binary is not available on the system or if
+	# StackStorm components are already running under Python 3 (e.g. Ubuntu Xenial)
+	run python3 --version
+	if [[ "$status" -ne 0 ]]; then
+		skip "Python 3 binary not found, skipping tests"
+	fi
+
+	run /opt/stackstorm/st2/bin/python3 --version
+	if [[ "$status" -eq 0 ]]; then
+		skip "StackStorm components are already running under Python 3, skipping tests"
+	fi
+}
+
 setup() {
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
+
 	if [[ ! -d /opt/stackstorm/packs/examples ]]; then
 		sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
 		[[ "$?" -eq 0 ]]
@@ -22,20 +38,6 @@ teardown() {
 
 	if [[ -d /opt/stackstorm/packs/python3_test ]]; then
 		st2 run packs.uninstall packs=python3_test
-	fi
-}
-
-skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
-	# Utility function which skips tests if python3 binary is not available on the system or if
-	# StackStorm components are already running under Python 3 (e.g. Ubuntu Xenial)
-	run python3 --version
-	if [[ "$status" -ne 0 ]]; then
-		skip "Python 3 binary not found, skipping tests"
-	fi
-
-	run /opt/stackstorm/st2/bin/python3 --version
-	if [[ "$status" -eq 0 ]]; then
-		skip "StackStorm components are already running under Python 3, skipping tests"
 	fi
 }
 
