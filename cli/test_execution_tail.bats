@@ -29,7 +29,7 @@ load '../test_helpers/bats-assert/load'
 
 @test "st2 execution tail works correctly for action chain workflows" {
 	# Run the run + execution tail command - this may take awhile
-	run eval "st2 run examples.action_chain_streaming_demo count=5 sleep_delay=1 --tail"
+	run eval "st2 run examples.action_chain_streaming_demo count=2 sleep_delay=0.2 --tail"
 
 	assert_success
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has started\..*"
@@ -46,7 +46,7 @@ load '../test_helpers/bats-assert/load'
 	fi
 
 	# Run the run + execution tail command - this may take awhile
-	run eval "st2 run examples.mistral-streaming-demo count=5 sleep_delay=1 --tail"
+	run eval "st2 run examples.mistral-streaming-demo count=2 sleep_delay=0.2 --tail"
 
 	assert_success
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has started\..*"
@@ -63,7 +63,7 @@ load '../test_helpers/bats-assert/load'
 	fi
 
 	# Run the run + execution tail command - this may take awhile
-	run eval "st2 run examples.orquesta-streaming-demo count=5 sleep_delay=1 --tail"
+	run eval "st2 run examples.orquesta-streaming-demo count=2 sleep_delay=0.2 --tail"
 
 	assert_success
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has started\..*"
