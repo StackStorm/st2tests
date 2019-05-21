@@ -250,7 +250,7 @@ KEY_JSON_FILE="docs/test_key_triggers.json"
 	# "TTL Monitor is a separate thread that runs periodically (usually every
 	# minute) and scans a collection"
 	# See https://github.com/StackStorm/st2cd/pull/397
-	sleep 3
+	sleep 2
 
 	# Get a list of all keys
 	KEY_LIST_RESULTS=$(st2 key list -j)
