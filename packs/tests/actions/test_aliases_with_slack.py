@@ -14,6 +14,10 @@ from slackclient import SlackClient
 #     /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
 #     for RHEL7 systems
 #   - Unnecessary for systems with Python 2.7.9+ (eg: Ubuntu 16.04 and later)
+#   - Not directly used by this script, it is used to specify the certificate
+#     bundle for root certificates loaded by the websocket Python package
+# * SLACK_CHANNEL
+#   - the Slack channel to connect to
 # * SLACK_BOT_USERNAME
 #   - the Slack username for the StackStorm bot
 #   - this should be set to the same username as the SLACK_BOT_API_TOKEN
@@ -27,23 +31,12 @@ from slackclient import SlackClient
 # OPTIONAL environment variables:
 #
 # * SLACK_WAIT_FOR_MESSAGES_TIMEOUT
-#   - Should be set to the number of seconds to wait for no messages
-#   - Default: 120 (seconds)
-# * SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT
-#   - Should be set to the number of seconds to wait for a message
-#   - Would be useful to be evenly divisible by 4, since that is the timeout
-#     between tests
-#   - Default: 8
+#   - Should be set to the number of seconds it is guaranteed to take the ST2
+#     IUT to respond
+#   - Used to timeout while waiting for responses, and used to wait long enough
+#     to assume a non-response for tests that don't expect responses
+#   - Default: 120
 
-
-WAIT_FOR_MESSAGES_TIMEOUT = os.environ.get('SLACK_WAIT_FOR_MESSAGES_TIMEOUT', 120)
-
-DONT_WAIT_FOR_MESSAGES_TIMEOUT = os.environ.get('SLACK_DONT_WAIT_FOR_MESSAGES_TIMEOUT', 8)
-
-SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
-SLACK_BOT_USERNAME = os.environ['SLACK_BOT_USERNAME']
-SLACK_USER_API_TOKEN = os.environ['SLACK_USER_API_TOKEN']
-SLACK_USER_USERNAME = os.environ['SLACK_USER_USERNAME']
 
 
 def ignore_username(userid):
@@ -51,9 +44,7 @@ def ignore_username(userid):
     # caused by a human typing in the channel. Otherwise, the number of
     # messages can be erroneously inflated.
     def filter_messages(message):
-        if message['type'] == 'user_typing':
-            return False
-        elif message['type'] == 'hello':
+        if message['type'] != 'message':
             return False
         elif message.get('user') == userid:
             return False
@@ -67,11 +58,18 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.WAIT_FOR_MESSAGES_TIMEOUT = int(os.environ.get('SLACK_WAIT_FOR_MESSAGES_TIMEOUT', 120))
+
+        cls.SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
+        cls.SLACK_BOT_USERNAME = os.environ['SLACK_BOT_USERNAME']
+        cls.SLACK_USER_API_TOKEN = os.environ['SLACK_USER_API_TOKEN']
+        cls.SLACK_USER_USERNAME = os.environ['SLACK_USER_USERNAME']
+
         # This token is for the bot that impersonates a user
-        cls.client = SlackClient(connect=True, token=SLACK_USER_API_TOKEN)
-        cls.channel = SLACK_CHANNEL
-        cls.bot_username = SLACK_BOT_USERNAME
-        cls.username = SLACK_USER_USERNAME
+        cls.client = SlackClient(connect=True, token=cls.SLACK_USER_API_TOKEN)
+        cls.channel = cls.SLACK_CHANNEL
+        cls.bot_username = cls.SLACK_BOT_USERNAME
+        cls.username = cls.SLACK_USER_USERNAME
         cls.userid = cls.get_user_id(cls.username)
         cls.filter = staticmethod(ignore_username(cls.userid))
 
@@ -81,7 +79,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             text="`===== BEGINNING ChatOps End-to-End Tests =====`",
             as_user=True)
 
-        time.sleep(DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
+        # Connect as the bot
+        cls.client.rtm_connect()
 
     @classmethod
     def tearDownClass(cls):
@@ -97,21 +96,6 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             if user.get('real_name') == username:
                 return user.get('id')
 
-    def setUp(self):
-        time.sleep(DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
-
-        # Connect as the bot
-        self.client.rtm_connect()
-
-        # Drain the event buffer
-        self.client.rtm_read()
-
-    def tearDown(self):
-        time.sleep(DONT_WAIT_FOR_MESSAGES_TIMEOUT/4)
-
-        # Drain the event buffer
-        self.client.rtm_read()
-
     def test_non_response(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -120,7 +104,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -134,6 +118,12 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertListEqual(messages, [])
 
+        if len(messages) != 0:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
+
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_help_shortcut(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -142,7 +132,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -155,20 +145,25 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
+        if len(messages) != 1:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
+
         # Help commands don't get acked
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_help_longcut(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="@{bot_user}help".format(bot_user=self.bot_username),
+            text="@{bot_user} help".format(bot_user=self.bot_username),
             as_user=True,
             link_names=True)
 
         messages = []
-        for i in range(DONT_WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -181,9 +176,14 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
+        if len(messages) != 1:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
+
         # Help commands don't get acked
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_run_command_on_localhost(self):
         post_message_response = self.client.api_call(
@@ -193,7 +193,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -206,13 +206,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -232,6 +232,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_run_exact_command_on_localhost(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -240,7 +243,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -253,13 +256,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -280,6 +283,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_run_exact_command_on_multiple_hosts(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -288,7 +294,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -301,13 +307,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -326,6 +332,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_run_command_on_default_hosts(self):
         post_message_response = self.client.api_call(
@@ -335,7 +344,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -348,13 +357,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -373,16 +382,19 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_run_command_with_regex_and_default_parameter(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!regex run \"echo ChatOps run command on default hosts\".",
+            text="!regex run \"echo ChatOps run command with regex\".",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -395,13 +407,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -420,16 +432,19 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_execute_command_with_regex_and_default_parameter(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!regex execute \"echo ChatOps run command on default hosts\"!",
+            text="!regex execute \"echo ChatOps execute command on default hosts\"!",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -442,13 +457,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -467,16 +482,19 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_run_command_with_extra_parameter(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!extra run \"echo ChatOps run command on default hosts\" on localhost timeout=120",
+            text="!extra run \"echo ChatOps run command with extra parameter\" on localhost timeout=120",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -489,13 +507,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -514,16 +532,19 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_weird_run_remote_command_with_parameter(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!weird run remote command \"echo ChatOps run command on default hosts\" on localhost",
+            text="!weird run remote command \"echo ChatOps run weird command\" on localhost",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -536,13 +557,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -561,16 +582,19 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_weird_run_remote_command_with_ssh(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!weird ssh to hosts localhost and run command \"echo ChatOps run command on default hosts\"",
+            text="!weird ssh to hosts localhost and run command \"echo ChatOps run weird command with SSH\"",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -583,13 +607,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -608,16 +632,19 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_weird_omg_just_run_command(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!weird OMG st2 just run this command \"echo ChatOps run command on default hosts\" on ma boxes localhost already",
+            text="!weird OMG st2 just run this command \"echo ChatOps run weird OMG command\" on ma boxes localhost already",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -630,13 +657,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -656,16 +683,19 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_custom_ack(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!custom-ack run \"echo ChatOps run command on default hosts\" on localhost",
+            text="!custom-ack run \"echo ChatOps run command with custom ack\" on localhost",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
-            if len(messages) >= 1:
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
+            if len(messages) >= 2:
                 break
             time.sleep(1)
 
@@ -676,22 +706,26 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             if filtered_messages:
                 messages.extend(filtered_messages)
 
-        self.assertEqual(1, len(messages))
+        self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for response
-        self.assertEqual('message', messages[0]['type'])
         self.assertIsNotNone(messages[0].get('bot_id'))
         self.assertEqual(messages[0].get('text'), 'Running the command(s) for you')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_disabled_ack(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!disabled-custom-ack run \"echo ChatOps run command on default hosts\" on localhost",
+            text="!disabled-custom-ack run \"echo ChatOps run command with disabled ack\" on localhost",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -704,9 +738,10 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
+        if len(messages) != 1:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for response
-        self.assertEqual('message', messages[0]['type'])
         self.assertIsNotNone(messages[0].get('bot_id'))
         self.assertIsNotNone(messages[0].get('attachments'))
         self.assertGreater(len(messages[0]['attachments']), 0)
@@ -726,15 +761,18 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_disabled_ack_with_bad_command(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!disabled-custom-ack run \"echof ChatOps run command on default hosts\" on localhost",
+            text="!disabled-custom-ack run \"echof ChatOps run bad command\" on localhost",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 1:
                 break
             time.sleep(1)
@@ -747,9 +785,10 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(1, len(messages))
+        if len(messages) != 1:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for response
-        self.assertEqual('message', messages[0]['type'])
         self.assertIsNotNone(messages[0].get('bot_id'))
         self.assertIsNotNone(messages[0].get('attachments'))
         self.assertGreater(len(messages[0]['attachments']), 0)
@@ -768,18 +807,21 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # So instead of strictly specifying those, we have a very relaxed
         # regex to capture the execution duration.
         self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
-        self.assertRegex(msg_text, r'stderr\s*:\s*bash: echof: command not found')
+        self.assertRegex(msg_text, r'stderr\s*:.*sh:.*echof:.*not found')
         self.assertRegex(msg_text, r'return_code\s*:\s*\d+')
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_alias_with_custom_result_format(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!custom-format run \"echo ChatOps run command on single host\" on localhost",
+            text="!custom-format run \"echo ChatOps run command with custom result format\" on localhost",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -792,13 +834,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -813,23 +855,26 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        expected_text = ('Ran command `echo ChatOps run command on single host` on `1` host.\n'
+        expected_text = ('Ran command `echo ChatOps run command with custom result format` on `1` host.\n'
                          '\n'
                          'Details are as follows:\n'
                          'Host: `localhost`\n'
-                         '    ---&gt; stdout: ChatOps run command on single host\n'
+                         '    ---&gt; stdout: ChatOps run command with custom result format\n'
                          '    ---&gt; stderr: \n')
         self.assertEqual(msg_text, expected_text)
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_alias_with_custom_result_format_and_multiple_hosts(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!custom-format run \"echo ChatOps run command on multiple hosts\" on localhost,127.0.0.1",
+            text="!custom-format run \"echo ChatOps run command with custom result format on multiple hosts\" on localhost,127.0.0.1",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -842,13 +887,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -863,26 +908,33 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        expected_text = ('Ran command `echo ChatOps run command on multiple hosts` on `2` hosts.\n'
-                         '\n'
-                         'Details are as follows:\n'
-                         'Host: `127.0.0.1`\n'
-                         '    ---&gt; stdout: ChatOps run command on multiple hosts\n'
-                         '    ---&gt; stderr: \n'
-                         'Host: `localhost`\n'
-                         '    ---&gt; stdout: ChatOps run command on multiple hosts\n'
-                         '    ---&gt; stderr: \n')
-        self.assertEqual(msg_text, expected_text)
+        expected_report = 'Ran command `echo ChatOps run command with custom result format on multiple hosts` on `2` hosts.\n'
+        expected_details = 'Details are as follows:\n'
+        expected_127_0_0_1 = ('Host: `127.0.0.1`\n'
+                              '    ---&gt; stdout: ChatOps run command with custom result format on multiple hosts\n'
+                              '    ---&gt; stderr: \n')
+        expected_localhost = ('Host: `localhost`\n'
+                              '    ---&gt; stdout: ChatOps run command with custom result format on multiple hosts\n'
+                              '    ---&gt; stderr: \n')
+        self.assertIn(expected_report, msg_text)
+        self.assertIn(expected_details, msg_text)
+        self.assertIn(expected_127_0_0_1, msg_text)
+        self.assertIn(expected_localhost, msg_text)
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_alias_with_disabled_result(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!disabled-result run \"echo ChatOps run command on default hosts\" on localhost",
+            text="!disabled-result run \"echo ChatOps run command with disabled result\" on localhost",
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        # Wait for longer here since we want to test that it does _not_
+        # emit a result
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -894,13 +946,15 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             if filtered_messages:
                 messages.extend(filtered_messages)
 
-        time.sleep(DONT_WAIT_FOR_MESSAGES_TIMEOUT/2)
-
         self.assertEqual(1, len(messages))
+        if len(messages) != 1:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
+
+        # Drain the event buffer
+        self.client.rtm_read()
 
     def test_attachment_and_plaintext_backup(self):
         post_message_response = self.client.api_call(
@@ -910,7 +964,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -923,13 +977,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -942,6 +996,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(messages[1]['attachments'][0]['fallback'],
                          messages[1]['attachments'][0]['text'])
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_fields_parameter(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -950,7 +1007,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -963,13 +1020,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
-        self.assertEqual('message', messages[0]['type'])
         self.assertIn("details available at", messages[0]['text'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -1000,6 +1057,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertEqual(messages[1]['attachments'][0]['image_url'], 'http://i.imgur.com/Gb9kAYK.jpg')
         self.assertEqual(messages[1]['attachments'][0]['color'], '00AA00')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_jinja_input_parameters(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
@@ -1008,7 +1068,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             as_user=True)
 
         messages = []
-        for i in range(WAIT_FOR_MESSAGES_TIMEOUT):
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
             if len(messages) >= 2:
                 break
             time.sleep(1)
@@ -1021,13 +1081,13 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                 messages.extend(filtered_messages)
 
         self.assertEqual(2, len(messages))
+        if len(messages) != 2:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
         # Test for ack
         self.assertIn("details available at", messages[0]['text'])
-        self.assertEqual('message', messages[0]['type'])
 
         # Test for response
-        self.assertEqual('message', messages[1]['type'])
         self.assertIsNotNone(messages[1].get('bot_id'))
         self.assertIsNotNone(messages[1].get('attachments'))
         self.assertGreater(len(messages[1]['attachments']), 0)
@@ -1053,13 +1113,17 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         self.assertEqual(messages[1]['attachments'][0]['color'], '88CCEE')
 
+        # Drain the event buffer
+        self.client.rtm_read()
+
 
 try:
     from st2common.runners.base_action import Action
 
     class SlackEndToEndTestAction(Action):
-        def run(self):
-            return unittest2.main(exit=False)
+        def run(self, *args, **kwargs):
+            suite = unittest2.TestLoader().loadTestsFromTestCase(SlackEndToEndTestCase)
+            return unittest2.TextTestRunner().run(suite)
 
 except ImportError:
     pass

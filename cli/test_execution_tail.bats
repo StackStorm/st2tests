@@ -1,16 +1,11 @@
-
 load '../test_helpers/bats-support/load'
 load '../test_helpers/bats-assert/load'
 
-
-
-setup() {
-	sudo crudini --set /etc/st2/st2.conf actionrunner stream_output True
-	[[ "$?" -eq 0 ]]
-
-	sudo st2ctl restart
-	[[ "$?" -eq 0 ]]
-
+# Hack: BATS executes tests sequentially in the order they are defined in the
+#       .bats file. We really only need to do this once (before the first
+#       actual test), so instead of doing all of this in the setup() function,
+#       we just throw it into a SETUP test.
+@test "SETUP: reinstall the examples pack" {
 	sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
 	[[ "$?" -eq 0 ]]
 	[[ -d /opt/stackstorm/packs/examples ]]
@@ -22,39 +17,21 @@ setup() {
 	[[ "$?" -eq 0 ]]
 }
 
-teardown() {
-	if [[ -d /opt/stackstorm/packs/examples ]]; then
-		st2 run packs.uninstall packs=examples
-	fi
-	[[ ! -d /opt/stackstorm/packs/examples ]]
-}
-
-
-
 @test "st2 execution tail works correctly for simple actions" {
-	run eval "st2 run examples.python_runner_print_to_stdout_and_stderr count=10 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
-	assert_success
-	EXECUTION_ID="$output"
+	# Run the run + execution tail command - this may take awhile
+	run eval "st2 run examples.python_runner_print_to_stdout_and_stderr count=5 sleep_delay=1 --tail"
 
-	# Run the execution tail command - this may take awhile
-	run eval "st2 execution tail $EXECUTION_ID"
 	assert_success
-
-	assert_output --partial "stdout -> Line: 6"
-	assert_output --partial "stdout -> Line: 10"
-	assert_output --partial "stderr -> Line: 7"
-	assert_output --partial "stderr -> Line: 9"
+	assert_output --partial "stderr -> Line: 3"
+	assert_output --partial "stdout -> Line: 4"
+	assert_output --partial "stderr -> Line: 5"
 }
 
 @test "st2 execution tail works correctly for action chain workflows" {
-	run eval "st2 run examples.action_chain_streaming_demo count=5 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
-	assert_success
-	EXECUTION_ID="$output"
+	# Run the run + execution tail command - this may take awhile
+	run eval "st2 run examples.action_chain_streaming_demo count=2 sleep_delay=0.2 --tail"
 
-	# Run the execution tail command - this may take awhile
-	run eval "st2 execution tail $EXECUTION_ID"
 	assert_success
-
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has started\..*"
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has finished \\(status=succeeded\\)\."
 	assert_output --regexp "Child execution \\(task=task10\\) [0-9a-f]{24} has started\..*"
@@ -68,14 +45,10 @@ teardown() {
 		skip "Mistral not available, skipping tests"
 	fi
 
-	run eval "st2 run examples.mistral-streaming-demo count=5 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
-	assert_success
-	EXECUTION_ID="$output"
+	# Run the run + execution tail command - this may take awhile
+	run eval "st2 run examples.mistral-streaming-demo count=2 sleep_delay=0.2 --tail"
 
-	# Run the execution tail command - this may take awhile
-	run eval "st2 execution tail $EXECUTION_ID"
 	assert_success
-
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has started\..*"
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has finished \\(status=succeeded\\)\."
 	assert_output --regexp "Child execution \\(task=task10\\) [0-9a-f]{24} has started\..*"
@@ -89,14 +62,10 @@ teardown() {
 		skip "Orquesta not available, skipping tests"
 	fi
 
-	run eval "st2 run examples.orquesta-streaming-demo count=5 sleep_delay=1 -a | grep 'st2 execution tail' | sed 's/ st2 execution tail//'"
-	assert_success
-	EXECUTION_ID="$output"
+	# Run the run + execution tail command - this may take awhile
+	run eval "st2 run examples.orquesta-streaming-demo count=2 sleep_delay=0.2 --tail"
 
-	# Run the execution tail command - this may take awhile
-	run eval "st2 execution tail $EXECUTION_ID"
 	assert_success
-
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has started\..*"
 	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has finished \\(status=succeeded\\)\."
 	assert_output --regexp "Child execution \\(task=task10\\) [0-9a-f]{24} has started\..*"

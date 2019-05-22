@@ -1,15 +1,9 @@
-
 load '../test_helpers/bats-support/load'
 load '../test_helpers/bats-assert/load'
 
-
-
-STATUS_SUCCESS='"status": "succeeded'
-
-setup() {
-	# TODO: Not sure if we can call skip from within a setup function...
-	#       If this doesn't work, copy the two skips to the top of each test
-	#       case and call it good.
+skip_tests_if_python3_is_not_available_or_if_already_running_under_python3() {
+	# Utility function which skips tests if python3 binary is not available on the system or if
+	# StackStorm components are already running under Python 3 (e.g. Ubuntu Xenial)
 	run python3 --version
 	if [[ "$status" -ne 0 ]]; then
 		skip "Python 3 binary not found, skipping tests"
@@ -19,28 +13,27 @@ setup() {
 	if [[ "$status" -eq 0 ]]; then
 		skip "StackStorm components are already running under Python 3, skipping tests"
 	fi
-
-	sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
-	[[ "$?" -eq 0 ]]
-	[[ -d /opt/stackstorm/packs/examples ]]
-
-	st2 run packs.setup_virtualenv packs=examples -j | grep -q "$STATUS_SUCCESS"
-	[[ "$?" -eq 0 ]]
-
-	st2-register-content --register-pack /opt/stackstorm/packs/examples/ --register-all
-	[[ "$?" -eq 0 ]]
 }
 
-teardown() {
-	if [[ -d /opt/stackstorm/packs/examples ]]; then
-		st2 run packs.uninstall packs=examples
+@test "SETUP: Install and register examples pack" {
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+
+	if [[ ! -d /opt/stackstorm/packs/examples ]]; then
+		sudo cp -r /usr/share/doc/st2/examples/ /opt/stackstorm/packs/
+		[[ "$?" -eq 0 ]]
+		[[ -d /opt/stackstorm/packs/examples ]]
 	fi
-	[[ ! -d /opt/stackstorm/packs/examples ]]
+
+	st2 run packs.setup_virtualenv packs=examples -j
+	[[ "$?" -eq 0 ]]
+
+	st2-register-content --register-pack /opt/stackstorm/packs/examples/ --register-actions
+	[[ "$?" -eq 0 ]]
 }
-
-
 
 @test "packs.setup_virtualenv without python3 flags works and defaults to Python 2" {
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+
 	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
 	assert_success
@@ -49,7 +42,6 @@ teardown() {
 
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.status'"
 	assert_success
-
 	assert_output "succeeded"
 
 	run /opt/stackstorm/virtualenvs/examples/bin/python --version
@@ -57,6 +49,8 @@ teardown() {
 }
 
 @test "packs.setup_virtualenv with python3 flag works" {
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+
 	SETUP_VENV_RESULTS=$(st2 run packs.setup_virtualenv packs=examples python3=true -j)
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.result.result'"
 	assert_success
@@ -65,7 +59,6 @@ teardown() {
 
 	run eval "echo '$SETUP_VENV_RESULTS' | jq -r '.status'"
 	assert_success
-
 	assert_output "succeeded"
 
 	run /opt/stackstorm/virtualenvs/examples/bin/python --version
@@ -84,4 +77,36 @@ teardown() {
 
 	run eval "echo '$RESULT' | jq -r '.status'"
 	assert_output "succeeded"
+
+	# Verify PYTHONPATH is correct
+	RESULT=$(st2 run examples.python_runner_print_python_environment -j)
+	assert_success
+
+	run eval "echo '$RESULT' | jq -r '.result.stdout'"
+	assert_success
+	assert_output --regexp ".*PYTHONPATH: .*/usr/(local/)?lib/python3.*"
+}
+
+@test "python3 imports work correctly" {
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+
+	run st2 pack install python3_test --python3 -j
+	assert_success
+
+	run st2 run python3_test.test_stdlib_import -j
+	assert_success
+
+	assert_output --partial 'imports work correctly'
+}
+
+@test "TEARDOWN: Uninstall examples and python3_test pack" {
+	skip_tests_if_python3_is_not_available_or_if_already_running_under_python3
+
+	if [[ -d /opt/stackstorm/packs/examples ]]; then
+		st2 run packs.uninstall packs=examples
+	fi
+
+	if [[ -d /opt/stackstorm/packs/python3_test ]]; then
+		st2 run packs.uninstall packs=python3_test
+	fi
 }
