@@ -1,7 +1,0 @@
----
-name: test_inherit_env_python_script_runner
-description: Test the --inherit-env option to the st2 command for an action run with the python-script runner
-enabled: true
-runner_type: python-script
-entry_point: test_inherit_env.py
-parameters: {}
