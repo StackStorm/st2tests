@@ -1,7 +1,7 @@
 ---
 name: remote_weird_representations
 description: Execute a command on a remote host via SSH - multiple formats, weird representations.
-pack: tests
+pack: chatops_tests
 action_ref: core.remote
 formats:
   - display: "weird run remote command {{cmd}} on {{hosts}}"

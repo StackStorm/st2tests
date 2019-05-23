@@ -1,7 +1,7 @@
 ---
 name: remote_custom_result_format
 description: Execute a command on a remote host via SSH - custom result format.
-pack: tests
+pack: chatops_tests
 action_ref: core.remote
 formats:
   - "custom-format run {{cmd}} on {{hosts}}"

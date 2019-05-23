@@ -1,7 +1,7 @@
 ---
 name: remote_plaintext_and_attachment
 description: Execute a command on a remote host via SSH - custom result format with plaintext and attachment.
-pack: tests
+pack: chatops_tests
 action_ref: core.remote
 formats:
   - "plaintext-and-attachment run {{cmd}} on {{hosts}}"
