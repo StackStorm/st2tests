@@ -1,7 +1,7 @@
 ---
 name: remote_disabled_custom_ack
 description: Execute a command on a remote host via SSH - disabled custom ack.
-pack: tests
+pack: chatops_tests
 action_ref: core.remote
 formats:
   - "disabled-custom-ack run {{cmd}} on {{hosts}}"
