@@ -4,7 +4,10 @@ ST2 Self-Test Pack
 About
 -----
 
-This pack contains a set of end-to-end tests, that allow to verify st2, using st2 itself. Currently the set contains the following tests:
+This pack contains a set of end-to-end tests, that allow to verify st2, using st2 itself. Those tests automatically run
+when using ``st2-self-check`` tool.
+
+Currently the set contains the following tests:
 
 * **tests.test_packs_pack** verifies functionality provided by [Packs pack](http://docs.stackstorm.com/packs.html#getting-a-pack).
 * **tests.test_quickstart** follows the set of commands described in [Explore StackStorm with CLI](http://docs.stackstorm.com/start.html#explore-st2-with-cli) and [Work with Actions](http://docs.stackstorm.com/start.html#work-with-actions) sections of [Quick Start](http://docs.stackstorm.com/start.html)
@@ -15,10 +18,18 @@ This pack contains a set of end-to-end tests, that allow to verify st2, using st
 
 All tests utilize [ActionChain](http://docs.stackstorm.com/actionchain.html).
 
+NOTE: All the tests which are added to this pack automatically run when running ``st2-self-check``
+and need to follow a specific format (each action needs to take ``host``, ``port`` and ``token``
+parameter, etc).
+
 Usage
 -----
 
-When |st2| is installed using all-in-one installation with [st2_deploy.sh](http://docs.stackstorm.com/install/index.html), the test pack can be used as part of the [self-check script](http://docs.stackstorm.com/troubleshooting.html#running-self-verification). Alternatively, each of the tests can be executed as follows:
+When |st2| is installed using all-in-one installation with
+[installer script](http://docs.stackstorm.com/install/index.html), the test pack can be used as
+part of the [self-check script](http://docs.stackstorm.com/troubleshooting.html#running-self-verification).
+
+Alternatively, each of the tests can be executed as follows:
 
 1. Switch to `root` user and save an authentication token into `ST2_AUTH_TOKEN` variable:
 
