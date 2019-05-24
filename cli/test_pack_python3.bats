@@ -13,7 +13,7 @@ skip_tests_if_st2_le_v3() {
     ST2_VER=$(echo ${ST2_VER//.})
 
     if [[ "${ST2_VER}" -le "300" ]]; then
-        skip "StackStorm is v3.0.0 or below"
+        skip "Python 3 imports are broken on StackStorm < 3.0.1, skipping tests"
     fi
 }
 
