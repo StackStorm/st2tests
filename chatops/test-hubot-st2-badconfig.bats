@@ -4,20 +4,18 @@ load '../test_helpers/bats-assert/load'
 
 
 ST2_CHATOPS_ENV_FILE='/opt/stackstorm/chatops/st2chatops.env'
+cd /opt/stackstorm/chatops
 
 @test "SETUP: setup environment variables for authentication related variables." {
 	`sed -e '/ ST2_API_KEY=/s/^/#/g' -i $ST2_CHATOPS_ENV_FILE`
 	`sed -e '/ ST2_AUTH_TOKEN= /s/^/#/g' -i $ST2_CHATOPS_ENV_FILE`
 	`sed -e '/ ST2_AUTH_USERNAME= /s/^/#/g' -i $ST2_CHATOPS_ENV_FILE`
 	`sed -e '/ ST2_AUTH_PASSWORD= /s/^/#/g' -i $ST2_CHATOPS_ENV_FILE`
-	`sed -e '/ ST2_AUTH_URL= /s/^/#/g' -i $ST2_CHATOPS_ENV_FILE`;
+	`sed -e '/ ST2_AUTH_URL= /s/^/#/g' -i $ST2_CHATOPS_ENV_FILE`
 }
 
 @test "exit with error status from unresolved ST2_API_URL." {
-	run eval "("\
-	         " cd /opt/stackstorm/chatops; "\
-	         " ST2_API_URL=http://non-existent:9101/ bin/hubot --test; "\
-	         ")"
+	run eval "(ST2_API_URL=http://non-existent:9101/ bin/hubot --test)"
 
 	assert_failure
 	assert_equal $status 1
@@ -25,10 +23,7 @@ ST2_CHATOPS_ENV_FILE='/opt/stackstorm/chatops/st2chatops.env'
 }
 
 @test "exit with error status from only providing user name for authentication." {
-	run eval "("\
-	         " cd /opt/stackstorm/chatops; "\
-	         " ST2_AUTH_USERNAME="st2admin" bin/hubot --test; "\
-	         ")"
+	run eval "(ST2_AUTH_USERNAME="st2admin" bin/hubot --test)"
 
 	assert_failure
 	assert_equal $status 1
@@ -37,10 +32,7 @@ ST2_CHATOPS_ENV_FILE='/opt/stackstorm/chatops/st2chatops.env'
 }
 
 @test "exit with error status from only providing user password for authentication." {
-	run eval "("\
-	         " cd /opt/stackstorm/chatops; "\
-	         " ST2_AUTH_PASSWORD="testp" bin/hubot --test; "\
-	         ")"
+	run eval "(ST2_AUTH_PASSWORD="testp" bin/hubot --test)"
 
 	assert_failure
 	assert_equal $status 1
@@ -49,10 +41,7 @@ ST2_CHATOPS_ENV_FILE='/opt/stackstorm/chatops/st2chatops.env'
 }
 
 @test "exit with error status from only providing user name and password for authentication." {
-	run eval "("\
-	         " cd /opt/stackstorm/chatops; "\
-	         " ST2_AUTH_USERNAME="st2admin" ST2_AUTH_PASSWORD="testp" bin/hubot --test; "\
-	         ")"
+	run eval "(ST2_AUTH_USERNAME="st2admin" ST2_AUTH_PASSWORD="testp" bin/hubot --test)"
 
 	assert_failure
 	assert_equal $status 1
@@ -61,11 +50,8 @@ ST2_CHATOPS_ENV_FILE='/opt/stackstorm/chatops/st2chatops.env'
 }
 
 @test "exit with error status from unresolved ST2_AUTH_URL." {
-	run eval "("\
-	         " cd /opt/stackstorm/chatops; "\
-	         " ST2_AUTH_USERNAME="st2admin" ST2_AUTH_PASSWORD="testp" " \
-	                               "ST2_AUTH_URL=http://non-existent:9100/ bin/hubot --test; "\
-	         ")"
+	run eval "(ST2_AUTH_USERNAME="st2admin" ST2_AUTH_PASSWORD="testp" "\
+	          "ST2_AUTH_URL=http://non-existent:9100/ bin/hubot --test)"
 
 	assert_failure
 	assert_equal $status 1
@@ -73,10 +59,7 @@ ST2_CHATOPS_ENV_FILE='/opt/stackstorm/chatops/st2chatops.env'
 }
 
 @test "exit with error status from invalid ST2_AUTH_TOKEN." {
-	run eval "("\
-	         " cd /opt/stackstorm/chatops; "\
-	         " ST2_AUTH_TOKEN=invalidst2authtoken bin/hubot --test; "\
-	         ")"
+	run eval "(ST2_AUTH_TOKEN=invalidst2authtoken bin/hubot --test)"
 
 	assert_failure
 	assert_equal $status 1
@@ -85,10 +68,7 @@ ST2_CHATOPS_ENV_FILE='/opt/stackstorm/chatops/st2chatops.env'
 }
 
 @test "exit with error status from invalid ST2_API_KEY." {
-	run eval "("\
-	         " cd /opt/stackstorm/chatops; "\
-	         " ST2_API_KEY=invalidst2apikey bin/hubot --test; "\
-	         ")"
+	run eval "(ST2_API_KEY=invalidst2apikey bin/hubot --test)"
 
 	assert_failure
 	assert_equal $status 1
