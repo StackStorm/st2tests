@@ -223,14 +223,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        self.assertRegex(msg_text, r'Action core\.remote completed\.')
-        self.assertRegex(msg_text, r'status\s*:\s*succeeded')
-        self.assertRegex(msg_text, r'execution\s*:\s*[0-9a-fA-F]{24}')
-        # The time can be an integer or a float, and might contain non-ASCII
-        # characters like mu (Unicode 03BC), which gets converted to \u03BC.
-        # So instead of strictly specifying those, we have a very relaxed
-        # regex to capture the execution duration.
-        self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+        self.assertRegex(msg_text, r'Ran command .* on .* hosts\.')
+        self.assertRegex(msg_text, r'Details are as follows:')
+        self.assertRegex(msg_text, r'Host:\s+\*localhost\*')
 
         # Drain the event buffer
         self.client.rtm_read()
@@ -274,14 +269,9 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        self.assertRegex(msg_text, r'Action core\.remote completed\.')
-        self.assertRegex(msg_text, r'status\s*:\s*succeeded')
-        self.assertRegex(msg_text, r'execution\s*:\s*[0-9a-fA-F]{24}')
-        # The time can be an integer or a float, and might contain non-ASCII
-        # characters like mu (Unicode 03BC), which gets converted to \u03BC.
-        # So instead of strictly specifying those, we have a very relaxed
-        # regex to capture the execution duration.
-        self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+        self.assertRegex(msg_text, r'Ran command .* on .* hosts\.')
+        self.assertRegex(msg_text, r'Details are as follows:')
+        self.assertRegex(msg_text, r'Host:\s+\*localhost\*')
 
         # Drain the event buffer
         self.client.rtm_read()
@@ -324,14 +314,10 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        self.assertRegex(msg_text, r'Action core\.remote completed\.')
-        self.assertRegex(msg_text, r'status\s*:\s*succeeded')
-        self.assertRegex(msg_text, r'execution\s*:\s*[0-9a-fA-F]{24}')
-        # The time can be an integer or a float, and might contain non-ASCII
-        # characters like mu (Unicode 03BC), which gets converted to \u03BC.
-        # So instead of strictly specifying those, we have a very relaxed
-        # regex to capture the execution duration.
-        self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+        self.assertRegex(msg_text, r'Ran command .* on .* hosts\.')
+        self.assertRegex(msg_text, r'Details are as follows:')
+        self.assertRegex(msg_text, r'Host:\s+\*localhost\*')
+        self.assertRegex(msg_text, r'Host:\s+\*127\.0\.0\.1\*')
 
         # Drain the event buffer
         self.client.rtm_read()
