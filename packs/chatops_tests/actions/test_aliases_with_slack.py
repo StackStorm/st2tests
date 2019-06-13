@@ -133,7 +133,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         messages = []
         for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
-            if len(messages) >= 1:
+            if len(messages) >= 2:
                 break
             time.sleep(1)
 
@@ -144,12 +144,18 @@ class SlackEndToEndTestCase(unittest2.TestCase):
             if filtered_messages:
                 messages.extend(filtered_messages)
 
-        self.assertEqual(1, len(messages))
-        if len(messages) != 1:
+        self.assertEqual(2, len(messages))
+        if len(messages) != 2:
             time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
+        # Help commands should returns more than 100
+        commands_len = 0
+        for message in messages:
+            commands_len = commands_len + len(message['text'].split('\n'))
+        self.assertGreater(commands_len, 100)
+
         # Help commands don't get acked
-        self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[0]['text'])
+        self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[1]['text'])
 
         # Drain the event buffer
         self.client.rtm_read()
