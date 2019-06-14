@@ -148,14 +148,11 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         if len(messages) != 2:
             time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
-        # Help commands should returns more than 100
-        commands_len = 0
-        for message in messages:
-            commands_len = commands_len + len(message['text'].split('\n'))
-        self.assertGreater(commands_len, 100)
-
-        # Help commands don't get acked
-        self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[1]['text'])
+        # Help commands for 'unused' action alias should returns 104.
+        combined_text = messages[0]['text'] + messages[1]['text']
+        number_of_unused_commands = len(filter(lambda line: line.startswith('![unused]'),
+                                               combined_text.split('\n')))
+        self.assertEqual(number_of_unused_commands, 104)
 
         # Drain the event buffer
         self.client.rtm_read()
@@ -185,8 +182,11 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         if len(messages) != 2:
             time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
-        # Help commands don't get acked
-        self.assertIn("!help - Displays all of the help commands that this bot knows about.", messages[1]['text'])
+        # Help commands for 'unused' action alias should returns 104
+        combined_text = messages[0]['text'] + messages[1]['text']
+        number_of_unused_commands = len(filter(lambda line: line.startswith('![unused]'),
+                                               combined_text.split('\n')))
+        self.assertEqual(number_of_unused_commands, 104)
 
         # Drain the event buffer
         self.client.rtm_read()
