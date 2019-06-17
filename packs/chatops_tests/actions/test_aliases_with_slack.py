@@ -189,7 +189,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!run date on localhost",
+            text="!remote run date on localhost",
             as_user=True)
 
         messages = []
@@ -234,7 +234,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!run \"echo ChatOps run exact command on localhost\" on localhost",
+            text="!remote run \"echo ChatOps run exact command on localhost\" on localhost",
             as_user=True)
 
         messages = []
@@ -280,7 +280,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!run \"echo ChatOps run exact command on multiple hosts\" on localhost,127.0.0.1",
+            text="!remote run \"echo ChatOps run exact command on multiple hosts\" on localhost,127.0.0.1",
             as_user=True)
 
         messages = []
