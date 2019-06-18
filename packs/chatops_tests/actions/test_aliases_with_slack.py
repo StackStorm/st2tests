@@ -189,7 +189,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!run date on localhost",
+            text="!remote run date on localhost",
             as_user=True)
 
         messages = []
@@ -223,9 +223,18 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        self.assertRegex(msg_text, r'Ran command .* on .* hosts\.')
-        self.assertRegex(msg_text, r'Details are as follows:')
-        self.assertRegex(msg_text, r'Host:\s+\*localhost\*')
+        self.assertRegex(msg_text, r'Action core\.remote completed\.')
+        self.assertRegex(msg_text, r'status\s*:\s*succeeded')
+        self.assertRegex(msg_text, r'execution\s*:\s*[0-9a-fA-F]{24}')
+        self.assertRegex(msg_text, r'web_url\s*:\s*')
+        # The time can be an integer or a float, and might contain non-ASCII
+        # characters like mu (Unicode 03BC), which gets converted to \u03BC.
+        # So instead of strictly specifying those, we have a very relaxed
+        # regex to capture the execution duration.
+        self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+        self.assertRegex(msg_text, r'result\s*:\s*')
+        self.assertRegex(msg_text, r'localhost\s*:\s*')
+        self.assertRegex(msg_text, r'stdout\s*:\s*')
 
         # Drain the event buffer
         self.client.rtm_read()
@@ -234,7 +243,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!run \"echo ChatOps run exact command on localhost\" on localhost",
+            text="!remote run \"echo ChatOps run exact command on localhost\" on localhost",
             as_user=True)
 
         messages = []
@@ -269,9 +278,18 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        self.assertRegex(msg_text, r'Ran command .* on .* hosts\.')
-        self.assertRegex(msg_text, r'Details are as follows:')
-        self.assertRegex(msg_text, r'Host:\s+\*localhost\*')
+        self.assertRegex(msg_text, r'Action core\.remote completed\.')
+        self.assertRegex(msg_text, r'status\s*:\s*succeeded')
+        self.assertRegex(msg_text, r'execution\s*:\s*[0-9a-fA-F]{24}')
+        self.assertRegex(msg_text, r'web_url\s*:\s*')
+        # The time can be an integer or a float, and might contain non-ASCII
+        # characters like mu (Unicode 03BC), which gets converted to \u03BC.
+        # So instead of strictly specifying those, we have a very relaxed
+        # regex to capture the execution duration.
+        self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+        self.assertRegex(msg_text, r'result\s*:\s*')
+        self.assertRegex(msg_text, r'localhost\s*:\s*')
+        self.assertRegex(msg_text, r'stdout\s*:\s*ChatOps run exact command on localhost')
 
         # Drain the event buffer
         self.client.rtm_read()
@@ -280,7 +298,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         post_message_response = self.client.api_call(
             "chat.postMessage",
             channel=self.channel,
-            text="!run \"echo ChatOps run exact command on multiple hosts\" on localhost,127.0.0.1",
+            text="!remote run \"echo ChatOps run exact command on multiple hosts\" on localhost,127.0.0.1",
             as_user=True)
 
         messages = []
@@ -314,10 +332,18 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Test attachment
         msg_text = messages[1]['attachments'][0]['text']
-        self.assertRegex(msg_text, r'Ran command .* on .* hosts\.')
-        self.assertRegex(msg_text, r'Details are as follows:')
-        self.assertRegex(msg_text, r'Host:\s+\*localhost\*')
-        self.assertRegex(msg_text, r'Host:\s+\*127\.0\.0\.1\*')
+        self.assertRegex(msg_text, r'Action core\.remote completed\.')
+        self.assertRegex(msg_text, r'status\s*:\s*succeeded')
+        self.assertRegex(msg_text, r'execution\s*:\s*[0-9a-fA-F]{24}')
+        self.assertRegex(msg_text, r'web_url\s*:\s*')
+        # The time can be an integer or a float, and might contain non-ASCII
+        # characters like mu (Unicode 03BC), which gets converted to \u03BC.
+        # So instead of strictly specifying those, we have a very relaxed
+        # regex to capture the execution duration.
+        self.assertRegex(msg_text, r'Took \d+.*s to complete\.')
+        self.assertRegex(msg_text, r'result\s*:\s*')
+        self.assertRegex(msg_text, r'localhost\s*:\s*\n\s*stdout\s*:\s*ChatOps run exact command on multiple hosts')
+        self.assertRegex(msg_text, r'127.0.0.1\s*:\s*\n\s*stdout\s*:\s*ChatOps run exact command on multiple hosts')
 
         # Drain the event buffer
         self.client.rtm_read()
