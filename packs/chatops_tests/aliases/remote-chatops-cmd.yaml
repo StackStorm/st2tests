@@ -4,4 +4,4 @@ description: Execute a command on a remote host via SSH.
 pack: chatops_tests
 action_ref: core.remote
 formats:
-  - "run {{cmd}} on {{hosts}}"
+  - "remote run {{cmd}} on {{hosts}}"
