@@ -148,11 +148,11 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         if len(messages) != 2:
             time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
-        # Help commands for 'unused' action alias should returns 104.
-        combined_text = messages[0]['text'] + messages[1]['text']
+        # Help commands for 'unused' action alias should returns 105.
+        combined_text = messages[0]['text'] + "\n" + messages[1]['text']
         number_of_unused_commands = len(filter(lambda line: line.startswith('![unused]'),
                                                combined_text.split('\n')))
-        self.assertEqual(number_of_unused_commands, 104)
+        self.assertEqual(number_of_unused_commands, 105)
 
         # Drain the event buffer
         self.client.rtm_read()
@@ -182,11 +182,11 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         if len(messages) != 2:
             time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
 
-        # Help commands for 'unused' action alias should returns 104
-        combined_text = messages[0]['text'] + messages[1]['text']
+        # Help commands for 'unused' action alias should returns 105
+        combined_text = messages[0]['text'] + "\n" + messages[1]['text']
         number_of_unused_commands = len(filter(lambda line: line.startswith('![unused]'),
                                                combined_text.split('\n')))
-        self.assertEqual(number_of_unused_commands, 104)
+        self.assertEqual(number_of_unused_commands, 105)
 
         # Drain the event buffer
         self.client.rtm_read()
