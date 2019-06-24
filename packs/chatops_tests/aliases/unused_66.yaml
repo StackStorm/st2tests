@@ -1,0 +1,7 @@
+---
+name: "remote_shell_cmd_66" 
+pack: "chatops_tests"
+action_ref: "core.echo" 
+description: "Pagination test." 
+formats:
+  - "[unused] 66 {{ message }}"
