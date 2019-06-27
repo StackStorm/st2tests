@@ -150,8 +150,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Help commands for 'unused' action alias should returns 105.
         combined_text = messages[0]['text'] + "\n" + messages[1]['text']
-        number_of_unused_commands = len(filter(lambda line: line.startswith('![unused]'),
-                                               combined_text.split('\n')))
+        number_of_unused_commands = len(list(filter(lambda line: line.startswith('![unused]'),
+                                               combined_text.split('\n'))))
         self.assertEqual(number_of_unused_commands, 105)
 
         # Drain the event buffer
@@ -184,8 +184,8 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Help commands for 'unused' action alias should returns 105
         combined_text = messages[0]['text'] + "\n" + messages[1]['text']
-        number_of_unused_commands = len(filter(lambda line: line.startswith('![unused]'),
-                                               combined_text.split('\n')))
+        number_of_unused_commands = len(list(filter(lambda line: line.startswith('![unused]'),
+                                               combined_text.split('\n'))))
         self.assertEqual(number_of_unused_commands, 105)
 
         # Drain the event buffer
