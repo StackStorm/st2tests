@@ -245,6 +245,49 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         # Drain the event buffer
         self.client.rtm_read()
 
+    def test_run_command_on_localhost_with_bad_argument(self):
+        post_message_response = self.client.api_call(
+            "chat.postMessage",
+            channel=self.channel,
+            text="!pack get pack=example",
+            as_user=True)
+
+        messages = []
+        for i in range(self.WAIT_FOR_MESSAGES_TIMEOUT):
+            if len(messages) >= 1:
+                break
+            time.sleep(1)
+
+            all_messages = self.client.rtm_read()
+
+            filtered_messages = filter(self.filter, all_messages)
+
+            if filtered_messages:
+                messages.extend(filtered_messages)
+
+        self.assertEqual(1, len(messages))
+        if len(messages) != 1:
+            time.sleep(self.WAIT_FOR_MESSAGES_TIMEOUT)
+
+        # Test for response
+        self.assertIsNotNone(messages[0].get('bot_id'))
+        self.assertIsNotNone(messages[0].get('attachments'))
+        self.assertGreater(len(messages[0]['attachments']), 0)
+        self.assertIsNotNone(messages[0]['attachments'][0].get('color'))
+        self.assertEqual(messages[0]['attachments'][0]['color'], 'F35A00')
+        self.assertIsNotNone(messages[0]['attachments'][0].get('text'))
+
+        # Check the pretext
+        msg_pretext = messages[0]['attachments'][0]['pretext']
+        self.assertRegex(msg_pretext, r"<@{userid}>: I'm sorry, Dave. I'm afraid I can't do that. ".format(userid=self.userid))
+
+        # Test attachment
+        msg_text = messages[0]['attachments'][0]['text']
+        self.assertRegex(msg_text, r"Command \"pack get pack=example\" doesn't match format string \"pack get \{\{ pack \}\}\"")
+
+        # Drain the event buffer
+        self.client.rtm_read()
+
     def test_run_exact_command_on_localhost(self):
         post_message_response = self.client.api_call(
             "chat.postMessage",
