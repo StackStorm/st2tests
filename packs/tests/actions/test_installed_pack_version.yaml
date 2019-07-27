@@ -1,0 +1,12 @@
+---
+name: "test_installed_pack_version"
+runner_type: "python-script"
+description: "Test installed pack version."
+pack: tests
+enabled: true
+entry_point: "test_installed_pack_version.py"
+parameters:
+  installed_pack:
+    type: "string"
+    description: "Name of pack to check"
+    required: true
