@@ -3,7 +3,7 @@ vars:
     base_repo_url: "https://github.com/StackStorm"
     # Note: Pack 1 should have no external dependencies beyond Python stdlib ones.
     pack_to_install_1: "csv"
-    pack_to_install_2: "xml"
+    pack_to_install_2: "xml=0.3.0"
     test_timeout: 180
 
 chain:
@@ -18,8 +18,17 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 pack install {{ pack_to_install_1 }}"
             timeout: "{{test_timeout}}"
+        on-success: test_installed_pack_1_version
+        on-failure: error_handler
+
+    -
+        name: test_installed_pack_1_version
+        ref: tests.test_installed_pack_version
+        params:
+            installed_pack: "{{ pack_to_install_1 }}"
         on-success: install_pack_2
         on-failure: error_handler
+
     -
         name: install_pack_2
         ref: core.local
@@ -31,8 +40,17 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 pack install {{ pack_to_install_2 }}"
             timeout: "{{test_timeout}}"
+        on-success: test_installed_pack_2_version
+        on-failure: error_handler
+
+    -
+        name: test_installed_pack_2_version
+        ref: tests.test_installed_pack_version
+        params:
+            installed_pack: "{{ pack_to_install_2 }}"
         on-success: run_pack_tests_without_creating_virtualenv
         on-failure: error_handler
+
     -
         name: run_pack_tests_without_creating_virtualenv
         ref: core.local
