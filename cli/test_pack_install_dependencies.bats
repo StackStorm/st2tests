@@ -67,6 +67,37 @@ load '../test_helpers/bats-assert/load'
 	assert_output "0.2.2"
 }
 
+@test "Successfully install the ms pack by skipping dependencies" {
+	run st2 pack install excel=0.2.4
+	assert_success
+
+	run eval "st2 pack get excel --json | jq -r .version"
+	assert_success
+
+	assert_output "0.2.4"
+
+	run st2 pack install powerpoint=0.2.2
+	assert_success
+
+	run eval "st2 pack get powerpoint --json | jq -r .version"
+	assert_success
+
+	assert_output "0.2.2"
+
+	run st2 pack install --skip-dependencies https://github.com/StackStorm/stackstorm-ms.git
+	assert_success
+
+	run eval "st2 pack get excel --json | jq -r .version"
+	assert_success
+
+	assert_output "0.2.4"
+
+	run eval "st2 pack get powerpoint --json | jq -r .version"
+	assert_success
+
+	assert_output "0.2.2"
+}
+
 @test "Successfully install the ms pack (excel and powerpoint packs)" {
 	run st2 pack remove excel powerpoint microsoft_test mssql microsoft_parent_test microsoft_broken_test
 	assert_success
