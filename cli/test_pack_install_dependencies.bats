@@ -97,6 +97,21 @@ load '../test_helpers/bats-assert/load'
 	assert_output "0.2.0"
 }
 
+@test "Successfully install the ms pack a second time" {
+	run st2 pack install https://github.com/StackStorm/stackstorm-ms.git
+	assert_success
+
+	run eval "st2 pack get excel --json | jq -r .version"
+	assert_success
+
+	assert_output "0.2.4"
+
+	run eval "st2 pack get powerpoint --json | jq -r .version"
+	assert_success
+
+	assert_output "0.2.0"
+}
+
 @test "Successfully install the parent ms pack" {
 	run st2 pack remove excel powerpoint microsoft_test mssql microsoft_parent_test microsoft_broken_test
 	assert_success
