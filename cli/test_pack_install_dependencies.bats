@@ -163,7 +163,7 @@ load '../test_helpers/bats-assert/load'
 	run eval "st2 pack get mssql --json | jq -r .version"
 	assert_success
 
-	assert_output "0.2.1"
+	assert_output "0.2.2"
 }
 
 @test "Fail to install the broken ms pack" {
