@@ -10,3 +10,18 @@ parameters:
     type: "string"
     description: "Name of pack to check"
     required: true
+# NOTE: Those arguments are unused, temporary workaround for regression
+# introduced in #176
+# See https://github.com/StackStorm/st2tests/pull/177#issuecomment-547601745
+  token:
+    type: "string"
+    description: "st2 auth token"
+    default: ""
+  protocol:
+    type: "string"
+    description: "http/https"
+    default: "http"
+  hostname:
+    type: "string"
+    description: "St2 host to run tests against"
+    default: "127.0.0.1"
