@@ -61,7 +61,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2-run-pack-tests -p /opt/stackstorm/packs/{{ pack_to_install_1 }} -x -j"
+            cmd: ". /opt/stackstorm/st2/bin/activate; st2-run-pack-tests -p /opt/stackstorm/packs/{{ pack_to_install_1 }} -x -j"
             timeout: "{{test_timeout}}"
         on-success: run_pack_tests_using_a_pack_tests_local_virtualenv
         on-failure: error_handler
@@ -74,7 +74,7 @@ chain:
               ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
-            cmd: "st2-run-pack-tests -p /opt/stackstorm/packs/{{ pack_to_install_2 }}"
+            cmd: ". /opt/stackstorm/st2/bin/activate; st2-run-pack-tests -p /opt/stackstorm/packs/{{ pack_to_install_2 }}"
             timeout: "{{test_timeout}}"
         on-success: run_pack_tests_using_existing_pack_local_virtualenv
         on-failure: error_handler
@@ -90,7 +90,7 @@ chain:
             # Note: Second run should succeed because the previous run created a virtual environment.
             # We need to run this as part of the same task because if we run it inside other task,
             # /tmp/ directory where virtualenv is created will be deleted by then.
-            cmd: "st2-run-pack-tests -p /opt/stackstorm/packs/{{ pack_to_install_2 }} && st2-run-pack-tests -p /opt/stackstorm/packs/{{ pack_to_install_2 }} -j"
+            cmd: ". /opt/stackstorm/st2/bin/activate; st2-run-pack-tests -p /opt/stackstorm/packs/{{ pack_to_install_2 }} && st2-run-pack-tests -p /opt/stackstorm/packs/{{ pack_to_install_2 }} -j"
             timeout: "{{test_timeout}}"
         on-success: success_handler
         on-failure: error_handler
