@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/opt/stackstorm/virtualenvs/fixtures/bin/python
 
 import argparse
 import sys
