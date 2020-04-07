@@ -18,7 +18,7 @@ from st2common.util.pack import get_pack_metadata
 from st2common.util.pack_management import get_repo_url
 
 
-class TesetInstalledPackVersionAction(Action):
+class CheckInstalledPackVersionAction(Action):
     def run(self, installed_pack, **kwargs):
         """
         :param installed_pack: Installed pack name with version

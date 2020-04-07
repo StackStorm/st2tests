@@ -1,14 +1,14 @@
 ---
-name: "test_installed_pack_version"
+name: "check_installed_pack_version"
 runner_type: "python-script"
-description: "Test installed pack version."
+description: "Compares the 'installed_pack' name and version to the version of the currently installed pack. NOTE: This is specifically NOT named test_xxx because we do not want it run by the st2-self-check script."
 pack: tests
 enabled: true
-entry_point: "test_installed_pack_version.py"
+entry_point: "check_installed_pack_version.py"
 parameters:
   installed_pack:
     type: "string"
-    description: "Name of pack to check"
+    description: "Expected name and version of pack, '=' delimited. Example 'st2=1.2.0'"
     required: true
 # NOTE: Those arguments are unused, temporary workaround for regression
 # introduced in #176
