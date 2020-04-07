@@ -19,12 +19,12 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 pack install {{ pack_to_install_1 }}"
             timeout: "{{test_timeout}}"
-        on-success: test_installed_pack_1_version
+        on-success: check_installed_pack_1_version
         on-failure: error_handler
 
     -
-        name: test_installed_pack_1_version
-        ref: tests.test_installed_pack_version
+        name: check_installed_pack_1_version
+        ref: tests.check_installed_pack_version
         params:
             installed_pack: "{{ pack_to_install_1 }}"
         on-success: install_pack_2
@@ -41,12 +41,12 @@ chain:
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 pack install {{ pack_to_install_2_with_version }}"
             timeout: "{{test_timeout}}"
-        on-success: test_installed_pack_2_version
+        on-success: check_installed_pack_2_version
         on-failure: error_handler
 
     -
-        name: test_installed_pack_2_version
-        ref: tests.test_installed_pack_version
+        name: check_installed_pack_2_version
+        ref: tests.check_installed_pack_version
         params:
             installed_pack: "{{ pack_to_install_2_with_version }}"
         on-success: run_pack_tests_without_creating_virtualenv
