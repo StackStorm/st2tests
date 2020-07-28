@@ -39,8 +39,8 @@ class TestPassiveSensor(Sensor):
                 raise Exception('Unhandled endpoint: %s', endpoint)
 
     def run(self):
-        # Stopped
-        self.app.run(host=self.host, port=self.port, threaded=False)
+        # Using a threaded sensor to verify monkey patching
+        self.app.run(host=self.host, port=self.port, threaded=True)
 
     def cleanup(self):
         pass
