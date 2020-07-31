@@ -152,69 +152,6 @@ describe file('/var/log/st2') do
   it { should be_directory }
 end
 
-# mistral
-MISTRAL_DEBIAN_PACKAGES = %w(mysql-server)
-MISTRAL_REDHAT_PACKAGES = %w(mariadb mariadb-libs mariadb-devel mariadb-server)
-
-MISTRAL_DEBIAN_PACKAGES.each do |package|
-  describe package(package), :if => os[:family] == 'ubuntu' do
-    it { should be_installed }
-  end
-end
-
-MISTRAL_REDHAT_PACKAGES.each do |package|
-  describe package(package), :if => os[:family] == 'redhat' do
-    it { should be_installed }
-  end
-end
-
-# describe connection string in config
-# ensure mysql is setup with mistral
-
-describe file('/opt/openstack/mistral') do
-  it { should be_directory }
-end
-
-describe file('/opt/openstack/mistral/.git') do
-  it { should be_directory }
-end
-
-describe file('/opt/openstack/mistral/.venv') do
-  it { should be_directory }
-end
-
-describe file('/etc/mistral/mistral.conf') do
-  it { should be_file }
-  it { should contain 'connection = mysql://mistral:StackStorm@localhost/mistral' }
-  it { should contain 'max_pool_size = 100' }
-  it { should contain 'auth_enable = false' }
-end
-
-MISTRAL_INIT_COMMAND="/opt/openstack/mistral/.venv/bin/python /opt/openstack/mistral/mistral/cmd/launch.py --config-file /etc/mistral/mistral.conf --log-file /var/log/mistral.log --log-config-append /etc/mistral/wf_trace_logging.conf"
-
-describe file('/etc/mistral/wf_trace_logging.conf') do
-  it { should be_file }
-  it { should contain 'args=("/var/log/mistral_wf_trace.log",)' }
-end
-
-describe file('/etc/init/mistral.conf'), :if => os[:family] == 'ubuntu' do
-  it { should be_file }
-  it { should contain MISTRAL_INIT_COMMAND }
-end
-
-describe file('/etc/systemd/system/mistral.service'), :if => os[:family] == 'redhat' do
-  it { should be_file }
-  it { should contain MISTRAL_INIT_COMMAND }
-end
-
-describe file('/etc/mistral/actions/st2mistral') do
-  it { should be_directory }
-end
-
-describe file('/etc/mistral/actions/st2mistral/.git') do
-  it { should be_directory }
-end
-
 describe port(8989) do
   it { should be_listening }
 end

@@ -39,23 +39,6 @@ load '../test_helpers/bats-assert/load'
 	assert_output --regexp "Execution [0-9a-f]{24} has completed \\(status=succeeded\\)."
 }
 
-@test "st2 execution tail command works correctly for Mistral workflows" {
-	run st2 runner get mistral-v2 > /dev/null
-	if [[ "$status" -ne 0 ]]; then
-		skip "Mistral not available, skipping tests"
-	fi
-
-	# Run the run + execution tail command - this may take awhile
-	run eval "st2 run examples.mistral-streaming-demo count=2 sleep_delay=0.2 --tail"
-
-	assert_success
-	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has started\..*"
-	assert_output --regexp "Child execution \\(task=task3\\) [0-9a-f]{24} has finished \\(status=succeeded\\)\."
-	assert_output --regexp "Child execution \\(task=task10\\) [0-9a-f]{24} has started\..*"
-	assert_output --regexp "Child execution \\(task=task10\\) [0-9a-f]{24} has finished \\(status=succeeded\\)\."
-	assert_output --regexp "Execution [0-9a-f]{24} has completed \\(status=succeeded\\)."
-}
-
 @test "st2 execution tail command works correctly for Orquesta workflows" {
 	run st2 runner get orquesta > /dev/null
 	if [[ "$status" -ne 0 ]]; then
