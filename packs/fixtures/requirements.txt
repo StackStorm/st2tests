@@ -1,2 +1,3 @@
 flask
 flask-jsonschema
+pyrsistent<0.17
