@@ -33,7 +33,8 @@ load '../test_helpers/bats-assert/load'
 	run eval "echo '$RESULTS' | jq -r '.[].ref'"
 	assert_success
 
-	assert_output "chatops.notify"
+	assert_line --index 0 "chatops.notify"
+	assert_line --index 1 "chatops.notify-errbot"
 
 	run eval "echo '$RESULTS' | jq -r '.[].enabled'"
 	assert_success
