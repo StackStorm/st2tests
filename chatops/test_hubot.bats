@@ -34,10 +34,12 @@ load '../test_helpers/bats-assert/load'
 	assert_success
 
 	assert_output --partial "chatops.notify"
+	assert_output --partial "chatops.notify-errbot"
 
-	run eval "echo '$RESULTS' | jq -r '.[] | select( (.ref == \"chatops.notify\") and .enabled == true) .ref'"
+	run eval "echo '$RESULTS' | jq -r '.[] | select( (.ref == \"chatops.notify\" or .ref == \"chatops.notify-errbot\") and .enabled == true) .ref'"
 	assert_success
 	assert_output --partial "chatops.notify"
+	assert_output --partial "chatops.notify-errbot"
 }
 
 @test "hubot help command works" {
