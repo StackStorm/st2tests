@@ -1,0 +1,19 @@
+---
+description: Check if key in object contains a given string value.
+enabled: true
+entry_point: object_key_string_contains.py
+name: object_key_string_contains
+parameters:
+  object:
+    type: object
+    description: Object input.
+    required: true
+  key:
+    type: string
+    description: Key in object to pick the value for to test.
+    required: true
+  value:
+    type: string
+    description: Expected string value.
+    required: true
+runner_type: "python-script"
