@@ -138,7 +138,7 @@ KEY_JSON_FILE="docs/test_key_triggers.json"
 	run eval "st2 key delete \"$ROBOT_KEY\""
 	assert_success
 
-	assert_output "Resource with id \"$ROBOT_KEY\" has been successfully deleted."
+	assert_line "Resource with id \"$ROBOT_KEY\" has been successfully deleted."
 
 	KEY_DELETE_RESULTS=$(st2 trigger-instance list --trigger=$TRIGGER_KEY_DELETE -n 1 -j)
 	run eval "echo '$KEY_DELETE_RESULTS' | jq -r '.[].trigger'"
@@ -215,7 +215,7 @@ KEY_JSON_FILE="docs/test_key_triggers.json"
 	run eval "st2 key delete 1 -j"
 	assert_success
 
-	assert_output "Resource with id \"1\" has been successfully deleted."
+	assert_line "Resource with id \"1\" has been successfully deleted."
 }
 
 @test "key-value operations with expiries" {

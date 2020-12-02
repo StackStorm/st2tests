@@ -8,8 +8,8 @@ load '../test_helpers/bats-assert/load'
 	run st2 --version
 	assert_success
 
-	assert_output --regexp "^st2 "
-	assert_output --partial "on Python"
+	assert_line --regexp "^st2 "
+	assert_line --partial "on Python"
 }
 
 @test "st2 usage works" {
@@ -24,7 +24,7 @@ load '../test_helpers/bats-assert/load'
 	run st2 -h
 	assert_success
 
-	assert_output --regexp "^usage:"
+	assert_line --regexp "^usage:"
 	assert_output --partial "CLI for StackStorm event-driven automation platform."
 	assert_output --partial "Enable debug mode"
 }
@@ -54,7 +54,7 @@ load '../test_helpers/bats-assert/load'
 	run eval "st2 action get -j core.http | jq -r '.ref'"
 	assert_success
 
-	assert_output "core.http"
+	assert_line "core.http"
 
 	run eval "st2 action get -j core.http | jq -r '.parameters.method.enum | .[]'"
 	assert_success
@@ -74,19 +74,19 @@ load '../test_helpers/bats-assert/load'
 	run eval "st2 run -j core.local -- date -R | jq -r '.status'"
 	assert_success
 
-	assert_output "succeeded"
+	assert_line "succeeded"
 
 	run eval "st2 run -j core.local -- date -R | jq -r '.parameters.cmd'"
 	assert_success
-	assert_output "date -R"
+	assert_line "date -R"
 
 	run eval "st2 execution list -n 1 -j | jq -r '.[].action.ref'"
 	assert_success
-	assert_output "core.local"
+	assert_line "core.local"
 
 	run eval "st2 execution list -n 1 -j | jq -r '.[].status'"
 	assert_success
-	assert_output "succeeded"
+	assert_line "succeeded"
 }
 
 @test "sensor list works" {
@@ -100,7 +100,7 @@ load '../test_helpers/bats-assert/load'
 	run eval "st2 trigger list -j -a=all | jq -r '.[].pack = \"core\" | length'"
 	assert_success
 
-	[[ "$output" -gt 15 ]]
+	assert_line --regexp "[[:digit:]]{1,}"
 }
 
 @test "trigger get works" {
@@ -108,17 +108,17 @@ load '../test_helpers/bats-assert/load'
 	run eval "st2 trigger get -j $TRIGGER_ID | jq -r '.id'"
 	assert_success
 
-	assert_output "$TRIGGER_ID"
+	assert_line "$TRIGGER_ID"
 }
 
 @test "core.remote action works" {
 	run eval "st2 run -j core.remote hosts=\"localhost\" -- uname -a | jq -r '.parameters.cmd'"
 	assert_success
 
-	assert_output "uname -a"
+	assert_line "uname -a"
 
 	run eval "st2 run -j core.remote hosts=\"localhost\" -- uname -a | jq -r '.parameters.hosts'"
 	assert_success
 
-	assert_output "localhost"
+	assert_line "localhost"
 }
