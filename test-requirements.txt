@@ -20,4 +20,5 @@ traceback2==1.4.0
 unittest2==1.1.0
 urllib3==1.24.2
 websocket-client==0.54.0
+wheel==0.36.0
 wrapt==1.11.1
