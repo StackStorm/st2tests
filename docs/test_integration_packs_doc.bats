@@ -24,7 +24,7 @@ load '../test_helpers/bats-assert/load'
 	run eval "st2 action list --pack libcloud -j | jq '. | length'"
 	assert_success
 
-	assert_output --regexp '^[[:digit:]]{1,}$'
+	assert_line --regexp '^[[:digit:]]{1,}$'
 	refute_output '0'
 }
 
@@ -32,7 +32,7 @@ load '../test_helpers/bats-assert/load'
 	run eval "st2 action list --pack consul -j | jq '. | length'"
 	assert_success
 
-	assert_output --regexp '^[[:digit:]]{1,}$'
+	assert_line --regexp '^[[:digit:]]{1,}$'
 	refute_output '0'
 }
 
@@ -48,14 +48,14 @@ load '../test_helpers/bats-assert/load'
 	run st2 action list --pack libcloud -j
 	assert_success
 
-	assert_output "No matching items found"
+	assert_line "No matching items found"
 }
 
 @test "no actions in consul pack" {
 	run st2 action list --pack consul -j
 	assert_success
 
-	assert_output "No matching items found"
+	assert_line "No matching items found"
 }
 
 @test "packs can be downloaded using packs.download" {
@@ -63,24 +63,24 @@ load '../test_helpers/bats-assert/load'
 	run eval "echo '$DOWNLOAD_RESULTS' | jq -r '.status'"
 	assert_success
 
-	assert_output "succeeded"
+	assert_line "succeeded"
 
 	run eval "echo '$DOWNLOAD_RESULTS' | jq -r '.result.result.libcloud'"
 	assert_success
 
-	assert_output "Success."
+	assert_line "Success."
 }
 
 @test "can run packs.setup_virtualenv for a pack downloaded in previous step" {
 	run eval "st2 run packs.setup_virtualenv packs=libcloud -j | jq -r '.status'"
 	assert_success
 
-	assert_output "succeeded"
+	assert_line "succeeded"
 
 	run eval "st2 run packs.setup_virtualenv packs=libcloud -j | jq -r '.result.result'"
 	assert_success
 
-	assert_output "Successfully set up virtualenv for the following packs: libcloud"
+	assert_line "Successfully set up virtualenv for the following packs: libcloud"
 }
 
 @test "packs register registers all packs" {
@@ -140,12 +140,12 @@ load '../test_helpers/bats-assert/load'
 	run eval "st2 run packs.download packs=bitcoin -j | jq -r '.result.result.bitcoin'"
 	assert_success
 
-	assert_output "Success."
+	assert_line "Success."
 }
 
 @test "pack reinstall with no config" {
 	run eval "st2 run packs.download packs=bitcoin -j | jq -r '.result.result.bitcoin'"
 	assert_success
 
-	assert_output "Success."
+	assert_line "Success."
 }

@@ -30,7 +30,7 @@ chain:
     on-success: "assert_stderr_field_stderr_test"
   -
     name: "assert_stderr_field_stderr_test"
-    ref: "asserts.object_key_string_equals"
+    ref: "asserts.object_key_string_contains"
     params:
         object: "{{test_stderr_python_action}}"
         key: "stderr"
