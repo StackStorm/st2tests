@@ -23,7 +23,7 @@ BUILD_REDHAT_PACKAGES.each do |package|
 end
 
 ## StackStorm Package Installation
-ST2_PACKAGES = %w(st2common st2reactor st2actions st2api st2auth st2debug)
+ST2_PACKAGES = %w(st2common st2reactor st2actions st2api st2auth)
 ST2_DEBIAN_PACKAGES = %w(python-st2client)
 ST2_REDHAT_PACKAGES = %w(st2client)
 
