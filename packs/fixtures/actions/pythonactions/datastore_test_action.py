@@ -3,7 +3,7 @@ import json
 
 # This is to test imports within actions folder to check
 # if we messed up sys.path for actions.
-from base import DummyClass
+from base import DummyClass  # pylint: disable=no-name-in-module
 
 from st2actions.runners.pythonrunner import Action
 from st2client.client import Client
