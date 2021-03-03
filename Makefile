@@ -32,9 +32,14 @@ REQUIREMENTS := test-requirements.txt requirements.txt
 #     PIP_VERSION ?= xx.yy.zz
 #
 # line of the st2/Makefile, grabs the third column of it, and then installs
-# that exact version of pip into the virtualenv
+# that exact version of pip into the virtualenv.
 #
-PIP_VERSION := $(shell curl --silent https://raw.githubusercontent.com/StackStorm/st2/$${ST2_BRANCH:-$${CIRCLE_BRANCH:-master}}/Makefile | grep 'PIP_VERSION ?= ' | awk '{ print $$3 }')
+# If the branch is specified in either ST2_BRANCH or CIRCLE_BRANCH, but there
+# is no corresponding branch in st2, then curl will error out, and the master
+# branch of st2 will be used.
+#
+PIP_VERSION := $(shell curl --silent https://raw.githubusercontent.com/StackStorm/st2/$${ST2_BRANCH:-$${CIRCLE_BRANCH:-master}}/Makefile | grep 'PIP_VERSION ?= ' | awk '{ print $$3 }' || \
+                       curl --silent https://raw.githubusercontent.com/StackStorm/st2/master/Makefile | grep 'PIP_VERSION ?= ' | awk '{ print $$3 }')
 PIP_OPTIONS := $(ST2_PIP_OPTIONS)
 
 NOSE_OPTS := --rednose --immediate
@@ -92,6 +97,7 @@ requirements: virtualenv
 	@echo
 
 	# Make sure we use latest version of pip
+	echo "Installing pip $(PIP_VERSION)"
 	$(VIRTUALENV_DIR)/bin/pip install --upgrade "pip==$(PIP_VERSION)"
 	$(VIRTUALENV_DIR)/bin/pip install virtualenv  # Required for packs.install in dev envs.
 
