@@ -1,0 +1,6 @@
+configparser==5.0.2
+enum34==1.1.10
+flake8==3.8.4
+pylint==2.7.2
+slackclient==2.9.3
+wheel==0.36.2
