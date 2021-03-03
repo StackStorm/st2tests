@@ -54,7 +54,7 @@ ifdef NOSE_TIME
 endif
 
 ifndef PIP_OPTIONS
-	PIP_OPTIONS := -U -q
+	PIP_OPTIONS := -U
 endif
 
 .PHONY: all
