@@ -17,6 +17,24 @@ COMPONENT_PYTHONPATH = $(subst $(space_char),:,$(realpath $(COMPONENTS)))
 PYTHON_TARGET := 2.7
 
 REQUIREMENTS := test-requirements.txt requirements.txt
+# Grab the version of pip from the Makefile in the st2 repository
+#
+# 1. Grab the st2 branch name from ST2_BRANCH
+#        |          2. Grab the st2 branch from CIRCLE_BRANCH if ST2_BRANCH
+#                      isn't set or is empty
+#        |                |        3. Default branch name, if CIRCLE_BRANCH
+#        |                |           and ST2_BRANCH aren't set or are empty
+#    vvvvvvvvvv     vvvvvvvvvvvvv  vvvvvv
+# $${ST2_BRANCH:-$${CIRCLE_BRANCH:-master}}
+#
+# This line grabs the version of pip specified in the
+#
+#     PIP_VERSION ?= xx.yy.zz
+#
+# line of the st2/Makefile, grabs the third column of it, and then installs
+# that exact version of pip into the virtualenv
+#
+PIP_VERSION := $(shell curl --silent https://raw.githubusercontent.com/StackStorm/st2/$${ST2_BRANCH:-$${CIRCLE_BRANCH:-master}}/Makefile | grep 'PIP_VERSION ?= ' | awk '{ print $$3 }')
 PIP_OPTIONS := $(ST2_PIP_OPTIONS)
 
 NOSE_OPTS := --rednose --immediate
@@ -74,7 +92,7 @@ requirements: virtualenv
 	@echo
 
 	# Make sure we use latest version of pip
-	$(VIRTUALENV_DIR)/bin/pip install --upgrade "pip>=8.1.2,<8.2"
+	$(VIRTUALENV_DIR)/bin/pip install --upgrade "pip==$(PIP_VERSION)"
 	$(VIRTUALENV_DIR)/bin/pip install virtualenv  # Required for packs.install in dev envs.
 
 	# Install requirements
