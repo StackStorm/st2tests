@@ -14,7 +14,7 @@ space_char +=
 comma := ,
 COMPONENT_PYTHONPATH = $(subst $(space_char),:,$(realpath $(COMPONENTS)))
 
-PYTHON_TARGET := 2.7
+PYTHON_TARGET := 3.6
 
 REQUIREMENTS := test-requirements.txt requirements.txt
 # Grab the version of pip from the Makefile in the st2 repository
