@@ -38,8 +38,12 @@ REQUIREMENTS := test-requirements.txt requirements.txt
 # is no corresponding branch in st2, then curl will error out, and the master
 # branch of st2 will be used.
 #
-PIP_VERSION := $(shell curl --silent https://raw.githubusercontent.com/StackStorm/st2/$${ST2_BRANCH:-$${CIRCLE_BRANCH:-master}}/Makefile | grep 'PIP_VERSION ?= ' | awk '{ print $$3 }' || \
-                       curl --silent https://raw.githubusercontent.com/StackStorm/st2/master/Makefile | grep 'PIP_VERSION ?= ' | awk '{ print $$3 }')
+ST2_BRANCH := $(shell echo $${ST2_BRANCH:-$${CIRCLE_BRANCH:-master}})
+PIP_VERSION := $(shell curl --silent https://raw.githubusercontent.com/StackStorm/st2/$(ST2_BRANCH)/Makefile | grep 'PIP_VERSION ?= ' | awk '{ print $$3 }')
+ifeq ($(PIP_VERSION),)
+	ST2_BRANCH := master
+	PIP_VERSION := $(shell curl --silent https://raw.githubusercontent.com/StackStorm/st2/$(ST2_BRANCH)/Makefile | grep 'PIP_VERSION ?= ' | awk '{ print $$3 }')
+endif
 PIP_OPTIONS := $(ST2_PIP_OPTIONS)
 
 NOSE_OPTS := --rednose --immediate
@@ -97,7 +101,7 @@ requirements: virtualenv
 	@echo
 
 	# Make sure we use latest version of pip
-	echo "Installing pip $(PIP_VERSION)"
+	echo "Installing pip $(PIP_VERSION) (found from st2 branch $(ST2_BRANCH))"
 	$(VIRTUALENV_DIR)/bin/pip install --upgrade "pip==$(PIP_VERSION)"
 	$(VIRTUALENV_DIR)/bin/pip install virtualenv  # Required for packs.install in dev envs.
 
