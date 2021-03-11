@@ -81,21 +81,20 @@ load '../test_helpers/bats-assert/load'
 	assert_output --partial "$RANDOM_CHANNEL_NAME"
 }
 
-# Fails on Ubuntu Xenial, and we have end-to-end tests to cover ChatOps
-# @test "complete request-response flow" {
-# 	run eval "("\
-# 	         " cd /opt/stackstorm/chatops; "\
-# 	         " { "\
-# 	         "   echo -n; "\
-# 	         "   sleep 10; "\
-# 	         "   echo 'hubot st2 list 5 actions pack=st2'; "\
-# 	         "   echo; "\
-# 	         "   sleep 25;"\
-# 	         " } "\
-# 	         " | bin/hubot --test"\
-# 	         ")"
-# 	assert_success
+@test "complete request-response flow" {
+	run eval "("\
+	         " cd /opt/stackstorm/chatops; "\
+	         " { "\
+	         "   echo -n; "\
+	         "   sleep 10; "\
+	         "   echo 'hubot st2 list 5 actions pack=st2'; "\
+	         "   echo; "\
+	         "   sleep 25;"\
+	         " } "\
+	         " | bin/hubot --test"\
+	         ")"
+	assert_success
 
-# 	assert_output --partial "Give me just a moment to find the actions for you"
-# 	assert_output --partial "st2.actions.list - Retrieve a list of available StackStorm actions."
-# }
+	assert_output --partial "Give me just a moment to find the actions for you"
+	assert_output --partial "st2.actions.list - Retrieve a list of available StackStorm actions."
+}
