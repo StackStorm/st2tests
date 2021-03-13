@@ -1,6 +1,7 @@
 ---
 vars:
     tested_rule: examples.sample_rule_with_webhook
+    tested_rule_unicode: "examples.unicode_rule_with_webhook_你好"
 
 chain:
     -
@@ -27,6 +28,28 @@ chain:
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: "st2 rule delete {{ tested_rule }} "
+        on-success: test_create_rule_unicode_name
+    -
+        name: test_create_rule_unicode_name
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 rule create /usr/share/doc/st2/examples/rules/sample_rule_with_webhook_unicode_name.yaml -j | grep name"
+        on-success: test_get_rule_unicode_name
+    -
+        name: test_get_rule_unicode_name
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 rule get {{ tested_rule_unicode }} -j | grep name"
         on-success: test_create_rule
     -
         name: test_create_rule
