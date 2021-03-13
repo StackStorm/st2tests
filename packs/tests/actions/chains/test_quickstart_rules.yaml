@@ -1,7 +1,7 @@
 ---
 vars:
     tested_rule: examples.sample_rule_with_webhook
-    tested_rule_unicode: "examples.sample_rule_with_webhook_你好"
+    tested_rule_unicode: "examples.unicode_rule_with_webhook_你好"
 
 chain:
     -
