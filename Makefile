@@ -6,7 +6,7 @@ VIRTUALENV_DIR ?= virtualenv
 BINARIES := bin
 
 # All components are prefixed by st2
-COMPONENTS := $(wildcard /tmp/st2/st2*)
+COMPONENTS := $(wildcard st2/st2*)
 
 # nasty hack to get a space into a variable
 space_char :=
