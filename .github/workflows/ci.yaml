@@ -20,7 +20,7 @@ jobs:
   lint-checks:
     needs: pre_job
     name: Make requirements and lint check on Python3.6
-    runs-on: ubuntu-bionic
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
