@@ -22,8 +22,11 @@ jobs:
     name: Make requirements and lint check on Python3.6
     runs-on: ubuntu-18.04
     steps:
-      - name: Checkout repository
+      - name: Checkout st2tests repository
         uses: actions/checkout@v2
+      - name: Checkout st2 repository
+        uses: actions/checkout@v2
+        repository: "StackStorm/st2"
       - name: 'Set up Python3.6'
         uses: actions/setup-python@v2
         with:
