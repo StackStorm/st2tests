@@ -43,6 +43,6 @@ jobs:
         run: |
           script -e -c "make requirements"
       - name: Make Lint
-        timeout-minutes: 5
+        timeout-minutes: 15
         run: |
           script -e -c "make lint"
