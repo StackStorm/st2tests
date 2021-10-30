@@ -1,0 +1,48 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  # Special job which automatically cancels old runs for the same branch, prevents runs for the
+  # same file set which has already passed, etc.
+  pre_job:
+    name: Skip Duplicate Jobs Pre Job
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@4c656bbdb6906310fa6213604828008bc28fe55d # v3.3.0
+        with:
+          cancel_others: 'true'
+          github_token: ${{ github.token }}
+
+  lint-checks:
+    needs: pre_job
+    name: Make requirements and lint check on Python3.6
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout st2tests repository
+        uses: actions/checkout@v2
+      - name: Checkout st2 repository
+        uses: actions/checkout@v2
+        with:
+          repository: "StackStorm/st2"
+      - name: Set up Python3.6
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.6.13'
+      - name: Install apt dependencies
+        run: |
+          sudo apt install -y libldap2-dev libsasl2-dev
+      - name: Install virtualenv
+        run: |
+          python3 -m pip install virtualenv
+      - name: Make requirements
+        timeout-minutes: 5
+        run: |
+          script -e -c "make requirements"
+      - name: Make Lint
+        timeout-minutes: 15
+        run: |
+          script -e -c "make lint"
