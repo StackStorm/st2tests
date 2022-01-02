@@ -279,7 +279,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
 
         # Check the pretext
         msg_pretext = messages[0]['attachments'][0]['pretext']
-        self.assertRegex(msg_pretext, r"<@{userid}>: I'm sorry, Dave. I'm afraid I can't do that. ".format(userid=self.userid))
+        self.assertRegex(msg_pretext, r"<@{userid}>: I'm sorry, Dave. I'm afraid I can't do that.".format(userid=self.userid))
 
         # Test attachment
         msg_text = messages[0]['attachments'][0]['text']
@@ -921,7 +921,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
                          'Details are as follows:\n'
                          'Host: `localhost`\n'
                          '    ---&gt; stdout: ChatOps run command with custom result format\n'
-                         '    ---&gt; stderr: \n')
+                         '    ---&gt; stderr:')
         self.assertEqual(msg_text, expected_text)
 
         # Drain the event buffer
@@ -973,10 +973,10 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         expected_details = 'Details are as follows:\n'
         expected_127_0_0_1 = ('Host: `127.0.0.1`\n'
                               '    ---&gt; stdout: ChatOps run command with custom result format on multiple hosts\n'
-                              '    ---&gt; stderr: \n')
+                              '    ---&gt; stderr:')
         expected_localhost = ('Host: `localhost`\n'
                               '    ---&gt; stdout: ChatOps run command with custom result format on multiple hosts\n'
-                              '    ---&gt; stderr: \n')
+                              '    ---&gt; stderr:')
         self.assertIn(expected_report, msg_text)
         self.assertIn(expected_details, msg_text)
         self.assertIn(expected_127_0_0_1, msg_text)
@@ -1051,7 +1051,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertIsNotNone(messages[1]['attachments'][0].get('text'))
 
         # Check the pretext
-        self.assertEqual(messages[1]['attachments'][0]['pretext'], '<@{userid}>: action completed! '.format(userid=self.userid))
+        self.assertEqual(messages[1]['attachments'][0]['pretext'], '<@{userid}>: action completed!'.format(userid=self.userid))
 
         # Test attachment
         self.assertEqual(messages[1]['attachments'][0]['fallback'],
@@ -1094,14 +1094,14 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertIsNotNone(messages[1]['attachments'][0].get('text'))
 
         # Check the pretext
-        self.assertEqual(messages[1]['attachments'][0]['pretext'], r'<@{userid}>: your kittens are here! '.format(userid=self.userid))
+        self.assertEqual(messages[1]['attachments'][0]['pretext'], r'<@{userid}>: your kittens are here!'.format(userid=self.userid))
 
         # Test fallback
         self.assertEqual(messages[1]['attachments'][0]['fallback'],
                          messages[1]['attachments'][0]['text'])
 
         # Test attachment
-        self.assertEqual(messages[1]['attachments'][0]['text'], ' Regards from the Box Kingdom.')
+        self.assertEqual(messages[1]['attachments'][0]['text'], 'Regards from the Box Kingdom.')
         self.assertEqual(messages[1]['attachments'][0]['fields'],
                          [
                             {
@@ -1155,7 +1155,7 @@ class SlackEndToEndTestCase(unittest2.TestCase):
         self.assertIsNotNone(messages[1]['attachments'][0].get('text'))
 
         # Check the pretext
-        self.assertEqual(messages[1]['attachments'][0]['pretext'], r'<@{userid}>: '.format(userid=self.userid))
+        self.assertEqual(messages[1]['attachments'][0]['pretext'], r'<@{userid}>:'.format(userid=self.userid))
 
         # Test fallback
         self.assertEqual(messages[1]['attachments'][0]['fallback'],
