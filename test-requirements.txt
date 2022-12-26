@@ -20,14 +20,8 @@ enum34==1.1.10
     # via -r test-requirements.in
 flake8==3.8.4
     # via -r test-requirements.in
-idna-ssl==1.1.0
-    # via aiohttp
 idna==3.1
-    # via
-    #   idna-ssl
-    #   yarl
-importlib-metadata==3.7.0
-    # via flake8
+    # via yarl
 isort==5.7.0
     # via pylint
 lazy-object-proxy==1.5.2
@@ -50,18 +44,11 @@ slackclient==2.9.3
     # via -r test-requirements.in
 toml==0.10.2
     # via pylint
-typed-ast==1.4.2
-    # via astroid
 typing-extensions==3.7.4.3
-    # via
-    #   aiohttp
-    #   importlib-metadata
-    #   yarl
-wheel==0.36.2
+    # via aiohttp
+wheel==0.38.1
     # via -r test-requirements.in
 wrapt==1.12.1
     # via astroid
 yarl==1.6.3
     # via aiohttp
-zipp==3.4.0
-    # via importlib-metadata
