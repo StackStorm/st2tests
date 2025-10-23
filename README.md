@@ -36,3 +36,9 @@ For example:
 git subtree pull --prefix test_helpers/bats-assert https://github.com/ztombol/bats-assert.git master --squash
 git subtree pull --prefix test_helpers/bats-support https://github.com/ztombol/bats-support.git master --squash
 ```
+
+## Supported Python versions
+
+StackStorm supports mulitple versions of python across numerous GNU/Linux distributions.  To define python dependencies in a
+reproducible fashion, the `pip-compile` tool is used to resolve dependencies from the `requirements.in` file.  The requirements
+are kept up to date with the `st2` repository and should be regenerated when requirements are updated.
