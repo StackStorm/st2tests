@@ -14,9 +14,9 @@ space_char +=
 comma := ,
 COMPONENT_PYTHONPATH = $(subst $(space_char),:,$(realpath $(COMPONENTS)))
 
-PYTHON_TARGET := 3.6
-
-REQUIREMENTS := test-requirements.txt requirements.txt
+# Extract the Python major/minor version to target the correct test requirements file.
+PYTHON_VERSION := $(shell python3 --version | sed -r 's/.*([[0-9]+\.[0-9]+)\.[0-9]+.*/\1/g')
+REQUIREMENTS := test-requirements-$(PYTHON_VERSION).txt requirements.txt
 # Grab the version of pip from the Makefile in the st2 repository
 #
 # 1. Grab the st2 branch name from ST2_BRANCH
@@ -73,7 +73,7 @@ pylint: requirements .pylint
 	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/fixtures/actions/scripts/*/*.py || exit 1;
 	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/fixtures/sensors/*.py || exit 1;
 	. $(VIRTUALENV_DIR)/bin/activate; pylint -E --rcfile=./lint-configs/python/.pylintrc packs/asserts/actions/*.py || exit 1;
-	
+
 .PHONY: flake8
 flake8: requirements .flake8
 
@@ -107,8 +107,8 @@ requirements: virtualenv
 
 	# Install requirements
 	for req in $(REQUIREMENTS); do \
-			echo "Installing $$req..." ; \
-			$(VIRTUALENV_DIR)/bin/pip install $(PIP_OPTIONS) -r $$req ; \
+		echo "Installing $$req..." ; \
+		$(VIRTUALENV_DIR)/bin/pip install $(PIP_OPTIONS) -r $$req ; \
 	done
 
 .PHONY: virtualenv
@@ -117,7 +117,7 @@ $(VIRTUALENV_DIR)/bin/activate:
 	@echo
 	@echo "==================== virtualenv ===================="
 	@echo
-	test -d $(VIRTUALENV_DIR) || virtualenv $(VIRTUALENV_DIR)
+	test -d $(VIRTUALENV_DIR) || python3 -m venv $(VIRTUALENV_DIR)
 
 	# Setup PYTHONPATH in bash activate script...
 	echo '' >> $(VIRTUALENV_DIR)/bin/activate
@@ -140,3 +140,17 @@ $(VIRTUALENV_DIR)/bin/activate:
 	echo '  functions -e old_deactivate' >> $(VIRTUALENV_DIR)/bin/activate.fish
 	echo 'end' >> $(VIRTUALENV_DIR)/bin/activate.fish
 	touch $(VIRTUALENV_DIR)/bin/activate.fish
+
+.PHONY: piptools
+piptools: virtualenv
+	@echo
+	@echo "================== Install pip-tools ===================="
+	@echo
+	"$(VIRTUALENV_DIR)/bin/pip" install pip-tools
+
+.PHONY: generate_requirements
+generate_requirements: piptools
+	@echo
+	@echo "================== Generate requirements file ===================="
+	@echo
+	"$(VIRTUALENV_DIR)/bin/pip-compile" --output-file=$(ROOT_DIR)/test-requirements-$(PYTHON_VERSION).txt $(ROOT_DIR)/test-requirements.in
