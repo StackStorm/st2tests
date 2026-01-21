@@ -55,6 +55,28 @@ chain:
               ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
               ST2_AUTH_TOKEN: "{{token}}"
             cmd: st2 execution list -n 1
+        on-success: test_execution_list_json
+    -
+        name: test_execution_list_json
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: st2 execution list -n 2 -j
+        on-success: test_execution_get_multi
+    -
+        name: test_execution_get_multi
+        ref: core.local
+        params:
+            env:
+              ST2_BASE_URL: "{{protocol}}://{{hostname}}"
+              ST2_AUTH_URL: "{{protocol}}://{{hostname}}:9100"
+              ST2_API_URL: "{{protocol}}://{{hostname}}:9101"
+              ST2_AUTH_TOKEN: "{{token}}"
+            cmd: "st2 execution get {{test_execution_list.stdout[0].id}} {{test_execution_list.stdout[1].id}}"
         on-success: test_sensor_list
     -
         name: test_sensor_list
